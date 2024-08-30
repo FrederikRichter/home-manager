@@ -1,11 +1,14 @@
 { config, pkgs, ... }:
 let
+	# create nix file loader function
 	modulesDir = ./modules;
 	moduleFiles = builtins.filter
 	(f: builtins.match ".*\\.nix" f != null)
 	(builtins.attrNames (builtins.readDir modulesDir));
+	mkgl = import ./scripts/mkgl.nix pkgs;
 in
 {
+	# load all nix files from ./modules
 	imports = map (f: modulesDir + "/${f}") moduleFiles;
 
 
@@ -52,7 +55,7 @@ in
 		tdesktop
 		firefox
 		kitty
-		qutebrowser
+		(mkgl "qutebrowser")
 # python
 		python3
 		pipx
