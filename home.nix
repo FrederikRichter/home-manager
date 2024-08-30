@@ -1,5 +1,5 @@
-{ config, pkgs, ... }:
-let
+{config, pkgs, inputs, ... }:
+let	
 	# create nix file loader function
 	modulesDir = ./modules;
 	moduleFiles = builtins.filter
@@ -26,12 +26,10 @@ in
 	home.packages = with pkgs; [
 	# cli
 		neofetch
-		zsh
 		htop
 		yt-dlp
 		powertop
 		thefuck
-		nixvim
 	# dev/libs
 		gdb
 		unzip

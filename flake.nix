@@ -8,6 +8,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
     nixgl = {
       url = "github:guibou/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -18,20 +22,22 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, nixgl, nixvim, ... }:
+  outputs = {nixpkgs, ... }@inputs:
 	let
 	  pkgs = import nixpkgs {
 	  system = "x86_64-linux";
-	  overlays = [ nixgl.overlay nixvim.overlays.default ];
+	  overlays = [ inputs.nixgl.overlay inputs.nixvim.overlays.default ];
 	  };
       in {
-      homeConfigurations."hm-testing" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-
+      homeConfigurations."hm-testing" = inputs.home-manager.lib.homeManagerConfiguration {
         # Specify your home configuration modules here, for example,
         # the path to your home.nix.
+	inherit pkgs;
         modules = [ ./home.nix ];
-
+	extraSpecialArgs = {
+	inherit inputs;
+	inherit pkgs;
+	};
         # Optionally use extraSpecialArgs
         # to pass through arguments to home.nix
       };

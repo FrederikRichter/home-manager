@@ -1,6 +1,11 @@
-{ config, pkgs, ... }:
+{inputs, ... }:
 {
-  programs.nixvim = {
+imports = [
+    inputs.nixvim.homeManagerModules.nixvim
+];
+programs.nixvim = {
+    enable = true;
+    defaultEditor = true;
     globals = {
       # Disable useless providers
       loaded_ruby_provider = 0; # Ruby
