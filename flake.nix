@@ -14,10 +14,13 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, ... }:
+  outputs = { self, nixpkgs, home-manager, nixGL, ... }:
     let
       system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [ nixGL.overlay ];
+      };
     in {
       homeConfigurations."hm-testing" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
@@ -25,9 +28,10 @@
         # Specify your home configuration modules here, for example,
         # the path to your home.nix.
         modules = [ ./home.nix ];
-
         # Optionally use extraSpecialArgs
         # to pass through arguments to home.nix
+	extraSpecialArgs = {
+	};
       };
     };
 }
