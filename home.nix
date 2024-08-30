@@ -4,10 +4,15 @@ let
 	moduleFiles = builtins.filter
 	(f: builtins.match ".*\\.nix" f != null)
 	(builtins.attrNames (builtins.readDir modulesDir));
-
+	nixGLModule = {
+		url = "https://raw.githubusercontent.com/guibou/nixGL/main/nixGL.nix";
+		sha256 = "1wdc64cz5xdp2wbkiqlxc2w9kb6qnidsw1lxpxjmniy6vkzcpx0a";
+	};
 in
 {
-	imports = map (f: modulesDir + "/${f}") moduleFiles;
+	imports = map (f: modulesDir + "/${f}") moduleFiles ++ [
+		(builtins.fetchurl nixGLModule)	
+	];
 
 
 # Home Manager needs a bit of information about you and the paths it should
