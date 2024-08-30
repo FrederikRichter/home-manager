@@ -1,10 +1,9 @@
-{ config, pkgs, nixGL, ... }:
+{ config, pkgs, ... }:
 let
 	modulesDir = ./modules;
 	moduleFiles = builtins.filter
 	(f: builtins.match ".*\\.nix" f != null)
 	(builtins.attrNames (builtins.readDir modulesDir));
-	nixGLWrap = pkg: nixGL.wrap pkg;
 in
 {
 	imports = map (f: modulesDir + "/${f}") moduleFiles;
@@ -46,14 +45,14 @@ in
 		ffmpeg-full
 		cmake
 		sway
-		nixgl
+		nixgl.auto.nixGLDefault
 # gui
 		zathura
 		inkscape
 		tdesktop
 		firefox
-		(nixGLWrap qutebrowser)
-		(nixGLWrap kitty)
+		kitty
+		qutebrowser
 # python
 		python3
 		pipx
