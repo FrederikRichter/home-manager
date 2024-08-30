@@ -12,13 +12,17 @@
       url = "github:guibou/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, nixgl, ... }:
+  outputs = { self, nixpkgs, home-manager, nixgl, nixvim, ... }:
 	let
 	  pkgs = import nixpkgs {
 	  system = "x86_64-linux";
-	  overlays = [ nixgl.overlay ];
+	  overlays = [ nixgl.overlay nixvim.overlays.default ];
 	  };
       in {
       homeConfigurations."hm-testing" = home-manager.lib.homeManagerConfiguration {

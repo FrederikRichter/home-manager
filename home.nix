@@ -31,6 +31,7 @@ in
 		yt-dlp
 		powertop
 		thefuck
+		nixvim
 	# dev/libs
 		gdb
 		unzip
