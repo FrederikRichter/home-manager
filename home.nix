@@ -47,18 +47,19 @@ in
 		coreutils
 		ffmpeg-full
 		cmake
-		(mkgl sway)
 		nixgl.auto.nixGLDefault
-# gui
-		zathura
-		inkscape
-		tdesktop
-		firefox
-		(mkgl kitty)
-		(mkgl qutebrowser)
 # python
 		python3
 		pipx
+	# append gl dependent programs
+	] ++ map (mkgl) [
+	sway
+	kitty
+	qutebrowser
+	firefox
+	tdesktop
+	zathura
+	inkscape
 	];
 
 # Home Manager is pretty good at managing dotfiles. The primary way to manage
