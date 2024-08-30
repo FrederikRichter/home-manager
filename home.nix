@@ -47,14 +47,14 @@ in
 		coreutils
 		ffmpeg-full
 		cmake
-		sway
+		(mkgl "sway")
 		nixgl.auto.nixGLDefault
 # gui
 		zathura
 		inkscape
 		tdesktop
 		firefox
-		kitty
+		(mkgl "kitty")
 		(mkgl "qutebrowser")
 # python
 		python3
