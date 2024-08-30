@@ -1,16 +1,16 @@
 pkgs:
 program:
 let
-package = pkgs.${program};
-  wrapped = pkgs.writeShellScriptBin "${program}" ''
-    exec nixGL ${package}/bin/${program}
+pname = program.meta.mainProgram;
+  wrapped = pkgs.writeShellScriptBin "${pname}" ''
+    exec nixGL ${program}/bin/${pname}
   '';
 in
 pkgs.symlinkJoin {
-  name = "${program}";
+  name = pname;
   paths = [
     wrapped
-    pkgs.${program}
+    program
   ];
 }
 
