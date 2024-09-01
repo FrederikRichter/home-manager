@@ -30,6 +30,7 @@ in
 		yt-dlp
 		powertop
 		thefuck
+        nixvim
 	# dev/libs
         # build when i have fast wifi texlive.combined.scheme-full
         gdb

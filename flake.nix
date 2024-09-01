@@ -17,17 +17,21 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim = {
-      url = "github:nix-community/nixvim";
+      url = "github:FrederikRichter/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs = {nixpkgs, ... }@inputs:
-	let
-	  pkgs = import nixpkgs {
-	  system = "x86_64-linux";
-	  overlays = [ inputs.nixgl.overlay inputs.nixvim.overlays.default ];
-	  };
+      let
+      system = "x86_64-linux";
+      nixvimOverlay = final: prev: {
+          nixvim = inputs.nixvim.packages.${system}.default;
+      };
+      pkgs = import nixpkgs {
+          system = "x86_64-linux";
+          overlays = [ inputs.nixgl.overlay nixvimOverlay ];
+      };
       in {
       homeConfigurations."hm-testing" = inputs.home-manager.lib.homeManagerConfiguration {
         # Specify your home configuration modules here, for example,
