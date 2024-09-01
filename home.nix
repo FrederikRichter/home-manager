@@ -31,7 +31,8 @@ in
 		powertop
 		thefuck
 	# dev/libs
-		gdb
+        # build when i have fast wifi texlive.combined.scheme-full
+        gdb
 		unzip
 		ripgrep
 		gcc
@@ -44,7 +45,6 @@ in
 		nixgl.auto.nixGLDefault
 	# python
 		python3
-		pipx
 	# append gl dependent programs
 		] ++ map (mkgl) [
 		sway
@@ -52,7 +52,6 @@ in
 		qutebrowser
 		firefox
 		tdesktop
-		zathura
 		inkscape
 		];
 	
@@ -62,7 +61,7 @@ in
 	
 	# set session vars
 	home.sessionVariables = {
-		EDITOR = "nvim";
+		# not needed because set in nixvim i suppose EDITOR = "nvim";
 	};
 }
 
