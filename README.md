@@ -2,4 +2,4 @@
 
 ## Usage
 
-```home-manager switch --flake github:frederikrichter/home-manager#USERNAME--impure```
+```home-manager switch --flake github:frederikrichter/home-manager --impure```
