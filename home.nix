@@ -32,7 +32,7 @@ in
 		thefuck
         nixvim
 	# dev/libs
-        # build when i have fast wifi texlive.combined.scheme-full
+        texlive.combined.scheme-full
         gdb
 		unzip
 		ripgrep
