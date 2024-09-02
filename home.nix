@@ -31,7 +31,6 @@ in
 		powertop
 		thefuck
         nixvim
-        hugo
 	# dev/libs
         texlive.combined.scheme-full
         gdb
