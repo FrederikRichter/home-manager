@@ -62,7 +62,7 @@ in
 	
 	# set session vars
 	home.sessionVariables = {
-        term = "kitty";
+        EDITOR="nvim";
 	};
 }
 

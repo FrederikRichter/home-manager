@@ -7,4 +7,5 @@
         modifier = "Mod4";
         terminal = "kitty";
   };
+  };
 }
