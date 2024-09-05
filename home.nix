@@ -32,12 +32,12 @@ in
 		yt-dlp
 		powertop
 		thefuck
-        	nixvim
-        	hugo
-        	docker
-	# dev/libs
-        	texlive.combined.scheme-full
-        	gdb
+        nixvim
+        hugo
+        docker
+# dev/libs
+        texlive.combined.scheme-full
+        gdb
 		unzip
 		ripgrep
 		gcc
@@ -48,6 +48,10 @@ in
 		ffmpeg-full
 		cmake
 		nixgl.auto.nixGLDefault
+        swaylock
+        swayidle
+        wl-clipboard
+        wofi
 	# python
 		python3
 	# append gl dependent programs

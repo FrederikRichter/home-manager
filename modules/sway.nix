@@ -24,9 +24,9 @@ in
 
             # bars = [{"command" = "${waybar}/bin/waybar";}];
 
-            # keybindings
+            # keybindings (clear first)
             keybindings = mkOptionDefault {
-            Print = ''exec ${grim}/bin/grim -g "$(${slurp}/bin/slurp -d)" - | ${wl-clipboard}/bin/wl-copy -t image/png'';
+            Print = ''exec grim -g "$(${slurp}/bin/slurp -d)" - | ${wl-clipboard}/bin/wl-copy -t image/png'';
             "${modifier}+q" = "kill";
             "${modifier}+${left}" = "focus left; exec $movemouse";
             "${modifier}+${down}" = "focus down; exec $movemouse";
@@ -49,7 +49,10 @@ in
             "${modifier}+Shift+f" = "move container to workspace number 4";
 
             "${modifier}+Shift+r" = "restart";
+            "${modifier}+o" = "exec wofi -S drun";
+
             };
+            assigns = {};
 
         };
         extraConfig = ''
