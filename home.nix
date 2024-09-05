@@ -35,6 +35,7 @@ in
         nixvim
         hugo
         docker
+
 	# dev/libs
         texlive.combined.scheme-full
         gdb
@@ -51,11 +52,15 @@ in
 	# python
 		python3
 	# append gl dependent programs
-		] ++ map (mkgl) [
+		] ++  [ #map (mkgl)
 		qutebrowser
 		firefox
 		tdesktop
 		inkscape
+        keepassxc
+        sway
+        kitty
+        megasync
 		];
 	
 	# direct file access
