@@ -32,12 +32,12 @@ in
 		yt-dlp
 		powertop
 		thefuck
-        nixvim
-        hugo
-        docker
+        	nixvim
+        	hugo
+        	docker
 	# dev/libs
-        texlive.combined.scheme-full
-        gdb
+        	texlive.combined.scheme-full
+        	gdb
 		unzip
 		ripgrep
 		gcc
@@ -57,7 +57,7 @@ in
 		tdesktop
 		inkscape
         keepassxc
-        megasync
+       	megasync
 		];
 	
 	# direct file access
