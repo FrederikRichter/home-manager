@@ -20,6 +20,10 @@
             url = "github:FrederikRichter/nixvim";
             inputs.nixpkgs.follows = "nixpkgs";
         };
+        stylix = {
+            url = "github:danth/stylix";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
     };
     outputs = {nixpkgs, ... }@inputs:
         let
@@ -38,7 +42,7 @@
 # Specify your home configuration modules here, for example,
 # the path to your home.nix.
             inherit pkgs;
-            modules = [ ./home.nix ];
+            modules = [ inputs.stylix.homeManagerModules.stylix ./home.nix ];
             extraSpecialArgs = {
                 inherit inputs;
                 inherit pkgs;

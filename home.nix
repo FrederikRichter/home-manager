@@ -71,6 +71,7 @@ in
 	# set session vars
 	home.sessionVariables = {
         EDITOR="nvim";
+        SHELL="zsh";
 	};
 }
 
