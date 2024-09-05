@@ -50,8 +50,6 @@ in
 		python3
 	# append gl dependent programs
 		] ++ map (mkgl) [
-		sway
-		kitty
 		qutebrowser
 		firefox
 		tdesktop
@@ -64,7 +62,7 @@ in
 	
 	# set session vars
 	home.sessionVariables = {
-		# not needed because set in nixvim i suppose EDITOR = "nvim";
+        term = "kitty";
 	};
 }
 
