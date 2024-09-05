@@ -7,11 +7,13 @@ let
 	(builtins.attrNames (builtins.readDir modulesDir));
 
 	mkgl = import ./scripts/mkgl.nix pkgs;
+
+    username = builtins.getEnv "USER";
 in
 {
 	# Setup home constants
-	home.username = "frederik";
-	home.homeDirectory = "/home/frederik";
+	home.username = "${username}";
+	home.homeDirectory = "/home/${username}";
 
 	home.stateVersion = "24.05";
 
