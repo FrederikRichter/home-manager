@@ -35,7 +35,6 @@ in
         nixvim
         hugo
         docker
-
 	# dev/libs
         texlive.combined.scheme-full
         gdb
@@ -58,8 +57,6 @@ in
 		tdesktop
 		inkscape
         keepassxc
-        sway
-        kitty
         megasync
 		];
 	
