@@ -33,7 +33,7 @@
           overlays = [ inputs.nixgl.overlay nixvimOverlay ];
       };
       in {
-      homeConfigurations."hm-testing" = inputs.home-manager.lib.homeManagerConfiguration {
+      homeConfigurations."frederik" = inputs.home-manager.lib.homeManagerConfiguration {
         # Specify your home configuration modules here, for example,
         # the path to your home.nix.
 	inherit pkgs;
