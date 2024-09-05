@@ -32,6 +32,7 @@ in
 		thefuck
         nixvim
         hugo
+        docker
 	# dev/libs
         texlive.combined.scheme-full
         gdb
