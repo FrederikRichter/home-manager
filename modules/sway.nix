@@ -39,14 +39,14 @@ in
             "${modifier}+Shift+${right}" = "move right";
 
             "${modifier}+a" = "workspace number 1";
-            "${modifier}+b" = "workspace number 2";
-            "${modifier}+c" = "workspace number 3";
-            "${modifier}+d" = "workspace number 4";
+            "${modifier}+s" = "workspace number 2";
+            "${modifier}+d" = "workspace number 3";
+            "${modifier}+f" = "workspace number 4";
 
             "${modifier}+Shift+a" = "move container to workspace number 1";
-            "${modifier}+Shift+b" = "move container to workspace number 2";
-            "${modifier}+Shift+c" = "move container to workspace number 3";
-            "${modifier}+Shift+d" = "move container to workspace number 4";
+            "${modifier}+Shift+s" = "move container to workspace number 2";
+            "${modifier}+Shift+d" = "move container to workspace number 3";
+            "${modifier}+Shift+f" = "move container to workspace number 4";
 
             "${modifier}+Shift+r" = "restart";
             };
