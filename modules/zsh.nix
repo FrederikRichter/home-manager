@@ -8,7 +8,7 @@
 		syntaxHighlighting.enable = true;
 		shellAliases = {
 			ll = "ls -l";
-			update = "home-manager switch --impure --show-trace";
+			update = "home-manager switch --impure --flake "github:FrederikRichter/home-manager" --show-trace";
 			sudo="sudo --preserve-env=PATH env";
 			tf="fuck";
 			hm-rollback="bash $(home-manager generations | fzf | awk -F '-> ' '{print $2 \"/activate\"}')";
