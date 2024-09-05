@@ -10,8 +10,8 @@ let
 in
 {
 	# Setup home constants
-	home.username = "hm-testing";
-	home.homeDirectory = "/home/hm-testing";
+	home.username = "frederik";
+	home.homeDirectory = "/home/frederik";
 
 	home.stateVersion = "24.05";
 
