@@ -27,6 +27,7 @@ in
             # keybindings (clear first)
             keybindings = mkOptionDefault {
             Print = ''exec grim -g "$(${slurp}/bin/slurp -d)" - | ${wl-clipboard}/bin/wl-copy -t image/png'';
+            "${modifier}+Return" = ''exec kitty --hold sh -c "tmux attach || tmux new"'';
             "${modifier}+q" = "kill";
             "${modifier}+${left}" = "focus left; exec $movemouse";
             "${modifier}+${down}" = "focus down; exec $movemouse";
