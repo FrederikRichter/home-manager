@@ -16,9 +16,20 @@ in
             floating.modifier = "Mod4";
 
             floating.border = 0;
-            window.border = 0;
+            floating.titlebar = false;
 
+            window.border = 0;
+            window.titlebar = false;
+        
             focus.followMouse = true;
+                
+            defaultWorkspace = "1";
+
+            bars = [
+            {
+                position = "top";
+            }
+            ];
 
             terminal = "kitty";
 
@@ -55,8 +66,6 @@ in
             "${modifier}+o" = "exec wofi -S drun";
 
             };
-            assigns = {};
-
         };
         extraConfig = ''
             input "type:keyboard" {

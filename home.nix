@@ -37,8 +37,8 @@ in
         nixvim
         hugo
         docker
-        stylix
 # dev/libs
+        dconf
         texlive.combined.scheme-full
         gdb
 		unzip
