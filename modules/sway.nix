@@ -49,6 +49,8 @@ in
             "${modifier}+Shift+d" = "move container to workspace number 3";
             "${modifier}+Shift+f" = "move container to workspace number 4";
 
+            "${modifier}+Tab" = "workspace back_and_forth";
+    
             "${modifier}+Shift+r" = "restart";
             "${modifier}+o" = "exec wofi -S drun";
 
