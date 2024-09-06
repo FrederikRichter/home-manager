@@ -15,10 +15,7 @@ in
             modifier = "Mod4";
             floating.modifier = "Mod4";
 
-            floating.border = 0;
             floating.titlebar = false;
-
-            window.border = 0;
             window.titlebar = false;
         
             focus.followMouse = true;
@@ -39,6 +36,8 @@ in
             keybindings = mkOptionDefault {
             Print = ''exec grim -g "$(${slurp}/bin/slurp -d)" - | ${wl-clipboard}/bin/wl-copy -t image/png'';
             "${modifier}+Return" = ''exec kitty --hold sh -c "tmux attach || tmux new"'';
+            "${modifier}+Shift+Return" = ''exec kitty --hold sh -c "tmux new"'';
+
             "${modifier}+q" = "kill";
             "${modifier}+${left}" = "focus left; exec $movemouse";
             "${modifier}+${down}" = "focus down; exec $movemouse";
@@ -75,7 +74,10 @@ in
         input "type:touchpad" {
             natural_scroll enabled
         }
-        '';
+        default_border none
+            default_floating_border none
+            gaps inner 10
+            '';
     };
     home.sessionVariables = {
         _JAVA_AWT_WM_NONREPARENTING = 1;
