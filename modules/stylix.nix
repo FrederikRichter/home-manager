@@ -11,7 +11,7 @@
         fonts = {
             monospace = {
                 package = pkgs.iosevka-comfy.comfy-wide-duo;
-                name = "Iosevka comfy wide motion duo";
+                name = "Iosevka";
             };
             serif = config.stylix.fonts.monospace;
             sansSerif = config.stylix.fonts.monospace;

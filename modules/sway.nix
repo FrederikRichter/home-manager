@@ -71,10 +71,10 @@ in
                 xkb_layout gb
                     xkb_options caps:swapescape
             }
-        input "type:touchpad" {
-            natural_scroll enabled
-        }
-        default_border none
+            input "type:touchpad" {
+                natural_scroll enabled
+            }
+            default_border none
             default_floating_border none
             gaps inner 10
             '';

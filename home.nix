@@ -59,12 +59,11 @@ in
 		python312
 	# append gl dependent programs
 		] ++  [ #map (mkgl)
-		qutebrowser
 		firefox
 		tdesktop
 		inkscape
         keepassxc
-       	megasync
+       	# megasync
 		];
 	
 	# direct file access
