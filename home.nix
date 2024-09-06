@@ -9,6 +9,8 @@ let
 	mkgl = import ./scripts/mkgl.nix pkgs;
 
     username = builtins.getEnv "USER";
+
+    inherit inputs;
 in
 {
 	# Setup home constants
@@ -22,7 +24,7 @@ in
 	targets.genericLinux.enable = true;
 
 	# load all nix files from ./modules
-	imports = map (f: modulesDir + "/${f}") moduleFiles;
+	imports = map (f: modulesDir + "/${f}") moduleFiles ++ [ inputs.stylix.homeManagerModules.stylix ];
 
 	# define home packages
 	home.packages = with pkgs; [
@@ -35,6 +37,7 @@ in
         nixvim
         hugo
         docker
+        stylix
 # dev/libs
         texlive.combined.scheme-full
         gdb
@@ -53,7 +56,7 @@ in
         wl-clipboard
         wofi
 	# python
-		python3
+		python312
 	# append gl dependent programs
 		] ++  [ #map (mkgl)
 		qutebrowser

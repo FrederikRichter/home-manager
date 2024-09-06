@@ -28,21 +28,23 @@
     outputs = {nixpkgs, ... }@inputs:
         let
         username = builtins.getEnv "USER";
-    system = "x86_64-linux";
-    nixvimOverlay = final: prev: {
-        nixvim = inputs.nixvim.packages.${system}.default;
-    };
-    pkgs = import nixpkgs {
         system = "x86_64-linux";
-        config.allowUnfree = true;
-        overlays = [ inputs.nixgl.overlay nixvimOverlay ];
-    };
+        
+        # Overlays
+        nixvimOverlay = final: prev: {
+            nixvim = inputs.nixvim.packages.${system}.default;
+        };
+        pkgs = import nixpkgs {
+            system = "x86_64-linux";
+            config.allowUnfree = true;
+            overlays = [ inputs.nixgl.overlay nixvimOverlay ];
+        };
     in {
         homeConfigurations.${username} = inputs.home-manager.lib.homeManagerConfiguration {
 # Specify your home configuration modules here, for example,
 # the path to your home.nix.
             inherit pkgs;
-            modules = [ inputs.stylix.homeManagerModules.stylix ./home.nix ];
+            modules = [ ./home.nix ];
             extraSpecialArgs = {
                 inherit inputs;
                 inherit pkgs;
