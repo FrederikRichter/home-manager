@@ -69,6 +69,7 @@ in
         signal-desktop
         discord
         pavucontrol
+        mpv
        	# megasync
 		];
 	
