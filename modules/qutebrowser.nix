@@ -14,6 +14,7 @@
                 DEFAULT = "https://www.google.com/search?hl=en&q={}";
                 hm = "https://home-manager-options.extranix.com/?query={}&release=release-24.05";
                 np = "https://search.nixos.org/packages?channel=24.05&from=0&size=50&sort=relevance&type=packages&query={}";
+                pp = "https://www.perplexity.ai/search/?q={}";
         };
     };
 }
