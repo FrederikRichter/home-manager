@@ -63,6 +63,7 @@ in
 		tdesktop
 		inkscape
         keepassxc
+        signal-desktop
        	# megasync
 		];
 	

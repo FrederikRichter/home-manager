@@ -10,12 +10,9 @@
         };
         fonts = {
             monospace = {
-                package = pkgs.iosevka-comfy.comfy-wide-duo;
-                name = "Iosevka";
+                package = pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];};
+                name = "JetBrainsMono Nerd Font Mono";
             };
-            serif = config.stylix.fonts.monospace;
-            sansSerif = config.stylix.fonts.monospace;
-            emoji = config.stylix.fonts.monospace;
         };
     };
 
