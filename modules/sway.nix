@@ -6,10 +6,17 @@ let
   down = "j";
   up = "k";
   right = "l";
-in
+  in
 {
+    xdg.portal = {
+        enable = true;
+        extraPortals = [ pkgs.xdg-desktop-portal-wlr pkgs.xdg-desktop-portal-gtk ];
+        config.sway.default = [ "wlr" "gtk" ];
+    };
+
     wayland.windowManager.sway = {
         enable = true;
+        systemd.enable = true;
         wrapperFeatures.gtk = true;
         config = rec {
             modifier = "Mod4";
@@ -19,19 +26,11 @@ in
             window.titlebar = false;
         
             focus.followMouse = true;
-                
-            defaultWorkspace = "1";
-
-            bars = [
-            {
-                position = "top";
-            }
-            ];
 
             terminal = "kitty";
 
             # bars = [{"command" = "${waybar}/bin/waybar";}];
-
+            bars = [];
             # keybindings (clear first)
             keybindings = mkOptionDefault {
             Print = ''exec grim -g "$(${slurp}/bin/slurp -d)" - | ${wl-clipboard}/bin/wl-copy -t image/png'';
@@ -77,6 +76,16 @@ in
             default_border none
             default_floating_border none
             gaps inner 10
+            exec swaymsg workspace 1
+
+            # Brightness
+            bindsym XF86MonBrightnessDown exec light -U 10
+            bindsym XF86MonBrightnessUp exec light -A 10
+
+            # Volume
+            bindsym XF86AudioRaiseVolume exec 'pactl set-sink-volume @DEFAULT_SINK@ +1%'
+            bindsym XF86AudioLowerVolume exec 'pactl set-sink-volume @DEFAULT_SINK@ -1%'
+            bindsym XF86AudioMute exec 'pactl set-sink-mute @DEFAULT_SINK@ toggle'
             '';
     };
     home.sessionVariables = {

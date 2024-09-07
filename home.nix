@@ -55,6 +55,9 @@ in
         swayidle
         wl-clipboard
         wofi
+        slurp
+        vesktop
+        pulseaudio
 	# python
 		python312
 	# append gl dependent programs
@@ -64,6 +67,8 @@ in
 		inkscape
         keepassxc
         signal-desktop
+        discord
+        pavucontrol
        	# megasync
 		];
 	
