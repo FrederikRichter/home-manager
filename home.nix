@@ -71,6 +71,7 @@ in
         discord
         pavucontrol
         mpv
+        spotify
 		];
 	
 	# direct file access

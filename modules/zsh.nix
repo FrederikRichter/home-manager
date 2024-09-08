@@ -11,6 +11,7 @@
 			update = "home-manager switch --impure --flake 'github:FrederikRichter/home-manager' --show-trace";
 			sudo="sudo --preserve-env=PATH env";
 			tf="fuck";
+            v="nvim";
 			hm-rollback="bash $(home-manager generations | fzf | awk -F '-> ' '{print $2 \"/activate\"}')";
 			hm="home-manager";
 		};
