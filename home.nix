@@ -70,7 +70,6 @@ in
         discord
         pavucontrol
         mpv
-       	megacmd
 		];
 	
 	# direct file access
