@@ -6,7 +6,7 @@ let
 	(f: builtins.match ".*\\.nix" f != null)
 	(builtins.attrNames (builtins.readDir modulesDir));
 
-	mkgl = import ./scripts/mkgl.nix pkgs;
+	# mkgl = import ./scripts/mkgl.nix pkgs;
 
     username = builtins.getEnv "USER";
 
@@ -29,8 +29,9 @@ in
 	# define home packages
 	home.packages = with pkgs; [
 	# cli
-    speedtest-cli
-		neofetch
+        speedtest-cli
+        btop
+        neofetch
 		htop
 		yt-dlp
 		powertop
