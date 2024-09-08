@@ -11,6 +11,7 @@
         Service = {
             ExecStart = "${pkgs.megacmd}/bin/mega-sync";
             Restart = "on-failure";
+            Environment = "PATH=${pkgs.megacmd}/bin/";
         };
 
         Install = {
