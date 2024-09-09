@@ -62,6 +62,7 @@ in
         slurp
         vesktop
         pulseaudio
+        grim
 	# python
 		python312
 	# append gl dependent programs
