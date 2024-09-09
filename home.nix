@@ -23,8 +23,6 @@ in
 	programs.home-manager.enable = true;
 	targets.genericLinux.enable = true;
     
-    # set maximum number of gens
-    home.generation-limit = 5;
 
 	# load all nix files from ./modules
 	imports = map (f: modulesDir + "/${f}") moduleFiles ++ [ inputs.stylix.homeManagerModules.stylix ];
