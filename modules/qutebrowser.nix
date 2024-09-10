@@ -1,12 +1,9 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
     programs.qutebrowser = {
         enable = true;
         keyBindings = {
             normal = {
-                "m" = "spawn mpv {url}";
-                # "Shift+o"
-#",p" = "spawn --userscript qute-pass";
             };
         };
         searchEngines = {
@@ -17,5 +14,20 @@
                 pp = "https://www.perplexity.ai/search/?q={}";
                 yt = "https://www.youtube.com/results?search_query={}";
         };
+        settings = {
+            tabs.show = "never";
+            };
+        extraConfig = ''
+            config.unbind("H", mode="normal")
+            config.unbind("J", mode="normal")
+            config.unbind("L", mode="normal")
+            config.unbind("K", mode="normal")
+
+            config.bind("m", "spawn mpv {url}", mode="normal")
+            config.bind("H", "tab-prev", mode="normal")
+            config.bind("L", "tab-next", mode="normal")
+            config.bind("J", "back", mode="normal")
+            config.bind("K", "forward", mode="normal")
+        '';
     };
 }
