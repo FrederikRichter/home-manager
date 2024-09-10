@@ -63,6 +63,7 @@ in
         vesktop
         pulseaudio
         grim
+        cbonsai
 	# python
 		python312
 	# append gl dependent programs
@@ -86,6 +87,8 @@ in
 	home.sessionVariables = {
         EDITOR="nvim";
         SHELL="zsh";
+        XDG_SESSION_TYPE = "wayland";
+        XDG_CURRENT_DESKTOP = "sway";
 	};
 }
 
