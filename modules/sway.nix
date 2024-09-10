@@ -67,7 +67,7 @@ let
         };
         extraConfig = ''
             input "type:keyboard" {
-                xkb_layout gb
+                xkb_layout us
                     xkb_options caps:swapescape
             }
             input "type:touchpad" {
