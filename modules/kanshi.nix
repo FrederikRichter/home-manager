@@ -1,7 +1,7 @@
 {
     lib,
-        config,
-        ...
+    config,
+    ...
 }:
 {
     services.kanshi = {
