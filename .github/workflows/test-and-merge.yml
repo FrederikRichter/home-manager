@@ -20,11 +20,10 @@ jobs:
           nix_path: nixpkgs=channel:nixos-24.05
           extra_nix_config: |
             experimental-features = nix-command flakes
-            allow-unfree = true
       
       - name: Install Home Manager
         run: |
-          nix-channel --add https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz home-manager
+          nix-channel --add https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz
           nix-channel --update
           nix-shell '<home-manager>' -A install
       
