@@ -26,6 +26,8 @@ jobs:
           source $HOME/.profile
           nix-channel --add https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz home-manager
           nix-channel --update
+          echo $PATH
+          echo $NIX_PATH
           nix-shell '<home-manager>' -A install
       
       - name: Run tests
