@@ -11,7 +11,9 @@ env:
 
 jobs:
   test:
-    runs-on: nixos/nix:2.24.5
+    runs-on: ubuntu-latest
+    container:
+      image: nixos/nix:latest
     steps:
       - uses: actions/checkout@v3
       - name: Run tests
