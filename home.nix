@@ -64,6 +64,7 @@ in
         pulseaudio
         grim
         cbonsai
+        tor
 	# python
 		python312
 	# append gl dependent programs
@@ -77,6 +78,7 @@ in
         pavucontrol
         mpv
         spotify
+        simplex-chat-desktop
 		];
 	
 	# direct file access
