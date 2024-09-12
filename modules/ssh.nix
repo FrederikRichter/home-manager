@@ -7,6 +7,16 @@
         serverAliveInterval = 60;
         addKeysToAgent = "yes";
         matchBlocks = {
+            "eu.nixbuild.net" = {
+                hostname = "eu.nixbuild.net";
+                identityFile = "~/.ssh/nixbuild";
+                extraOptions = {
+                    PubkeyAcceptedKeyTypes = "ssh-ed25519";
+                    ServerAliveInterval = "60";
+                    IPQoS = "throughput";
+                };
+            };
+
             "github.com" = {
                 hostname = "github.com";
                 user = "git";
@@ -17,6 +27,8 @@
                 };
             };
         };
+        extraConfig = ''
+            '';
     };
     services.ssh-agent = {
         enable = true;
