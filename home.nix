@@ -42,6 +42,7 @@ in
         docker
 # dev/libs
         dconf
+        i2p
         fzf
         texlive.combined.scheme-full
         gdb
