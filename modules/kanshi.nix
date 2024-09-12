@@ -26,7 +26,7 @@
             {
                 criteria = "DP-4";
                 status = "enable";
-                mode = "2560x1440@120Hz";
+                mode = "2560x1440@143.973Hz";
                 position = "0,0";
             }
             ];
