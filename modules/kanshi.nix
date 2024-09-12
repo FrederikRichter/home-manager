@@ -24,9 +24,9 @@
                 status = "disable";
             }
             {
-                criteria = "HDMI-A-1";
+                criteria = "DP-4";
                 status = "enable";
-                mode = "2560x1440@60Hz";
+                mode = "2560x1440@120Hz";
                 position = "0,0";
             }
             ];
