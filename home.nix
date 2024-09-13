@@ -23,7 +23,6 @@ in
 	programs.home-manager.enable = true;
 	targets.genericLinux.enable = true;
     
-
 	# load all nix files from ./modules
 	imports = map (f: modulesDir + "/${f}") moduleFiles ++ [ inputs.stylix.homeManagerModules.stylix ];
 
@@ -73,7 +72,6 @@ in
 		firefox
 		tdesktop
 		inkscape
-        keepassxc
         signal-desktop
         discord
         pavucontrol
@@ -94,4 +92,3 @@ in
         XDG_CURRENT_DESKTOP = "sway";
 	};
 }
-
