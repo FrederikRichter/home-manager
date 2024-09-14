@@ -87,7 +87,6 @@ let
             bindsym XF86AudioMute exec 'pactl set-sink-mute @DEFAULT_SINK@ toggle'
 
             focus_on_window_activation focus
-            workspace_auto_back_and_forth yes
             '';
     };
     home.sessionVariables = {
