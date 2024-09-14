@@ -40,6 +40,7 @@ in
         hugo
         docker
 # dev/libs
+        libnotify
         bash
         dconf
         i2p
