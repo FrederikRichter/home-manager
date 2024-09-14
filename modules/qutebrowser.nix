@@ -24,11 +24,15 @@
             config.unbind("L", mode="normal")
             config.unbind("K", mode="normal")
 
+             # todo config.unbind("m", mode="normal")
+
             config.bind("m", "spawn mpv {url}", mode="normal")
             config.bind("H", "tab-prev", mode="normal")
             config.bind("L", "tab-next", mode="normal")
             config.bind("J", "back", mode="normal")
             config.bind("K", "forward", mode="normal")
+
+            # todo config.bind("m", "forward", mode="normal")
         '';
     };
 }
