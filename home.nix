@@ -40,6 +40,7 @@ in
         hugo
         docker
 # dev/libs
+        bash
         dconf
         i2p
         fzf
