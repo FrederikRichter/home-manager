@@ -18,5 +18,32 @@
             WantedBy = [ "graphical-session.target" ];
         };
     };
+    home.file = {
+        "${config.xdg.configHome}/keepassxc/keepassxc.ini" = {
+            text = ''
+                [General]
+                ConfigVersion=2
+
+                [Browser]
+                CustomProxyLocation=
+
+                [FdoSecrets]
+                ConfirmAccessItem=false
+                Enabled=true
+                ShowNotification=true
+
+                [GUI]
+                MinimizeOnStartup=true
+                TrayIconAppearance=monochrome-light
+
+                [PasswordGenerator]
+                AdditionalChars=
+                ExcludedChars=
+
+                [Security]
+                LockDatabaseScreenLock=false
+                    '';
+        };
+    };
 
 }

@@ -74,17 +74,4 @@
         ];
     };
 
-    home.file = {
-        "${config.xdg.configHome}/aerc/wait-for-creds.sh" = {
-            text = ''
-                #!/usr/bin/env bash
-                /home/frederik/.nix-profile/bin/secret-tool lookup "$1" "$2"
-                # wait until the password is available
-                while [ $? != 0 ]; do
-                    secret-tool lookup "$1" "$2"
-                done;
-            '';
-            executable = true;
-        };
-    };
 }
