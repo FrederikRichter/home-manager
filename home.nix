@@ -81,6 +81,7 @@ in
         mpv
         spotify
         simplex-chat-desktop
+        zathura
 		];
 	
 	# direct file access
