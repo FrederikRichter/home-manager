@@ -17,7 +17,7 @@
             spacing = 4;
             modules-left = [ "sway/workspaces" "idle_inhibitor" ];
             modules-center = [];
-            modules-right = ["network" "battery" "cpu" "memory" "clock" "tray"];
+            modules-right = ["pulseaudio" "network" "battery" "cpu" "memory" "disk" "clock" "tray"];
             "sway/workspaces" = {
                 disable-scroll = true;
                 format = "{icon}";
@@ -30,19 +30,19 @@
             };
 
             "network" = {
-                format-wifi =  "{signalStrength}: {essid}";
-                format-ethernet =  "eth: {cidr} ";
-                format-disconnected =  "offline ";
+                format-wifi =  "{essid} ({signalStrength}%)";
+                format-ethernet =  "{ifname}";
+                format-disconnected =  "offline";
             };
 
             "pulseaudio" = {
                 format-muted = "muted ";
-                format = "VOL {volume} ";
+                format = "VOL {volume}% ";
             };
 
             "battery" = {
-                format = "BAT {capacity}% ";
-                format-charging = "charging {capacity}% ";
+                format = "BAT discharging ({capacity}%) ";
+                format-charging = "BAT charging ({capacity}%) ";
             };
 
             "cpu" = {
@@ -52,7 +52,12 @@
             "memory" = {
                 format = "RAM {used}G ";
             };
-
+            
+            "disk" = {
+                interval = 30;
+                format = "{percentage_used}% ({path})";
+            };
+            
             "clock" = {
                 format = "{:%H:%M %d.%m.%y}";
             };
