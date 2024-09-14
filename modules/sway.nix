@@ -76,7 +76,6 @@ let
             default_border none
             default_floating_border none
             gaps inner 10
-            exec swaymsg workspace 1
 
             # Brightness
             bindsym XF86MonBrightnessDown exec light -U 10
@@ -86,6 +85,9 @@ let
             bindsym XF86AudioRaiseVolume exec 'pactl set-sink-volume @DEFAULT_SINK@ +1%'
             bindsym XF86AudioLowerVolume exec 'pactl set-sink-volume @DEFAULT_SINK@ -1%'
             bindsym XF86AudioMute exec 'pactl set-sink-mute @DEFAULT_SINK@ toggle'
+
+            focus_on_window_activation focus
+            workspace_auto_back_and_forth yes
             '';
     };
     home.sessionVariables = {

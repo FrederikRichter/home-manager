@@ -53,6 +53,7 @@ in
 		gnumake
 		coreutils
 		ffmpeg-full
+        libsecret
 		cmake
 		nixgl.auto.nixGLDefault
         swaylock
