@@ -65,7 +65,8 @@
         userName = "frederik.richter@mailbox.org";
         imap.host = "imap.mailbox.org";
         smtp.host = "smtp.mailbox.org";
-        passwordCommand = "${pkgs.bash}/bin/bash ~/.config/aerc/wait-for-creds.sh Title 'Mailbox konto'";
+        passwordCommand = "$HOME/.nix-profile/bin/secret-tool lookup Title 'Mailbox konto'";
+        # passwordCommand = "${pkgs.bash}/bin/bash ~/.config/aerc/wait-for-creds.sh Title 'Mailbox konto'";
         aliases = [
             "fredster@mailbox.org"
             "frederik.shopping@mailbox.org"
