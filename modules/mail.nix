@@ -51,6 +51,9 @@
                 "message/rfc822" = "colorize";
                 "text/html" = "${pkgs.w3m}/bin/w3m -T text/html -cols $(tput cols) -dump -o display_image=false -o display_link_number=true";
             };
+            openers = {
+                "application/pdf" = "${pkgs.zathura}/bin/zathura";
+            };
         };
     };
 

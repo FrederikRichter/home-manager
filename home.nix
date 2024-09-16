@@ -73,6 +73,7 @@ in
 	# append gl dependent programs
 		] ++  [ #map (mkgl)
 		firefox
+        xournalpp
 		tdesktop
 		inkscape
         signal-desktop

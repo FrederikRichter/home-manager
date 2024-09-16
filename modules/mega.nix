@@ -3,14 +3,14 @@
     home.packages = [pkgs.megacmd];
     systemd.user.services.mega = {
         Unit = {
-            Description = "mega-sync";
-            After = [ "graphical-session-pre.target" ];
+            Description = "mega-cmd server";
+            After = [ "network.target" ];
             PartOf = [ "graphical-session.target" ];
         };
 
         Service = {
-            ExecStart = "${pkgs.megacmd}/bin/mega-sync";
-            Restart = "on-failure";
+            ExecStart = "${pkgs.megacmd}/bin/mega-cmd-server";
+            Restart = "always";
             Environment = "PATH=${pkgs.megacmd}/bin/";
         };
 
