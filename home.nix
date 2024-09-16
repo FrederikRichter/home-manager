@@ -45,7 +45,7 @@ in
         dconf
         i2p
         fzf
-        texlive.combined.scheme-full
+        texliveFull
         gdb
 		unzip
 		ripgrep
