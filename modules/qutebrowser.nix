@@ -1,5 +1,6 @@
 { config, pkgs, lib, ... }:
 {
+    home.packages = [ pkgs.python312Packages.pynacl ];
     programs.qutebrowser = {
         enable = true;
         keyBindings = {
@@ -33,6 +34,8 @@
             config.bind("K", "forward", mode="normal")
 
             # todo config.bind("m", "forward", mode="normal")
+
+            config.bind('pw', 'spawn --userscript qute-keepassxc --insecure', mode='normal')
         '';
     };
 }

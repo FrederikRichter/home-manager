@@ -26,6 +26,7 @@
 
                 [Browser]
                 CustomProxyLocation=
+                Enabled=true
 
                 [FdoSecrets]
                 ConfirmAccessItem=false
