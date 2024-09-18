@@ -25,8 +25,6 @@ let
             floating.titlebar = false;
             window.titlebar = false;
         
-            focus.followMouse = true;
-
             terminal = "kitty";
 
             # bars = [{"command" = "${waybar}/bin/waybar";}];
