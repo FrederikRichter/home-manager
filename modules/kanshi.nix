@@ -24,7 +24,7 @@
                 status = "disable";
             }
             {
-                criteria = "DP-4";
+                criteria = "LG Electronics LG ULTRAGEAR 308MATW9JR37";
                 status = "enable";
                 mode = "2560x1440@143.973Hz";
                 position = "0,0";
