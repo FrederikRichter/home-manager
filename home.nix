@@ -29,7 +29,6 @@ in
 	# define home packages
 	home.packages = with pkgs; [
 	# cli
-        speedtest-cli
         btop
         neofetch
 		htop
