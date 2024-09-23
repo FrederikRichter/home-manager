@@ -85,6 +85,7 @@ let
             bindsym XF86AudioMute exec 'pactl set-sink-mute @DEFAULT_SINK@ toggle'
 
             focus_on_window_activation focus
+            focus_follows_mouse no
             '';
     };
     home.sessionVariables = {
