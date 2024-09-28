@@ -2,13 +2,13 @@
 {
     programs.mpv = {
             enable = true;
-            config = ''
+            config = {
                 profile = "gpu-hq";
                 hwdec="auto-safe";
                 vo="gpu";
                 ytdl-format = "bestvideo+bestaudio";
                 cache-default = 4000000;
-                gpu-context=wayland;
-            '';
+                gpu-context="wayland";
+            };
         };
 }
