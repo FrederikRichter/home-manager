@@ -39,6 +39,8 @@ in
         hugo
         docker
 # dev/libs
+        udisks
+        gvfs
         libnotify
         bash
         dconf
