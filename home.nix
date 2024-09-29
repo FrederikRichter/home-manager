@@ -72,6 +72,7 @@ in
 	# append gl dependent programs
 		] ++  [ #map (mkgl)
 		firefox
+        calibre
         xournalpp
 		tdesktop
 		inkscape
