@@ -22,7 +22,14 @@ in
 	# Let Home Manager install and manage itself.
 	programs.home-manager.enable = true;
 	targets.genericLinux.enable = true;
+    nixpkgs = {
+        config = {
+            allowUnfree = true;
+            allowUnfreePredicate = (_: true);  # Allows all unfree packages
+        };
+    };
     
+
 	# load all nix files from ./modules
 	imports = map (f: modulesDir + "/${f}") moduleFiles ++ [ inputs.stylix.homeManagerModules.stylix ];
 
@@ -39,8 +46,9 @@ in
         hugo
         docker
 # dev/libs
-        udisks
         gvfs
+        udiskie
+        usbutils
         libnotify
         bash
         dconf
