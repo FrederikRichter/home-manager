@@ -66,7 +66,6 @@ in
 		ffmpeg-full
         libsecret
 		cmake
-		nixgl.auto.nixGLDefault
         swaylock
         swayidle
         wl-clipboard
