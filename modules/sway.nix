@@ -30,10 +30,10 @@ let
             # bars = [{"command" = "${waybar}/bin/waybar";}];
             bars = [];
             # keybindings (clear first)
-            keybindings = mkOptionDefault {
+            keybindings =  {
             Print = ''exec grim -g "$(${slurp}/bin/slurp -d)" - | ${wl-clipboard}/bin/wl-copy -t image/png'';
-            "${modifier}+Return" = ''exec kitty --hold sh -c "tmux attach || tmux new"'';
-            "${modifier}+Shift+Return" = ''exec kitty --hold sh -c "tmux new"'';
+            "${modifier}+Return" = ''exec kitty --hold sh -c "${tmux}/bin/tmux attach || ${tmux}/bin/tmux new"'';
+            "${modifier}+Shift+Return" = ''exec kitty --hold sh -c "${tmux}/bin/tmux"'';
 
             "${modifier}+q" = "kill";
             "${modifier}+${left}" = "focus left; exec $movemouse";
