@@ -101,7 +101,6 @@ in
 	# set session vars
 	home.sessionVariables = {
         EDITOR="nvim";
-        SHELL="zsh";
         XDG_SESSION_TYPE = "wayland";
         XDG_CURRENT_DESKTOP = "sway";
 	};
