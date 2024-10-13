@@ -12,7 +12,6 @@
                 user = "git";
                 identityFile = "~/.ssh/id_rsa";
                 extraOptions = {
-#                    PreferredAuthentifications = "publickey";
                     identitiesOnly = "yes";
                 };
             };
@@ -21,7 +20,14 @@
                 user = "frederik";
                 identityFile = "~/.ssh/id_rsa";
                 extraOptions = {
-#                    PreferredAuthentifications = "publickey";
+                    identitiesOnly = "yes";
+                };
+            };
+            "nix-remote-builder" = {
+                hostname = "192.168.1.189";
+                user = "nixremote";
+                identityFile = "~/.ssh/id_rsa";
+                extraOptions = {
                     identitiesOnly = "yes";
                 };
             };
