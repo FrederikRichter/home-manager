@@ -2,4 +2,4 @@
 
 ## Usage
 (follows unstable nix/nixpkgs)
-```nix shell pkgs#home-manager --command 'home-manager switch --impure --flake "github:FrederikRichter/home-manager"'```
+```nix shell nixpkgs#home-manager && home-manager switch --impure --flake "github:FrederikRichter/home-manager```
