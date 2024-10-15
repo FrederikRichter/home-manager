@@ -1,4 +1,4 @@
-{config, pkgs, inputs, ... }:
+{config, pkgs, inputs, username, ... }:
 let	
 	# create nix file loader function
 	modulesDir = ./modules;
@@ -6,11 +6,10 @@ let
 	(f: builtins.match ".*\\.nix" f != null)
 	(builtins.attrNames (builtins.readDir modulesDir));
 
-	# mkgl = import ./scripts/mkgl.nix pkgs;
 
-    username = builtins.getEnv "USER";
-
+    inherit pkgs;
     inherit inputs;
+    inherit username;
 in
 {
 	# Setup home constants
@@ -22,13 +21,6 @@ in
 	# Let Home Manager install and manage itself.
 	programs.home-manager.enable = true;
 	targets.genericLinux.enable = true;
-    nixpkgs = {
-        config = {
-            allowUnfree = true;
-            allowUnfreePredicate = (_: true);  # Allows all unfree packages
-        };
-    };
-    
 
 	# load all nix files from ./modules
 	imports = map (f: modulesDir + "/${f}") moduleFiles ++ [ inputs.stylix.homeManagerModules.stylix ];

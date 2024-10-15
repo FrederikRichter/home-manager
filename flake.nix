@@ -1,5 +1,5 @@
 {
-    description = "Home Manager configuration of hm-testing";
+    description = "Home Manager configuration of frederik";
 
     inputs = {
 # Specify the source of Home Manager and Nixpkgs.
@@ -21,13 +21,12 @@
         let
         username = builtins.getEnv "USER";
         system = "x86_64-linux";
-        
         # Overlays
         nixvimOverlay = final: prev: {
             nixvim = inputs.nixvim.packages.${system}.default;
         };
         pkgs = import nixpkgs {
-            system = "x86_64-linux";
+            inherit system;
             config.allowUnfree = true;
             overlays = [ nixvimOverlay ];
         };
@@ -39,7 +38,7 @@
             modules = [ ./home.nix ];
             extraSpecialArgs = {
                 inherit inputs;
-                inherit pkgs;
+                inherit username;
             };
 # Optionally use extraSpecialArgs
 # to pass through arguments to home.nix
