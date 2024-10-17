@@ -33,9 +33,11 @@ in
 		htop
 		yt-dlp
 		powertop
+        typst
 		thefuck
         nixvim
         hugo
+        wakeonlan
         docker
 # dev/libs
         gvfs
@@ -46,7 +48,6 @@ in
         dconf
         i2p
         fzf
-        texliveFull
         gdb
 		unzip
 		ripgrep
@@ -69,11 +70,10 @@ in
         cbonsai
         tor
 	# python
-		python312
+		python312Full
 	# append gl dependent programs
 		] ++  [ #map (mkgl)
 		firefox
-        calibre
         xournalpp
 		tdesktop
 		inkscape
@@ -95,5 +95,6 @@ in
         EDITOR="nvim";
         XDG_SESSION_TYPE = "wayland";
         XDG_CURRENT_DESKTOP = "sway";
+        NIXPKGS_ALLOW_UNFREE=1;
 	};
 }

@@ -3,6 +3,7 @@
     home.packages = [ pkgs.python312Packages.pynacl ];
     programs.qutebrowser = {
         enable = true;
+        package = pkgs.qutebrowser-qt5;
         keyBindings = {
             normal = {
             };
