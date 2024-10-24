@@ -38,7 +38,6 @@ in
         nixvim
         hugo
         wakeonlan
-        docker
 # dev/libs
         gvfs
         udiskie
