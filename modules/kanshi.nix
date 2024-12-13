@@ -16,7 +16,7 @@
                 position = "0,0";
             }
             {
-                criteria = "HDMI-A-1";
+                criteria = "LG Electronics LG ULTRAGEAR 308MATW9JR37";
                 status = "enable";
                 position = "0,0";
             }
