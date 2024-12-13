@@ -13,6 +13,7 @@
             {
                 criteria = "eDP-1";
                 status = "enable";
+                position = "0,0";
             }
             {
                 criteria = "HDMI-A-1";
