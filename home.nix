@@ -41,7 +41,6 @@ in
 # dev/libs
         gvfs
         udiskie
-        cm-unicode
         usbutils
         libnotify
         bash

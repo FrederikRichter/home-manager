@@ -14,6 +14,11 @@
                 criteria = "eDP-1";
                 status = "enable";
             }
+            {
+                criteria = "HDMI-A-1";
+                status = "enable";
+                position = "0,0";
+            }
             ];
         }
         {
