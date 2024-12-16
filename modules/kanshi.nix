@@ -10,16 +10,6 @@
         {
             profile.name = "undocked";
             profile.outputs = [
-            {
-                criteria = "eDP-1";
-                status = "enable";
-                position = "0,0";
-            }
-            {
-                criteria = "LG Electronics LG ULTRAGEAR 308MATW9JR37";
-                status = "enable";
-                position = "0,0";
-            }
             ];
         }
         {
