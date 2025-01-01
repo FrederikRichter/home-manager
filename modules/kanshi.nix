@@ -22,7 +22,7 @@
             {
                 criteria = "XMI Mi Monitor 5744900021637";
                 status = "enable";
-                mode = "2560x1440@143.981Hz";
+                mode = "2560x1440@99.946Hz";
                 position = "0,0";
             }
             ];
