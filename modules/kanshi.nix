@@ -20,9 +20,9 @@
                 status = "disable";
             }
             {
-                criteria = "LG Electronics LG ULTRAGEAR 308MATW9JR37";
+                criteria = "XMI Mi Monitor 5744900021637";
                 status = "enable";
-                mode = "2560x1440@143.973Hz";
+                mode = "2560x1440@143.981Hz";
                 position = "0,0";
             }
             ];
