@@ -8,11 +8,6 @@
         enable = true;
         settings = [
         {
-            profile.name = "undocked";
-            profile.outputs = [
-            ];
-        }
-        {
             profile.name = "docked";
             profile.outputs = [
             {
