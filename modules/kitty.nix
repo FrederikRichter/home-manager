@@ -10,6 +10,7 @@
     window_padding_width 10
     font_size        14.0
     enable_audio_bell no
+    cursor_trail 3
   '';
   };
 }
