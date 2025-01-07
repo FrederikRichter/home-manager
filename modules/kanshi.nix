@@ -15,9 +15,9 @@
                 status = "disable";
             }
             {
-                criteria = "XMI Mi Monitor 5744900021637";
+                criteria = "Xiaomi Corporation Mi Monitor 5744900021637";
                 status = "enable";
-                mode = "2560x1440@99.946Hz";
+                mode = "2560x1440@143.981Hz";
                 position = "0,0";
             }
             ];
