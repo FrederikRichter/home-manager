@@ -23,7 +23,7 @@ in
 	targets.genericLinux.enable = true;
 
 	# load all nix files from ./modules
-	imports = map (f: modulesDir + "/${f}") moduleFiles ++ [ inputs.stylix.homeManagerModules.stylix ];
+	imports = map (f: modulesDir + "/${f}") moduleFiles;
 
 	# define home packages
 	home.packages = with pkgs; [
