@@ -68,7 +68,6 @@ in
         grim
         cbonsai
         tor
-        stylix.homeManagerModules.stylix
 	# python
 		python312Full
 	# append gl dependent programs
