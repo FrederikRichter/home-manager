@@ -1,6 +1,6 @@
-{ config, pkgs, libs, inputs, ... }:
+{ config, pkgs, libs, ... }:
 {
-    inputs.stylix.homeManagerModules.stylix = {
+    stylix = {
         autoEnable = true;
         base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
         image = pkgs.fetchurl {
