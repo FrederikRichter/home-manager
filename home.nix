@@ -74,6 +74,7 @@ in
 		] ++  [ #map (mkgl)
 		firefox
         xournalpp
+        libreoffice-qt6-fresh
 		tdesktop
 		inkscape
         signal-desktop
@@ -83,6 +84,8 @@ in
         spotify
         simplex-chat-desktop
         zathura
+        transmission_4
+        xfce.thunar
 		];
 	
 	# direct file access
