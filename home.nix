@@ -45,6 +45,7 @@ in
         libnotify
         bash
         dconf
+        gvfs
         i2p
         fzf
         gdb
