@@ -17,7 +17,7 @@
             {
                 criteria = "Xiaomi Corporation Mi Monitor 5744900021637";
                 status = "enable";
-                mode = "2560x1440@143.981Hz";
+                mode = "2560x1440@59.951Hz";
                 position = "0,0";
             }
             ];

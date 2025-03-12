@@ -39,17 +39,17 @@ in
         hugo
         wakeonlan
 # dev/libs
-        gvfs
         udiskie
         usbutils
         libnotify
         bash
         dconf
-        gvfs
         i2p
         fzf
         gdb
 		unzip
+        ntfs3g
+        dosfstools
 		ripgrep
 		gcc
 		wget
@@ -86,8 +86,7 @@ in
         simplex-chat-desktop
         zathura
         transmission_4
-        xfce.thunar
-		];
+        ];
 	
 	# direct file access
 	home.file = {
