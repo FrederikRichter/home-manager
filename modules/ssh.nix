@@ -7,6 +7,14 @@
         serverAliveInterval = 60;
         addKeysToAgent = "yes";
         matchBlocks = {
+            "gitlab-tu" = {
+                hostname = "git.rz.tu-bs.de";
+                user = "git";
+                identityFile = "~/.ssh/id_rsa";
+                extraOptions = {
+                    identitiesOnly = "yes";
+                };
+            };
             "github.com" = {
                 hostname = "github.com";
                 user = "git";
