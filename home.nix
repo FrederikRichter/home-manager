@@ -6,7 +6,6 @@ let
 	(f: builtins.match ".*\\.nix" f != null)
 	(builtins.attrNames (builtins.readDir modulesDir));
 
-
     inherit pkgs;
     inherit inputs;
     inherit username;
@@ -97,6 +96,6 @@ in
         EDITOR="nvim";
         XDG_SESSION_TYPE = "wayland";
         XDG_CURRENT_DESKTOP = "sway";
-        NIXPKGS_ALLOW_UNFREE=1;
+        NIXPKGS_ALLOW_UNFREE = 1;
 	};
 }

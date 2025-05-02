@@ -60,7 +60,7 @@ let
     
             "${modifier}+Shift+r" = "restart";
             "${modifier}+o" = "exec wofi -S drun";
-            "${modifier}+n" = "exec wofi --dmenu --prompt='Enter nixpkg: ' | xargs -I {} kitty --hold sh -c 'nix shell nixpkgs#{}'";
+            "${modifier}+n" = "exec wofi --dmenu --prompt='Enter nixpkg: ' | xargs -I {} kitty --hold sh -c 'nix shell nixpkgs#{} --impure'";
 
             };
         };
