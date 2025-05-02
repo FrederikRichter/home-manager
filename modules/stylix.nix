@@ -14,5 +14,10 @@
                 name = "JetBrainsMono Nerd Font Mono";
             };
         };
+        cursor = {
+            name = "macOS";
+            package = pkgs.apple-cursor;
+            size = 26;
+        };
     };
 }
