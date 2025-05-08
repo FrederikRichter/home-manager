@@ -1,4 +1,9 @@
-{}:
+{
+    config,
+    lib,
+    pkgs,
+    ...
+}:
 {
     services.shikane = {
         enable = true;
@@ -15,7 +20,7 @@
                     match = "HDMI-A-1";
                     enable = true;
                     position = {
-                        x = 0;
+                        x = 1920;
                         y = 0;
                     };
                 }
