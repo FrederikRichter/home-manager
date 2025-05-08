@@ -20,9 +20,10 @@
                     match = "HDMI-A-1";
                     enable = true;
                     position = {
-                        x = 1920;
+                        x = 0;
                         y = 0;
                     };
+                    mode = "1920x1080@60Hz";
                 }
                 ];
             }
@@ -40,6 +41,7 @@
                         x = 0;
                         y = 0;
                     };
+                    mode = "2560x1440@144Hz";
                 }
                 ];
             }
