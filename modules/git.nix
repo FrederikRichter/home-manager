@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 {
-    home.packes = with pkgs; [
+    home.packages = with pkgs; [
         git
         git-credential-manager
     ];
