@@ -35,7 +35,7 @@
                     enable = false;
                 }
                 {
-                    match = "DP-4";
+                    match = "DP-3";
                     enable = true;
                     position = {
                         x = 0;
