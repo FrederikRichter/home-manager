@@ -38,6 +38,7 @@
                 helper = "manager";
                 "https://git.rz.tu-bs.de/".username = "frederik.richer@tu-braunschweig.de";
                 credentialStore = "cache";
+                provide = "generic";
             };
         };
     };
