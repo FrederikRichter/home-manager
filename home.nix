@@ -5,10 +5,12 @@ let
 	moduleFiles = builtins.filter
 	(f: builtins.match ".*\\.nix" f != null)
 	(builtins.attrNames (builtins.readDir modulesDir));
+	stylixTheme = config.lib.stylix.nixvim.config;
+	nixvim = inputs.nixvim.packages.${pkgs.system}.default.extend stylixTheme;
 
-    inherit pkgs;
-    inherit inputs;
-    inherit username;
+	inherit pkgs;
+	inherit inputs;
+	inherit username;
 in
 {
 	# Setup home constants
@@ -20,12 +22,15 @@ in
 	# Let Home Manager install and manage itself.
 	programs.home-manager.enable = true;
 	targets.genericLinux.enable = true;
+		
+
 
 	# load all nix files from ./modules
-	imports = map (f: modulesDir + "/${f}") moduleFiles ++ [ inputs.stylix.homeModules.stylix ];
+	imports = map (f: modulesDir + "/${f}") moduleFiles;
 
 	# define home packages
 	home.packages = with pkgs; [
+	nixvim
 	# cli
         btop
         neofetch
@@ -85,7 +90,6 @@ in
 	zathura
 	transmission_4
 	] ++ [
-	inputs.nixvim.packages.${system}.default
 	];
 	
 	# direct file access

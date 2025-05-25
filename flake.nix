@@ -31,7 +31,7 @@
 # Specify your home configuration modules here, for example,
 # the path to your home.nix.
             inherit pkgs;
-            modules = [ ./home.nix ];
+            modules = [ ./home.nix inputs.stylix.homeManagerModules.stylix ];
             extraSpecialArgs = {
                 inherit inputs;
                 inherit username;

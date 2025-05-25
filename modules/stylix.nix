@@ -1,7 +1,11 @@
-{ config, pkgs, libs,  ... }:
+{ config, pkgs, lib,  ... }:
 {
     stylix = {
         enable = true;
+	targets.nixvim.enable = lib.mkForce false;
+	targets.neovim.enable = lib.mkForce false;
+	targets.vim.enable = lib.mkForce false;
+
         autoEnable = true;
         base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-light-medium.yaml";
         image = pkgs.fetchurl {
