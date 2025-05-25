@@ -29,64 +29,64 @@ in
 	# cli
         btop
         neofetch
-		htop
-		yt-dlp
-		powertop
-        typst
-		thefuck
-        hugo
-        wakeonlan
+	htop
+	yt-dlp
+	powertop
+	typst
+	thefuck
+	hugo
+	wakeonlan
 # dev/libs
-        udiskie
-        usbutils
-        libnotify
-        bash
-        dconf
-        i2p
-        fzf
-        gdb
-		unzip
-        ntfs3g
-        dosfstools
-		ripgrep
-		gcc
-		wget
-		gnupg
-		gnumake
-		coreutils
-		ffmpeg-full
-        libsecret
-		cmake
-        swaylock
-        swayidle
-        wl-clipboard
-        wofi
-        slurp
-        vesktop
-        pulseaudio
-        grim
-        cbonsai
-        tor
-	# python
-		python312Full
-	# append gl dependent programs
-		] ++  [ #map (mkgl)
-		firefox
-        xournalpp
-        libreoffice-qt6-fresh
-		tdesktop
-		inkscape
-        signal-desktop
-        discord
-        pavucontrol
-        mpv
-        spotify
-        simplex-chat-desktop
-        zathura
-        transmission_4
-        ] ++ [
-                inputs.nixvim.packages.${system}.default
-        ];
+	udiskie
+	usbutils
+	libnotify
+	bash
+	dconf
+	i2p
+	fzf
+	gdb
+	unzip
+	ntfs3g
+	dosfstools
+	ripgrep
+	gcc
+	wget
+	gnupg
+	gnumake
+	coreutils
+	ffmpeg-full
+	libsecret
+	cmake
+	swaylock
+	swayidle
+	wl-clipboard
+	wofi
+	slurp
+	vesktop
+	pulseaudio
+	grim
+	cbonsai
+	tor
+# python
+	python312Full
+# append gl dependent programs
+	] ++  [ #map (mkgl)
+	firefox
+	xournalpp
+	libreoffice-qt6-fresh
+	tdesktop
+	inkscape
+	signal-desktop
+	discord
+	pavucontrol
+	mpv
+	spotify
+	simplex-chat-desktop
+	zathura
+	transmission_4
+	] ++ [
+	inputs.nixvim.packages.${system}.default
+	];
 	
 	# direct file access
 	home.file = {
