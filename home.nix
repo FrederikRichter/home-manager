@@ -22,7 +22,7 @@ in
 	targets.genericLinux.enable = true;
 
 	# load all nix files from ./modules
-	imports = map (f: modulesDir + "/${f}") moduleFiles ++ [ inputs.stylix.homeManagerModules.stylix ];
+	imports = map (f: modulesDir + "/${f}") moduleFiles ++ [ inputs.stylix.homeModules.stylix ];
 
 	# define home packages
 	home.packages = with pkgs; [
@@ -34,7 +34,6 @@ in
 		powertop
         typst
 		thefuck
-        nixvim
         hugo
         wakeonlan
 # dev/libs
@@ -85,6 +84,8 @@ in
         simplex-chat-desktop
         zathura
         transmission_4
+        ] ++ [
+                inputs.nixvim.packages.${system}.default
         ];
 	
 	# direct file access

@@ -22,13 +22,9 @@
         username = builtins.getEnv "USER";
         system = "x86_64-linux";
         # Overlays
-        nixvimOverlay = final: prev: {
-            nixvim = inputs.nixvim.packages.${system}.default;
-        };
         pkgs = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
-            overlays = [ nixvimOverlay ];
         };
     in {
         homeConfigurations.${username} = inputs.home-manager.lib.homeManagerConfiguration {
