@@ -28,49 +28,47 @@ in
 
 	# define home packages
 	home.packages = with pkgs; [
-	nixvim
-	# cli
-    btop
-    neofetch
-    tree
-	htop
-	yt-dlp
-	powertop
-	typst
-	hugo
-	wakeonlan
-# dev/libs
-	udiskie
-	usbutils
-	libnotify
 	bash
+	coreutils
 	dconf
+	dosfstools
+	ffmpeg-full
 	fzf
 	gdb
-	unzip
-	ntfs3g
-	dosfstools
-	ripgrep
-	wget
-	coreutils
-	ffmpeg-full
+	grim
+	htop
+	hugo
+	libnotify
+	libreoffice-qt6-fresh
 	libsecret
+	nixvim
+	ntfs3g
+	pavucontrol
+	powertop
+	python312Full
+	ripgrep
+	signal-desktop
+	slurp
+	spotify
 	swayidle
+	tdesktop
+	transmission_4
+	typst
+	udiskie
+	unzip
+	usbutils
+	wakeonlan
+	wget
 	wl-clipboard
 	wofi
-	slurp
-	grim
-# python
-	python312Full
 	xournalpp
-	libreoffice-qt6-fresh
-	tdesktop
-	signal-desktop
-	pavucontrol
-    mpv
-	spotify
+	yt-dlp
 	zathura
-	transmission_4
+    btop
+    mpv
+    neofetch
+    tree
+    vlc
 	];
 
 	# set session vars
