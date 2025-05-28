@@ -67,7 +67,6 @@ in
 	wl-clipboard
 	wofi
 	slurp
-	vesktop
 	pulseaudio
 	grim
 	cbonsai
