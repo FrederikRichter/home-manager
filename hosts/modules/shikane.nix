@@ -5,7 +5,10 @@
     ...
 }:
 {
-    services.shikane = {
+
+    options.services.shikane.enable = lib.mkEnableOption; 
+
+    config = lib.mkIf config.services.shikane.enable {
         enable = true;
         settings = {
             profile = [

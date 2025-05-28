@@ -1,5 +1,5 @@
 {
-    description = "Home Manager configuration of frederik";
+    description = "Home Manager configuration by FrederikRichter";
 
     inputs = {
 # Specify the source of Home Manager and Nixpkgs.
@@ -21,23 +21,28 @@
         let
         username = builtins.getEnv "USER";
         system = "x86_64-linux";
-        # Overlays
+
         pkgs = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
         };
+
     in {
-        homeConfigurations.${username} = inputs.home-manager.lib.homeManagerConfiguration {
-# Specify your home configuration modules here, for example,
-# the path to your home.nix.
+        homeConfigurations."nixos-thinkpad" = inputs.home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
-            modules = [ ./home.nix inputs.stylix.homeManagerModules.stylix ];
+            modules = [ ./hosts/base.nix ./hosts/thinkpad.nix inputs.stylix.homeManagerModules.stylix ];
             extraSpecialArgs = {
                 inherit inputs;
                 inherit username;
             };
-# Optionally use extraSpecialArgs
-# to pass through arguments to home.nix
+        };
+        homeConfigurations."nixos-battlestation" = inputs.home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [ ./hosts/base.nix ./hosts/battlestation.nix inputs.stylix.homeManagerModules.stylix ];
+            extraSpecialArgs = {
+                inherit inputs;
+                inherit username;
+            };
         };
     };
 }
