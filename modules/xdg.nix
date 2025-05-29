@@ -1,4 +1,4 @@
-{config, lib, pkgs, ...}:
+{config, lib, pkgs, username, ...}:
 {
     xdg = {
         enable = true;
@@ -27,11 +27,4 @@
             };
         };
     };
-      home.file."Desktop".source = null;
-      home.file."Downloads".source = null;
-      home.file."Videos".source = null;
-      home.file."Documents".source = null;
-      home.file."Music".source = null;
-      home.file."Pictures".source = null;
-      home.file."git".source = null;
 }
