@@ -7,13 +7,18 @@
             realName = "Frederik Richter";
             primary = true;
             userName = "frederik.richter@mailbox.org";
-            imap.host = "imap.mailbox.org";
-            smtp.host = "smtp.mailbox.org";
-            passwordCommand = "$HOME/.nix-profile/bin/secret-tool lookup Title 'Mailbox konto'";
+            imap = {
+                host = "imap.mailbox.org";
+                port = 993;
+            };
+            smtp = {
+                host = "smtp.mailbox.org";
+                port = 465;
+            };
             aliases = [
                 "fredster@mailbox.org"
-                    "frederik.shopping@mailbox.org"
-                    "frederik.gaming@mailbox.org"
+                "frederik.shopping@mailbox.org"
+                "frederik.gaming@mailbox.org"
             ];
             thunderbird.enable = true;
         };
@@ -24,7 +29,6 @@
             "default" = {
                 isDefault = true;
             };
-
         };
     };
 }
