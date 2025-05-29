@@ -7,8 +7,8 @@
         mimeApps = {
             enable = true;
             defaultApplications = {
-                "x-scheme-handler/http" = "qutebrowser.desktop";
-                "x-scheme-handler/https" = "qutebrowser.desktop";
+                "x-scheme-handler/http" = "librewolf.desktop";
+                "x-scheme-handler/https" = "librewolf.desktop";
                 "text/html" = "librewolf.desktop";
                 "text/plain" = "nvim.desktop";
                 "application/pdf" = "zathura.desktop";
