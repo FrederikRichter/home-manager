@@ -1,4 +1,9 @@
 { config, pkgs, lib, ... }:
 {
-    programs.librewolf.enable = true;
+    programs.librewolf = {
+        enable = true;
+        settings = {
+            "browser.sessionstore.resume_from_crash" = false;
+        };
+    };
 }
