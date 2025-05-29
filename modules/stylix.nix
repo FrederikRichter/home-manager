@@ -2,14 +2,15 @@
 {
     stylix = {
         enable = true;
-	targets = {
-		vesktop.enable = false;
-		nixvim.enable = false;
-	};
+        targets = {
+            vesktop.enable = false;
+            nixvim.enable = false;
+            librewolf.profileNames = [ "default" ];
+        };
         autoEnable = true;
         base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-light-medium.yaml";
         image = ../wallpaper/gruvbox_light_linux.png;
-	fonts = {
+        fonts = {
             monospace = {
                 package = pkgs.nerd-fonts.jetbrains-mono;
                 name = "JetBrainsMono Nerd Font Mono";

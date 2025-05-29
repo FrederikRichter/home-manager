@@ -30,7 +30,7 @@
     in {
         homeConfigurations."thinkpad" = inputs.home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
-            modules = [ ./hosts/base.nix ./hosts/thinkpad.nix inputs.stylix.homeManagerModules.stylix ];
+            modules = [ ./hosts/base.nix ./hosts/thinkpad.nix inputs.stylix.homeModules.stylix ];
             extraSpecialArgs = {
                 inherit inputs;
                 inherit username;
@@ -38,7 +38,7 @@
         };
         homeConfigurations."battlestation" = inputs.home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
-            modules = [ ./hosts/base.nix ./hosts/battlestation.nix inputs.stylix.homeManagerModules.stylix ];
+            modules = [ ./hosts/base.nix ./hosts/battlestation.nix inputs.stylix.homeModules.stylix ];
             extraSpecialArgs = {
                 inherit inputs;
                 inherit username;
