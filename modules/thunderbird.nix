@@ -22,6 +22,38 @@
             ];
             thunderbird.enable = true;
         };
+        tu-bs = {
+            address = "frederik.richter@tu-braunschweig.de";
+            maildir.path = "tubs";
+            realName = "Frederik Richter";
+            userName = "AD\\y0117852";
+            imap = {
+                host = "mail.tu-braunschweig.de";
+                port = 993;
+            };
+            smtp = {
+                host = "mail.tu-braunschweig.de";
+                port = 587;
+                tls.useStartTls = true;
+            };
+            thunderbird.enable = true;
+            };
+
+        gmail = {
+            address = "frederik.richter@tu-braunschweig.de";
+            maildir.path = "tubs";
+            realName = "Frederik Richter";
+            userName = "frederik.twix@gmail.com";
+            imap = {
+                host = "imap.gmail.com";
+                port = 993;
+            };
+            smtp = {
+                host = "smtp.gmail.com";
+                port = 465;
+            };
+            thunderbird.enable = true;
+        };
     };
     programs.thunderbird = {
         enable = true;
