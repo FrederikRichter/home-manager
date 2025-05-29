@@ -5,6 +5,6 @@
     ...
 }:
 {	
-    programs.swaylock.enable = true;
-    services.shikane.enable = true;
+    swaylock.enable = true;
+    shikane.enable = true;
 }

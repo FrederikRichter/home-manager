@@ -28,7 +28,7 @@
         };
 
     in {
-        homeConfigurations."nixos-thinkpad" = inputs.home-manager.lib.homeManagerConfiguration {
+        homeConfigurations."thinkpad" = inputs.home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
             modules = [ ./hosts/base.nix ./hosts/thinkpad.nix inputs.stylix.homeManagerModules.stylix ];
             extraSpecialArgs = {
@@ -36,7 +36,7 @@
                 inherit username;
             };
         };
-        homeConfigurations."nixos-battlestation" = inputs.home-manager.lib.homeManagerConfiguration {
+        homeConfigurations."battlestation" = inputs.home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
             modules = [ ./hosts/base.nix ./hosts/battlestation.nix inputs.stylix.homeManagerModules.stylix ];
             extraSpecialArgs = {

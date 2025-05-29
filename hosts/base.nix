@@ -1,7 +1,7 @@
 {config, pkgs, inputs, username, ... }:
 let	
 	# create nix file loader function
-	modulesDir = ./modules;
+	modulesDir = ../modules;
 	moduleFiles = builtins.filter
 	(f: builtins.match ".*\\.nix" f != null)
 	(builtins.attrNames (builtins.readDir modulesDir));
