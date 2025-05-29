@@ -9,7 +9,7 @@
         };
         searchEngines = {
                 w = "https://en.wikipedia.org/wiki/Special:Search?search={}&go=Go&ns0=1";
-                DEFAULT = "https://www.google.com/search?q={}&udm=14";
+                DEFAULT = "https://search.hbubli.cc/search?q={}";
                 hm = "https://home-manager-options.extranix.com/?query={}&release=master";
                 np = "https://search.nixos.org/packages?channel=unstable&from=0&size=50&sort=relevance&type=packages&query={}";
                 pp = "https://www.perplexity.ai/search/?q={}";
