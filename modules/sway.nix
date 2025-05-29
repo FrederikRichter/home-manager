@@ -91,5 +91,8 @@ let
     };
     home.sessionVariables = {
         _JAVA_AWT_WM_NONREPARENTING = 1;
+        WLR_RENDERER="vulkan";
+        WLR_DRM_NO_MODIFIERS=1;
+        WLR_DRM_DEVICES="/dev/dri/card1";
     };
 }
