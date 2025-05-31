@@ -1,18 +1,28 @@
-{pkgs}:
+{pkgs, ...}:
 {
     programs.vesktop = {
         enable = true;
-        vencord.settings = {
+        settings = {
             autoUpdate = false;
             autoUpdateNotification = false;
             notifyAboutUpdates = false;
             disableMinSize = true;
+            clickTrayToShowHide = true;
+            minimizeToTray = true;
+            discordBranch = "stable";
+        };
+        vencord.settings = {
+            autoUpdate = false;
+            autoUpdateNotification = false;
+            notifyAboutUpdates = false;
             plugins = {
                 MessageLogger.enabled = true;
                 FakeNitro.enabled = true;
             };
         };
+
     };
+
 
 
     systemd.user.services.vesktop = {
