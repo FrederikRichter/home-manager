@@ -19,12 +19,18 @@ let
         systemd.enable = true;
         wrapperFeatures.gtk = true;
         config = rec {
+            # wait until new change is merged
+            # output = {
+            #         DP-4 = {
+            #                 hdr="on";
+            #             };
+            #     };
+
             modifier = "Mod4";
             floating.modifier = "Mod4";
 
             floating.titlebar = false;
             window.titlebar = false;
-        
             terminal = "kitty";
 
             # bars = [{"command" = "${waybar}/bin/waybar";}];
@@ -59,9 +65,9 @@ let
             "${modifier}+Tab" = "workspace back_and_forth";
     
             "${modifier}+Shift+r" = "restart";
-            "${modifier}+o" = "exec wofi -S drun";
+            "${modifier}+o" = "exec wofi -S drun -i";
             "${modifier}+n" = "exec wofi --dmenu --prompt='Enter nixpkg: ' | xargs -I {} kitty --hold sh -c 'nix shell nixpkgs#{} --impure'";
-
+            
             };
         };
         extraConfig = ''
@@ -93,6 +99,5 @@ let
         _JAVA_AWT_WM_NONREPARENTING = 1;
         WLR_RENDERER="vulkan";
         WLR_DRM_NO_MODIFIERS=1;
-        WLR_DRM_DEVICES="/dev/dri/card1";
     };
 }
