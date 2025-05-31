@@ -53,6 +53,9 @@
         };
     };
 
+
+    home.packages = [pkgs.libsecret];
+
     systemd.user.services.mailspring = {
         Unit = {
             Description = "mailspring autostart";
