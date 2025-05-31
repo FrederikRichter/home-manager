@@ -43,7 +43,8 @@
 
                 [Security]
                 LockDatabaseScreenLock=false
-                    '';
+                ClearClipboardTimeout=40
+                '';
         };
     };
 
