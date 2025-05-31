@@ -53,6 +53,23 @@
         };
     };
 
+    systemd.user.services.mailspring = {
+        Unit = {
+            Description = "mailspring autostart";
+            After = [ "graphical-session-pre.target" ];
+            PartOf = [ "graphical-session.target" ];
+        };
+
+        Service = {
+            ExecStart = "${pkgs.mailspring}/bin/mailspring --background --password-store=gnome-libsecret";
+            Restart = "on-failure";
+        };
+
+        Install = {
+            WantedBy = [ "graphical-session.target" ];
+        };
+    };
+
     xdg.desktopEntries.mailspring = {
       name = "Mailspring";
       exec = "${pkgs.mailspring}/bin/mailspring --password-store=gnome-libsecret";
@@ -61,5 +78,4 @@
       comment = "A beautiful, modern email client";
       categories = [ "Network" "Email" ];
     };
-
 }
