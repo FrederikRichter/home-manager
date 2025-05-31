@@ -56,7 +56,7 @@
     systemd.user.services.mailspring = {
         Unit = {
             Description = "mailspring autostart";
-            After = [ "graphical-session-pre.target" ];
+            After = [ "keepassxc.service" ];
             PartOf = [ "graphical-session.target" ];
         };
 
