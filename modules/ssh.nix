@@ -23,8 +23,6 @@
                 };
             };
         };
-        extraConfig = ''
-            '';
     };
     services.ssh-agent = {
         enable = true;
