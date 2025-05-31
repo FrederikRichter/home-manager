@@ -8,7 +8,4 @@
       comment = "A beautiful, modern email client";
       categories = [ "Network" "Email" ];
     };
-
-    services.gnome-keyring.enable = true;
-
 }

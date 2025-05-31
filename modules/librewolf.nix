@@ -10,6 +10,7 @@
             "browser.toolbars.bookmarks.visibility" = "never";
         };
     };
+
     home.file."/.librewolf/native-messaging-hosts/org.keepassxc.keepassxc_browser.json".text = ''
     {
         "allowed_extensions": [
