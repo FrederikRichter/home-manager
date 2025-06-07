@@ -20,11 +20,15 @@ let
         wrapperFeatures.gtk = true;
         config = rec {
             # wait until new change is merged
-            # output = {
-            #         DP-4 = {
-            #                 hdr="on";
-            #             };
-            #     };
+            output = {
+                    DP-4 = {
+                            # hdr="on";
+                            render_bit_depth = "10";
+                            adaptive_sync = "on";
+                            subpixel = "rgb";
+                            allow_tearing = "true";
+                        };
+                };
 
             modifier = "Mod4";
             floating.modifier = "Mod4";
