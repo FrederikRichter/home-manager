@@ -37,6 +37,7 @@
             credential = {
                 helper = "manager";
                 "https://git.rz.tu-bs.de/".username = "frederik.richer@tu-braunschweig.de";
+                "https://git.rz.tu-bs.de".provider = "generic";
                 credentialStore = "cache";
                 provide = "generic";
             };

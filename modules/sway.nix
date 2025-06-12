@@ -16,6 +16,7 @@ let
 
     wayland.windowManager.sway = {
         enable = true;
+        #package = swayfx;
         systemd.enable = true;
         wrapperFeatures.gtk = true;
         config = rec {
@@ -67,14 +68,17 @@ let
             "${modifier}+Shift+f" = "move container to workspace number 4";
 
             "${modifier}+Tab" = "workspace back_and_forth";
-    
+            "${modifier}+e" = "exec ${nautilus}/bin/nautilus";
             "${modifier}+Shift+r" = "restart";
-            "${modifier}+o" = "exec wofi -S drun -i";
-            "${modifier}+n" = "exec wofi --dmenu --prompt='Enter nixpkg: ' | xargs -I {} kitty --hold sh -c 'nix shell nixpkgs#{} --impure'";
+            "${modifier}+o" = "exec ${wofi}/bin/wofi -S drun -i --allow-images --no-actions";
+            "${modifier}+n" = "exec ${wofi}/bin/wofi --dmenu --prompt='Enter nixpkg: ' | xargs -I {} kitty --hold sh -c 'nix shell nixpkgs#{} --impure'";
             
             };
         };
         extraConfig = ''
+            # sway fx:
+            # shadows enable
+
             input "type:keyboard" {
                 xkb_layout us
                     xkb_options caps:swapescape
