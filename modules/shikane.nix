@@ -58,7 +58,7 @@
                     name = "Xiaomi only";
                     output = [
                     {
-                        match = "DP-4";
+                        match = "DP-1";
                         enable = true;
                         mode = "2560x1440@180Hz";
                         # exec = ["${pkgs.sway}/bin/swaymsg output DP-4 render_bit_depth 10"];
