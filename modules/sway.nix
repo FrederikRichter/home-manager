@@ -22,7 +22,7 @@ let
         config = rec {
             # wait until new change is merged
             output = {
-                    DP-4 = {
+                    DP-1 = {
                             # hdr="on";
                             render_bit_depth = "10";
                             adaptive_sync = "on";
