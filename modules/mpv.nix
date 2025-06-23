@@ -5,7 +5,7 @@
             config = {
                 profile = "gpu-hq";
                 vo="gpu-next";
-                hwdec="vulkan";
+                hwdec="auto";
                 video-sync="display-resample";
                 interpolation="yes";
                 target-colorspace-hint="yes";
