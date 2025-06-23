@@ -2,7 +2,7 @@
 {
     home.packages = [ pkgs.python312Packages.pynacl ];
     programs.qutebrowser = {
-        enable = true;
+        enable = false;
         keyBindings = {
             normal = {
             };
