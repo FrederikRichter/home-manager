@@ -1,4 +1,19 @@
 {pkgs, ...}:
+let
+    keepassxc-script = (pkgs.writeShellScriptBin "start-mailspring-when-unlocked.sh" ''
+          #!${pkgs.bash}/bin/bash
+
+            export PATH=${pkgs.gnugrep}/bin:${pkgs.systemd}/bin:${pkgs.coreutils}/bin:$PATH
+# Wait until at least one unlocked item is visible under the secret collection
+            while ! busctl --user tree org.freedesktop.secrets | grep -q '/org/freedesktop/secrets/collection/Database/'; do
+            echo "Waiting for KeepassXC database to be unlocked..."
+            sleep 2
+            done
+
+            echo "Database unlocked. Starting Mailspring..."
+            exec ${pkgs.mailspring}/bin/mailspring --background --password-store=gnome-libsecret
+            '');
+in
 {
     accounts.email.accounts = {
         mailbox = {
@@ -54,17 +69,22 @@
     };
 
 
-    home.packages = [pkgs.libsecret];
+    home.packages = [
+        pkgs.libsecret
+    ];
+    
+
 
     systemd.user.services.mailspring = {
         Unit = {
             Description = "mailspring autostart";
-            After = [ "keepassxc.service" ];
+            After = [ "graphical-session.target" "keepassxc.service" ];
             PartOf = [ "graphical-session.target" ];
+            Requires = [ "graphical-session.target" ];
         };
 
         Service = {
-            ExecStart = "${pkgs.mailspring}/bin/mailspring --background --password-store=gnome-libsecret";
+            ExecStart = "${keepassxc-script}/bin/start-mailspring-when-unlocked.sh";
             Restart = "on-failure";
         };
 
