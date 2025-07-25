@@ -22,7 +22,7 @@ let
         config = rec {
             # wait until new change is merged
             output = {
-                    DP-1 = {
+                    DP-4 = {
                             # hdr="on";
                             render_bit_depth = "10";
                             adaptive_sync = "on";
@@ -105,7 +105,6 @@ let
     };
     home.sessionVariables = {
         _JAVA_AWT_WM_NONREPARENTING = 1;
-        WLR_RENDERER="vulkan";
         WLR_DRM_NO_MODIFIERS=1;
     };
 }
