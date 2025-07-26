@@ -26,6 +26,7 @@ in
 
 	# define home packages
 	home.packages = with pkgs; [
+    android-tools
 	bash
 	coreutils
 	dconf
@@ -53,6 +54,7 @@ in
 	transmission_4
 	typst
 	udiskie
+    unrar
 	unzip
 	usbutils
 	wakeonlan
@@ -62,6 +64,7 @@ in
 	xournalpp
 	yt-dlp
 	zathura
+    rustdesk
     btop
     mpv
     neofetch
@@ -76,6 +79,5 @@ in
         XDG_SESSION_TYPE = "wayland";
         XDG_CURRENT_DESKTOP = "sway";
         NIXPKGS_ALLOW_UNFREE = 1;
-        WLR_RENDERER="vulkan";
 	};
 }

@@ -105,6 +105,5 @@ let
     };
     home.sessionVariables = {
         _JAVA_AWT_WM_NONREPARENTING = 1;
-        WLR_DRM_NO_MODIFIERS=1;
     };
 }

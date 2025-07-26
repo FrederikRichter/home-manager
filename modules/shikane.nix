@@ -35,7 +35,7 @@
                         enable = false;
                     }
                     {
-                        match = "DP-3";
+                        match = "DP-4";
                         enable = true;
                         position = {
                             x = 0;
@@ -58,7 +58,7 @@
                     name = "Xiaomi only";
                     output = [
                     {
-                        match = "DP-1";
+                        match = "DP-4";
                         enable = true;
                         mode = "2560x1440@180Hz";
                         # exec = ["${pkgs.sway}/bin/swaymsg output DP-4 render_bit_depth 10"];
