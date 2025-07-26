@@ -34,7 +34,7 @@ in
       # General settings
       general = {
         gaps_in = 10;
-        gaps_out = 0;
+        gaps_out = 10;
         border_size = 0;  # equivalent to default_border none
         layout = "dwindle";
         allow_tearing = true;

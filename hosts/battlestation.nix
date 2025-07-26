@@ -11,7 +11,7 @@ brave
 wayland.windowManager.hyprland = {
     settings = {
         monitor = [
-            "DP-4,preferred,auto,1,bitdepth,10,vrr,1,cm,hdr,sdrbrightness, 1.3"
+            "DP-4,preferred,auto,1,bitdepth,10,vrr,1,cm,hdr,sdrbrightness, 1.3, sdrsaturation, 1.15"
         ];
         experimental = {
             xx_color_management_v4 = true;
