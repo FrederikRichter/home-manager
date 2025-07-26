@@ -3,14 +3,20 @@
     programs.mpv = {
             enable = true;
             config = {
-                profile = "gpu-hq";
+                profile = "high-quality";
                 vo="gpu-next";
-                hwdec="auto";
+                hwdec="nvdec";
                 video-sync="display-resample";
                 interpolation="yes";
+                tscale="sphinx";
+                tscale-blur="0.65";
                 target-colorspace-hint="yes";
-                gpu-context="waylandvk";
                 gpu-api="vulkan";
+                gpu-context="waylandvk";
+                target-peak=1000;
+                deband="no";
+                vf="format:film-grain=no";
+                save-position-on-quit="yes";
             };
         };
 }
