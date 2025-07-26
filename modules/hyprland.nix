@@ -17,17 +17,8 @@ in
     systemd.enable = true;
     
     settings = {
+        debug.disable_logs = false;
       # Monitor configuration
-      monitor = [
-        "DP-4,preferred,auto,1,bitdepth,10"
-      ];
-      
-      # Environment variables
-      env = [
-        "JAVA_AWT_WM_NONREPARENTING,1"
-        "LIBVA_DRIVER_NAME,nvidia"
-        "__GLX_VENDOR_LIBRARY_NAME,nvidia"
-      ];
       
       # Input configuration
       input = {
@@ -52,7 +43,6 @@ in
       # Decoration settings
       decoration = {
         rounding = 0;
-        drop_shadow = false;  # can be enabled if you want shadows like swayfx
       };
       
       # Key bindings
