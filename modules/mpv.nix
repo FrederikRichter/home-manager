@@ -14,6 +14,8 @@
                 gpu-api="vulkan";
                 gpu-context="waylandvk";
                 target-peak=1000;
+                target-prim="bt.2020";
+                target-trc="pq";
                 deband="no";
                 vf="format:film-grain=no";
                 save-position-on-quit="yes";
