@@ -23,7 +23,7 @@ in
       # Input configuration
       input = {
         kb_layout = "us";
-        kb_options = "caps:swapescape";
+        # kb_options = "caps:swapescape";
         follow_mouse = 0;  # equivalent to focus_follows_mouse no
         
         touchpad = {
