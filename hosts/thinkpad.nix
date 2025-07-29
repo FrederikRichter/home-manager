@@ -5,6 +5,6 @@
     ...
 }:
 {	
-    swaylock.enable = true;
+    hyprlock.enable = true;
     shikane.enable = true;
 }
