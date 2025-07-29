@@ -1,11 +1,7 @@
 {config, pkgs, lib, ...}:
 {
 shikane.enable = true;
-home.packages = with pkgs ;[
-r2modman
-qbittorrent
-brave
-];
+
 
 
 wayland.windowManager.hyprland = {
@@ -25,4 +21,15 @@ wayland.windowManager.hyprland = {
 
     };
 };
+
+home.packages = with pkgs ;[
+    r2modman
+    qbittorrent
+    brave
+];
+
+
+	home.sessionVariables = {
+        ENABLE_HDR_WSI=1;
+	};
 }
