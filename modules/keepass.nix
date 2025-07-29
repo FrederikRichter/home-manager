@@ -1,7 +1,26 @@
 { config, pkgs, lib, ... }:
 
 {
-    home.packages = [pkgs.keepassxc];
+    programs.keepassxc = {
+        enable = true;
+        settings = {
+            Browser = {
+                Enabled = true;
+                UseCustomBrowser = true;
+    CustomBrowserType = 2;
+            };
+            GUI = {
+                CheckForUpdates = false;
+            };
+            Security = {
+                ClearClipboardTimeout = 20;
+            };
+            FdoSecrets = {
+                Enabled = true;
+            };
+        };
+    };
+
     systemd.user.services.keepassxc = {
         Unit = {
             Description = "keepassxc secret service";
@@ -18,34 +37,4 @@
             WantedBy = [ "graphical-session.target" ];
         };
     };
-    home.file = {
-        "${config.xdg.configHome}/keepassxc/keepassxc.ini" = {
-            text = ''
-                [General]
-                ConfigVersion=2
-
-                [Browser]
-                CustomProxyLocation=
-                Enabled=true
-
-                [FdoSecrets]
-                ConfirmAccessItem=false
-                Enabled=true
-                ShowNotification=true
-
-                [GUI]
-                MinimizeOnStartup=true
-                TrayIconAppearance=monochrome-light
-
-                [PasswordGenerator]
-                AdditionalChars=
-                ExcludedChars=
-
-                [Security]
-                LockDatabaseScreenLock=false
-                ClearClipboardTimeout=40
-                '';
-        };
-    };
-
 }
