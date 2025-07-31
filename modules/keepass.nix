@@ -2,7 +2,7 @@
 
 {
     programs.keepassxc = {
-        enable = true;
+        enable = false;
         settings = {
             Browser = {
                 Enabled = true;
