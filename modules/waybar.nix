@@ -8,15 +8,12 @@
     programs.waybar = {
         systemd = {
             enable = true;
-            target = "hyprland-session.target";
         };
         enable = true;
         settings.mainBar = {
             position = "bottom";
             spacing = 4;
-            modules-left = [ "hyprland/workspaces" "idle_inhibitor" ];
             modules-center = [];
-            modules-right = ["pulseaudio" "network" "battery" "cpu" "memory" "disk" "clock" "bluetooth" "tray"];
             "hyprland/workspaces" = {
                 disable-scroll = true;
                 format = "{icon}";

@@ -1,11 +1,18 @@
-{config, pkgs, ... }: 
+{config, pkgs, lib, ... }: 
 let
   left = "h";
   down = "j";
   up = "k";
   right = "l";
+  terminal = "${pkgs.foot}/bin/foot";
 in
 {
+    options = {
+        hyprland.enable = lib.mkEnableOption "Enable hyprland";
+    };
+
+    config = lib.mkIf config.hyprland.enable {
+
   xdg.portal = {
     enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-hyprland pkgs.xdg-desktop-portal-gtk ];
@@ -50,8 +57,8 @@ in
       
       bind = [
         # Terminal
-        "$mod, Return, exec, kitty --hold sh -c '${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new'"
-        "$mod SHIFT, Return, exec, kitty --hold sh -c '${pkgs.tmux}/bin/tmux'"
+        "$mod, Return, exec, ${terminal} --hold sh -c '${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new'"
+        "$mod SHIFT, Return, exec, ${terminal} --hold sh -c '${pkgs.tmux}/bin/tmux'"
         
         # Window management
         "$mod, q, killactive"
@@ -86,7 +93,7 @@ in
         # Applications
         "$mod, e, exec, ${pkgs.nautilus}/bin/nautilus"
         "$mod, o, exec, ${pkgs.wofi}/bin/wofi -S drun -i --allow-images --no-actions"
-        "$mod, n, exec, ${pkgs.wofi}/bin/wofi --dmenu --prompt='Enter nixpkg: ' | xargs -I {} kitty --hold sh -c 'nix shell nixpkgs#{} --impure'"
+        "$mod, n, exec, ${pkgs.wofi}/bin/wofi --dmenu --prompt='Enter nixpkg: ' | xargs -I {} ${terminal} --hold sh -c 'nix shell nixpkgs#{} --impure'"
         
         # System
         "$mod SHIFT, r, exec, hyprctl reload"
@@ -110,4 +117,5 @@ in
       };
     };
   };
+    };
 }

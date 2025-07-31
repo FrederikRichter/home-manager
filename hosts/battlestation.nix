@@ -3,6 +3,15 @@
 shikane.enable = true;
 
 
+hyprland.enable = true;
+
+programs.waybar = {
+    systemd.target = "hyprland-session.target";
+    settings.mainBar = {
+        modules-left = [ "hyprland/workspaces" "idle_inhibitor" ];
+        modules-right = ["pulseaudio" "network" "battery" "cpu" "memory" "disk" "clock" "bluetooth" "tray"];
+    };
+};
 
 wayland.windowManager.hyprland = {
     settings = {
@@ -26,10 +35,12 @@ home.packages = with pkgs ;[
     r2modman
     qbittorrent
     brave
+    rustdesk
 ];
 
 
-	home.sessionVariables = {
-        ENABLE_HDR_WSI=1;
-	};
+
+home.sessionVariables = {
+    ENABLE_HDR_WSI=1;
+};
 }

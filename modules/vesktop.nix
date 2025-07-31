@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{pkgs, lib, config, ...}:
 {
     programs.vesktop = {
         enable = true;
@@ -25,6 +25,11 @@
 
 
 
+    options = {
+        vesktop-autostart.enable = lib.mkEnableOption "Enable vesktop-autostart";
+    };
+
+    config = lib.mkIf config.vesktop-autostart.enable {
     systemd.user.services.vesktop = {
         Unit = {
             Description = "vesktop autostart";
@@ -40,5 +45,6 @@
         Install = {
             WantedBy = [ "graphical-session.target" ];
         };
+    };
     };
 }

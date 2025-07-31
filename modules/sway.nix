@@ -8,6 +8,11 @@ let
   right = "l";
   in
 {
+    options = {
+        sway.enable = lib.mkEnableOption "Enable sway";
+    };
+
+    config = lib.mkIf config.sway.enable {
     xdg.portal = {
         enable = true;
         extraPortals = [ pkgs.xdg-desktop-portal-wlr pkgs.xdg-desktop-portal-gtk ];
@@ -21,30 +26,21 @@ let
         wrapperFeatures.gtk = true;
         config = rec {
             # wait until new change is merged
-            output = {
-                    DP-4 = {
-                            # hdr="on";
-                            render_bit_depth = "10";
-                            adaptive_sync = "on";
-                            subpixel = "rgb";
-                            allow_tearing = "true";
-                        };
-                };
 
             modifier = "Mod4";
             floating.modifier = "Mod4";
 
             floating.titlebar = false;
             window.titlebar = false;
-            terminal = "kitty";
+            terminal = "foot";
 
             # bars = [{"command" = "${waybar}/bin/waybar";}];
             bars = [];
             # keybindings (clear first)
             keybindings =  {
             Print = ''exec grim -g "$(${slurp}/bin/slurp -d)" - | ${wl-clipboard}/bin/wl-copy -t image/png'';
-            "${modifier}+Return" = ''exec kitty --hold sh -c "${tmux}/bin/tmux attach || ${tmux}/bin/tmux new"'';
-            "${modifier}+Shift+Return" = ''exec kitty --hold sh -c "${tmux}/bin/tmux"'';
+            "${modifier}+Return" = ''exec ${terminal} --hold sh -c "${tmux}/bin/tmux attach || ${tmux}/bin/tmux new"'';
+            "${modifier}+Shift+Return" = ''exec ${terminal} --hold sh -c "${tmux}/bin/tmux"'';
 
             "${modifier}+q" = "kill";
             "${modifier}+${left}" = "focus left; exec $movemouse";
@@ -71,8 +67,6 @@ let
             "${modifier}+e" = "exec ${nautilus}/bin/nautilus";
             "${modifier}+Shift+r" = "restart";
             "${modifier}+o" = "exec ${wofi}/bin/wofi -S drun -i --allow-images --no-actions";
-            "${modifier}+n" = "exec ${wofi}/bin/wofi --dmenu --prompt='Enter nixpkg: ' | xargs -I {} kitty --hold sh -c 'nix shell nixpkgs#{} --impure'";
-            
             };
         };
         extraConfig = ''
@@ -80,8 +74,7 @@ let
             # shadows enable
 
             input "type:keyboard" {
-                xkb_layout us
-                    xkb_options caps:swapescape
+                xkb_layout de
             }
             input "type:touchpad" {
                 natural_scroll enabled
@@ -102,6 +95,7 @@ let
             focus_on_window_activation focus
             focus_follows_mouse no
             '';
+    };
     };
     home.sessionVariables = {
         _JAVA_AWT_WM_NONREPARENTING = 1;

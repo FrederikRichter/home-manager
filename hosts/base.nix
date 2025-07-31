@@ -37,6 +37,7 @@ in
 	grim
 	htop
 	hugo
+    keepassxc
 	libnotify
 	libreoffice-qt6-fresh
 	libsecret
@@ -64,7 +65,7 @@ in
 	xournalpp
 	yt-dlp
 	zathura
-    rustdesk
+#    rustdesk
     btop
     mpv
     neofetch
