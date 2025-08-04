@@ -21,17 +21,19 @@ in
   
   wayland.windowManager.hyprland = {
     enable = true;
+    extraConfig = ''
+        animation=global,0
+        decoration:blur:enabled = false
+        decoration:shadow:enabled = false
+        misc:vfr = true
+        ecosystem:no_update_news = true
+    '';
     systemd.enable = true;
-    
     settings = {
-        debug.disable_logs = false;
-      # Monitor configuration
-      
+      debug.disable_logs = false;
       # Input configuration
       input = {
-        kb_layout = "us";
-        # kb_options = "caps:swapescape";
-        follow_mouse = 0;  # equivalent to focus_follows_mouse no
+        follow_mouse = 1; 
         
         touchpad = {
           natural_scroll = true;
