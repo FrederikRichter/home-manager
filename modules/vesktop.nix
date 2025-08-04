@@ -23,28 +23,26 @@
 
     };
 
-
-
-    options = {
-        vesktop-autostart.enable = lib.mkEnableOption "Enable vesktop-autostart";
-    };
-
-    config = lib.mkIf config.vesktop-autostart.enable {
-    systemd.user.services.vesktop = {
-        Unit = {
-            Description = "vesktop autostart";
-            After = [ "graphical-session.target" ];
-            PartOf = [ "graphical-session.target" ];
-        };
-
-        Service = {
-            ExecStart = "${pkgs.vesktop}/bin/vesktop";
-            Restart = "on-failure";
-        };
-
-        Install = {
-            WantedBy = [ "graphical-session.target" ];
-        };
-    };
-    };
+    # options = {
+    #     vesktop-autostart.enable = lib.mkEnableOption "Enable vesktop-autostart";
+    # };
+    #
+    # config = lib.mkIf config.vesktop-autostart.enable {
+    # systemd.user.services.vesktop = {
+    #     Unit = {
+    #         Description = "vesktop autostart";
+    #         After = [ "graphical-session.target" ];
+    #         PartOf = [ "graphical-session.target" ];
+    #     };
+    #
+    #     Service = {
+    #         ExecStart = "${pkgs.vesktop}/bin/vesktop";
+    #         Restart = "on-failure";
+    #     };
+    #
+    #     Install = {
+    #         WantedBy = [ "graphical-session.target" ];
+    #     };
+    # };
+    # };
 }
