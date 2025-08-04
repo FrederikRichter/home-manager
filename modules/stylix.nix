@@ -9,7 +9,6 @@
         };
         autoEnable = true;
         base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-light-medium.yaml";
-        image = ../wallpaper/mojave.jpg;
         fonts = {
             monospace = {
                 package = pkgs.nerd-fonts.jetbrains-mono;
