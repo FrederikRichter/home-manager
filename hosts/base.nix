@@ -61,6 +61,7 @@ in
 	wakeonlan
 	wget
 	wl-clipboard
+    lm_sensors
 	wofi
 	xournalpp
 	yt-dlp
@@ -78,7 +79,7 @@ in
 	home.sessionVariables = {
         EDITOR="nvim";
         XDG_SESSION_TYPE = "wayland";
-        XDG_CURRENT_DESKTOP = "sway";
         NIXPKGS_ALLOW_UNFREE = 1;
+        XDG_CURRENT_DESKTOP = "hyprland";
 	};
 }

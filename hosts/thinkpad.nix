@@ -14,7 +14,7 @@
         systemd.target = "hyprland-session.target";
         settings.mainBar = {
             modules-left = [ "hyprland/workspaces" "idle_inhibitor" ];
-            modules-right = ["pulseaudio" "network" "battery" "cpu" "memory" "disk" "clock" "tray"];
+            modules-right = ["pulseaudio" "network" "battery" "cpu" "temperature" "memory" "disk" "clock" "tray"];
         };
     };
     wayland.windowManager.hyprland.settings.input.kb_layout = "de";
