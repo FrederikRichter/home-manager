@@ -33,6 +33,7 @@ in
 	dosfstools
 	ffmpeg-full
 	fzf
+    feh
 	gdb
 	grim
 	htop
@@ -63,10 +64,8 @@ in
 	wl-clipboard
     lm_sensors
 	wofi
-	xournalpp
 	yt-dlp
 	zathura
-#    rustdesk
     btop
     mpv
     neofetch
