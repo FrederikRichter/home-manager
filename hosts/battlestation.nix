@@ -39,6 +39,7 @@ home.packages = with pkgs ;[
     qbittorrent
     brave
     rustdesk
+    xournalpp
 ];
 
 
