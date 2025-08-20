@@ -36,7 +36,8 @@ in
         follow_mouse = 1; 
         
         touchpad = {
-          natural_scroll = true;
+            tap-to-click = 0;
+            natural_scroll = true;
         };
       };
       
