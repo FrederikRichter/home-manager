@@ -14,6 +14,7 @@
             position = "bottom";
             spacing = 4;
             modules-center = [];
+
             "hyprland/workspaces" = {
                 disable-scroll = true;
                 format = "{icon}";
