@@ -33,15 +33,16 @@ in
 	dosfstools
 	ffmpeg-full
 	fzf
-    feh
 	gdb
 	grim
 	htop
 	hugo
     keepassxc
+    loupe
 	libnotify
 	libreoffice-qt6-fresh
 	libsecret
+    librewolf
 	nixvim
 	ntfs3g
 	pavucontrol
