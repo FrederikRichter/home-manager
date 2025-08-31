@@ -12,12 +12,12 @@ in
     };
 
     config = lib.mkIf config.hyprland.enable {
+            
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-hyprland pkgs.xdg-desktop-portal-gtk ];
-    config.hyprland.default = [ "hyprland" "gtk" ];
+    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
   };
-  
+
   wayland.windowManager.hyprland = {
     enable = true;
     extraConfig = ''
@@ -93,7 +93,7 @@ in
         "$mod, Tab, workspace, previous"
         
         # Applications
-        "$mod, e, exec, ${pkgs.nautilus}/bin/nautilus"
+        "$mod, e, exec, ${pkgs.xfce.thunar}/bin/thunar"
         "$mod, o, exec, ${pkgs.wofi}/bin/wofi -S drun -i --allow-images --no-actions"
         "$mod, n, exec, ${pkgs.wofi}/bin/wofi --dmenu --prompt='Enter nixpkg: ' | xargs -I {} ${terminal} --hold sh -c 'nix shell nixpkgs#{} --impure'"
         
