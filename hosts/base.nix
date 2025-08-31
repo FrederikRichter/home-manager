@@ -81,5 +81,6 @@ in
         XDG_SESSION_TYPE = "wayland";
         NIXPKGS_ALLOW_UNFREE = 1;
         XDG_CURRENT_DESKTOP = "hyprland";
+        GSK_RENDERER="gl";
 	};
 }
