@@ -32,7 +32,7 @@ in
       debug.disable_logs = false;
       # Input configuration
       input = {
-        follow_mouse = 1; 
+        follow_mouse = 0; 
         
         touchpad = {
             tap-to-click = 0;
