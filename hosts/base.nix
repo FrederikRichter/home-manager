@@ -72,7 +72,7 @@ in
     neofetch
     tree
     vlc
-    gnome-calculator
+    qalculate-qt
 	];
 
 	# set session vars
