@@ -42,8 +42,6 @@ home.packages = with pkgs ;[
     xournalpp
 ];
 
-
-
 home.sessionVariables = {
     ENABLE_HDR_WSI=1;
 };
