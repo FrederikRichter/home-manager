@@ -69,7 +69,7 @@ in
 	zathura
     btop
     mpv
-    neofetch
+    fastfetch
     tree
     vlc
     qalculate-qt
