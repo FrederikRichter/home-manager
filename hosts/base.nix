@@ -48,7 +48,6 @@ in
 	ntfs3g
 	pavucontrol
 	powertop
-	python312Full
 	ripgrep
 	signal-desktop
 	slurp
