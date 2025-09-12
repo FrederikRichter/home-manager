@@ -28,6 +28,8 @@ in
         ecosystem:no_update_news = true
     '';
     systemd.enable = true;
+    systemd.variables = ["--all"];
+
     settings = {
       debug.disable_logs = false;
       # Input configuration

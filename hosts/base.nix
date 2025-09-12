@@ -31,6 +31,7 @@ in
 	coreutils
 	dconf
 	dosfstools
+    discord
 	ffmpeg-full
 	fzf
 	gdb
@@ -80,7 +81,8 @@ in
         EDITOR="nvim";
         XDG_SESSION_TYPE = "wayland";
         NIXPKGS_ALLOW_UNFREE = 1;
-        XDG_CURRENT_DESKTOP = "hyprland";
+        XDG_CURRENT_DESKTOP = "Hyprland";
+        XDG_SESSION_DESKTOP = "Hyprland";
         GSK_RENDERER="ngl";
 	};
 }
