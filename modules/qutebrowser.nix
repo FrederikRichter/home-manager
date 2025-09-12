@@ -1,5 +1,5 @@
-# { config, pkgs, lib, ... }:
-# {
+{ config, pkgs, lib, ... }:
+{
 #     home.packages = [ pkgs.python312Packages.pynacl ];
 #     programs.qutebrowser = {
 #         enable = false;
@@ -38,4 +38,4 @@
 #             config.bind('pw', 'spawn --userscript qute-keepassxc --insecure', mode='normal')
 #         '';
 #     };
-# }
+}
