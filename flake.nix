@@ -26,11 +26,11 @@
             inherit system;
             config.allowUnfree = true;
         };
-
+        stylix = inputs.stylix.homeModules.stylix; 
     in {
         homeConfigurations."thinkpad" = inputs.home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
-            modules = [ ./hosts/base.nix ./hosts/thinkpad.nix inputs.stylix.homeModules.stylix ];
+            modules = [ ./hosts/base.nix ./hosts/thinkpad.nix stylix ];
             extraSpecialArgs = {
                 inherit inputs;
                 inherit username;
@@ -38,7 +38,7 @@
         };
         homeConfigurations."battlestation" = inputs.home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
-            modules = [ ./hosts/base.nix ./hosts/battlestation.nix inputs.stylix.homeModules.stylix ];
+            modules = [ ./hosts/base.nix ./hosts/battlestation.nix stylix ];
             extraSpecialArgs = {
                 inherit inputs;
                 inherit username;

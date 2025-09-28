@@ -5,7 +5,9 @@ let
 	moduleFiles = builtins.filter
 	(f: builtins.match ".*\\.nix" f != null)
 	(builtins.attrNames (builtins.readDir modulesDir));
-	stylixNixvim = config.lib.stylix.nixvim.config; nixvim = inputs.nixvim.packages.${pkgs.system}.default.extend stylixNixvim;
+    # nixvim = inputs.nixvim.packages.${pkgs.system}.default.extend config.stylix.targets.nixvim.exportedModule;
+    nixvim = inputs.nixvim.packages.${pkgs.system}.default;
+
 	inherit pkgs;
 	inherit inputs;
 	inherit username;
