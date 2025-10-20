@@ -29,6 +29,7 @@ in
 	# define home packages
 	home.packages = with pkgs; [
     android-tools
+    ausweisapp
 	bash
 	coreutils
 	dconf
