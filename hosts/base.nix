@@ -56,7 +56,7 @@ in
 	slurp
 	spotify
 	swayidle
-	tdesktop
+	telegram-desktop
 	transmission_4
 	typst
 	udiskie
