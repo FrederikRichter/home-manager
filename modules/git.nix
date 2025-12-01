@@ -6,17 +6,19 @@
     ];
     programs.git = {
         enable = true;
-        userName = "Frederik Richter";
-        userEmail = "frederik.richter@mailbox.org";
-        aliases = {
-            st = "status";
-            cm = "commit";
-            co = "checkout";
-            br = "branch";
-            unstage = "reset HEAD --";
-            last = "log -1 HEAD";
-        };
-        extraConfig = {
+        settings = {
+            user = {
+                user = "Frederik Richter";
+                email = "frederik.richter@mailbox.org";
+            };
+            alias = {
+                st = "status";
+                cm = "commit";
+                co = "checkout";
+                br = "branch";
+                unstage = "reset HEAD --";
+                last = "log -1 HEAD";
+            };
             core = {
                 editor = "$EDITOR";
             };
