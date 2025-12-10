@@ -17,7 +17,7 @@
             modules-right = ["pulseaudio" "network" "battery" "cpu" "temperature" "memory" "disk" "clock" "tray"];
         };
     };
-    wayland.windowManager.hyprland.settings.input.kb_layout = "de";
+    wayland.windowManager.hyprland.settings.input.kb_layout = "us";
 
     stylix.image = ../wallpaper/akira.jpg;
 }

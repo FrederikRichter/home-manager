@@ -41,7 +41,7 @@ in
             natural_scroll = true;
         };
       };
-      
+    
       # General settings
       general = {
         gaps_in = 10;
