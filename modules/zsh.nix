@@ -14,6 +14,7 @@
 			hm = "home-manager";
             rm = "echo Use forcerm, consider using trash";
             forcerm = "rm";
+            trash = "${pkgs.gtrash}/bin/gtrash";
 		};
 		history = {
 			size = 10000;
