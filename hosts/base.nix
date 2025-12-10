@@ -38,6 +38,7 @@ in
 	ffmpeg-full
 	fzf
 	gdb
+    gtrash
 	grim
 	htop
 	hugo
