@@ -18,11 +18,8 @@ wayland.windowManager.hyprland = {
         input.kb_layout = "us";
         monitor = [
             ", highres,auto,1,bitdepth,10,vrr,1,cm,hdr,sdrbrightness, 1.3, sdrsaturation, 1.15"
+            # ", highres,auto,1,bitdepth,10,vrr,1"
         ];
-        experimental = {
-            xx_color_management_v4 = true;
-        };
-
 # Environment variables
         env = [
             "LIBVA_DRIVER_NAME,nvidia"
@@ -37,7 +34,6 @@ stylix.image = ../wallpaper/mojave.jpg;
 home.packages = with pkgs ;[
     r2modman
     qbittorrent
-    brave
     rustdesk
     xournalpp
 ];
