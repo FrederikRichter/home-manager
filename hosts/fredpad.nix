@@ -1,0 +1,21 @@
+{
+    config,
+    lib,
+    pkgs,
+    ...
+}:
+{	
+    shikane.enable = true;
+    hyprland.enable = true;
+    
+    programs.waybar = {
+        systemd.target = "hyprland-session.target";
+        settings.mainBar = {
+            modules-left = [ "hyprland/workspaces" "idle_inhibitor" ];
+            modules-right = ["pulseaudio" "network" "battery" "cpu" "temperature" "memory" "disk" "clock" "tray"];
+        };
+    };
+    wayland.windowManager.hyprland.settings.input.kb_layout = "us";
+
+    stylix.image = ../wallpaper/akira.jpg;
+}

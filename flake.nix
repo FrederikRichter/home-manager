@@ -35,7 +35,7 @@
         stylix = inputs.stylix.homeModules.stylix; 
     in {
         homeConfigurations."thinkpad" = inputs.home-manager.lib.homeManagerConfiguration {
-            inherit x86_pkgs;
+            pkgs = x86_pkgs;
             modules = [ ./hosts/base.nix ./hosts/thinkpad.nix stylix ];
             extraSpecialArgs = {
                 inherit inputs;
@@ -43,15 +43,15 @@
             };
         };
         homeConfigurations."fredpad" = inputs.home-manager.lib.homeManagerConfiguration {
-            inherit aarch64_pkgs;
-            modules = [ ./hosts/base.nix stylix ];
+            pkgs = aarch64_pkgs;
+            modules = [ ./hosts/base.nix ./hosts/fredpad.nix stylix ];
             extraSpecialArgs = {
                 inherit inputs;
                 inherit username;
             };
         };
         homeConfigurations."battlestation" = inputs.home-manager.lib.homeManagerConfiguration {
-            inherit x86_pkgs;
+            pkgs = x86_pkgs;
             modules = [ ./hosts/base.nix ./hosts/battlestation.nix stylix ];
             extraSpecialArgs = {
                 inherit inputs;
