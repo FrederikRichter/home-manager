@@ -17,7 +17,7 @@ wayland.windowManager.hyprland = {
     settings = {
         input.kb_layout = "us";
         monitor = [
-            ", highres,auto,1,bitdepth,10,vrr,1,cm,hdr,sdrbrightness, 1.3, sdrsaturation, 1.15"
+            ", highres,auto,1,bitdepth,10,vrr,1,cm,hdr,sdrbrightness, 1.2, sdrsaturation, 1.15"
             # ", highres,auto,1,bitdepth,10,vrr,1"
         ];
 # Environment variables

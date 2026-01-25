@@ -20,24 +20,38 @@
     outputs = {nixpkgs, ... }@inputs:
         let
         username = builtins.getEnv "USER";
-        system = "x86_64-linux";
-
-        pkgs = import nixpkgs {
-            inherit system;
+        x86_system = "x86_64-linux";
+        x86_pkgs = import nixpkgs {
+            inherit x86_system;
             config.allowUnfree = true;
         };
+
+        aarch64_system = "aarch64-linux";
+        aarch64_pkgs = import nixpkgs {
+            inherit aarch64_system;
+            config.allowUnfree = true;
+        };
+
         stylix = inputs.stylix.homeModules.stylix; 
     in {
         homeConfigurations."thinkpad" = inputs.home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
+            inherit x86_pkgs;
             modules = [ ./hosts/base.nix ./hosts/thinkpad.nix stylix ];
             extraSpecialArgs = {
                 inherit inputs;
                 inherit username;
             };
         };
+        homeConfigurations."fredpad" = inputs.home-manager.lib.homeManagerConfiguration {
+            inherit aarch64_pkgs;
+            modules = [ ./hosts/base.nix stylix ];
+            extraSpecialArgs = {
+                inherit inputs;
+                inherit username;
+            };
+        };
         homeConfigurations."battlestation" = inputs.home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
+            inherit x86_pkgs;
             modules = [ ./hosts/base.nix ./hosts/battlestation.nix stylix ];
             extraSpecialArgs = {
                 inherit inputs;
