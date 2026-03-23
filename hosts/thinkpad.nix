@@ -9,6 +9,9 @@
     sway.enable = true;
     swaylock.enable = true;
     hyprland.enable = true;
+
+    targets.genericLinux.enable = lib.mkForce false;
+
     
     programs.waybar = {
         systemd.target = "hyprland-session.target";

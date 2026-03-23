@@ -5,6 +5,8 @@ xdg = {
   mime.enable = true;
   userDirs.enable = true;
 
+
+
   # mimeApps = {
   #   enable = true;
   #

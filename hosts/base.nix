@@ -1,4 +1,4 @@
-{config, pkgs, inputs, username, ... }:
+{config, pkgs, inputs, username, lib, ... }:
 let	
 	# create nix file loader function
 	modulesDir = ../modules;
@@ -21,7 +21,7 @@ in
 
 	# Let Home Manager install and manage itself.
 	programs.home-manager.enable = true;
-	targets.genericLinux.enable = true;
+	targets.genericLinux.enable = lib.mkDefault true;
 
 	# load all nix files from ./modules
 	imports = map (f: modulesDir + "/${f}") moduleFiles;
