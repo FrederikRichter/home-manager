@@ -76,6 +76,7 @@ in
     fastfetch
     tree
     vlc
+    rquickshare
     qalculate-qt
 	];
 
@@ -86,6 +87,12 @@ in
         NIXPKGS_ALLOW_UNFREE = 1;
         XDG_CURRENT_DESKTOP = "Hyprland";
         XDG_SESSION_DESKTOP = "Hyprland";
-        GSK_RENDERER="ngl";
+        GSK_RENDERER="ngl"; # HOTFIX
+        WEBKIT_DISABLE_COMPOSITING_MODE=1; # HOTFIX
 	};
+
+    systemd.user.sessionVariables = {
+        WEBKIT_DISABLE_COMPOSITING_MODE=1; # HOTFIX
+        GSK_RENDERER="ngl"; # HOTFIX
+    };
 }
