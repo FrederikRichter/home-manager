@@ -28,6 +28,8 @@ in
         animation=global,0
         decoration:blur:enabled = false
         decoration:shadow:enabled = false
+        decoration:rounding = 8
+        decoration:rounding_power = 3.0
         misc:vfr = true
         ecosystem:no_update_news = true
     '';
@@ -36,6 +38,7 @@ in
 
     settings = {
       exec-once = [
+      "hyprsunset --identity --gamma 70"
       "noctalia-shell" 
       ];
 
@@ -111,8 +114,8 @@ in
         "$mod SHIFT, r, exec, hyprctl reload"
         
         # Media keys
-        ", XF86MonBrightnessDown, exec, hyprctl hyprsunset gamma -10"
-        ", XF86MonBrightnessUp, exec, hyprctl hyprsunset gamma +10"
+        ", XF86MonBrightnessDown, exec, hyprctl hyprsunset gamma -5"
+        ", XF86MonBrightnessUp, exec, hyprctl hyprsunset gamma +5"
         ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%+"
         ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%-"
         ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_SINK@ toggle"
