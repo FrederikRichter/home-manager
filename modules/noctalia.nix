@@ -62,20 +62,6 @@
                     ];
                 };
             };
-            location = {
-                name = "Brunswick";
-                weatherEnabled = true;
-                weatherShowEffects = false;
-                useFahrenheit = false;
-                use12hourFormat = false;
-                showWeekNumberInCalendar = false;
-                showCalendarEvents = false;
-                showCalendarWeather = false;
-                analogClockInCalendar = false;
-                firstDayOfWeek = 0;
-                hideWeatherTimezone = false;
-                hideWeatherCityName = false;
-            };
         };
     };
 }
