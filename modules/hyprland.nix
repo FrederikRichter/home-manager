@@ -12,6 +12,10 @@ in
     };
 
     config = lib.mkIf config.hyprland.enable {
+
+    home.packages = with pkgs; [
+        hyprsunset
+    ];
             
   xdg.portal = {
     enable = true;
@@ -31,7 +35,10 @@ in
     systemd.variables = ["--all"];
 
     settings = {
-      exec-once = "noctalia-shell";
+      exec-once = [
+      "noctalia-shell" 
+      ];
+
       debug.disable_logs = false;
       # Input configuration
       input = {
@@ -104,8 +111,8 @@ in
         "$mod SHIFT, r, exec, hyprctl reload"
         
         # Media keys
-        ", XF86MonBrightnessDown, exec, light -U 10"
-        ", XF86MonBrightnessUp, exec, light -A 10"
+        ", XF86MonBrightnessDown, exec, hyprctl hyprsunset gamma -10"
+        ", XF86MonBrightnessUp, exec, hyprctl hyprsunset gamma +10"
         ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%+"
         ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%-"
         ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_SINK@ toggle"
