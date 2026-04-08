@@ -16,19 +16,18 @@
             url = "github:danth/stylix";
             inputs.nixpkgs.follows = "nixpkgs";
         };
+        noctalia = {
+            url = "github:noctalia-dev/noctalia-shell";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
     };
+
     outputs = {nixpkgs, ... }@inputs:
         let
         username = builtins.getEnv "USER";
         x86_system = "x86_64-linux";
         x86_pkgs = import nixpkgs {
             inherit x86_system;
-            config.allowUnfree = true;
-        };
-
-        aarch64_system = "aarch64-linux";
-        aarch64_pkgs = import nixpkgs {
-            inherit aarch64_system;
             config.allowUnfree = true;
         };
 
@@ -42,9 +41,9 @@
                 inherit username;
             };
         };
-        homeConfigurations."fredpad" = inputs.home-manager.lib.homeManagerConfiguration {
-            pkgs = aarch64_pkgs;
-            modules = [ ./hosts/base.nix ./hosts/fredpad.nix stylix ];
+        homeConfigurations."ideapad" = inputs.home-manager.lib.homeManagerConfiguration {
+            pkgs = x86_pkgs;
+            modules = [ ./hosts/base.nix ./hosts/ideapad.nix stylix ];
             extraSpecialArgs = {
                 inherit inputs;
                 inherit username;

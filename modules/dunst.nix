@@ -1,7 +1,7 @@
 {config, lib, ...}:
 {
     services.dunst = {
-        enable = true;
+        enable = false;
         settings = lib.mkDefault {
             global = {
                 frame_width = 1;

@@ -9,7 +9,7 @@
         systemd = {
             enable = true;
         };
-        enable = true;
+        enable = false;
         settings.mainBar = {
             position = "bottom";
             spacing = 4;
@@ -73,7 +73,7 @@
                 format= " {status}";
                 format-connected= " {device_alias}";
                 format-connected-battery = " {device_alias} {device_battery_percentage}%";
-                on-click= "exec ${pkgs.blueman}/bin/blueman-manager";
+                on-click= "exec ${pkgs.overskride}/bin/overskride";
             };
         };
     };

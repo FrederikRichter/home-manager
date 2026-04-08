@@ -31,6 +31,7 @@ in
     systemd.variables = ["--all"];
 
     settings = {
+      exec-once = "noctalia-shell";
       debug.disable_logs = false;
       # Input configuration
       input = {
@@ -105,12 +106,12 @@ in
         # Media keys
         ", XF86MonBrightnessDown, exec, light -U 10"
         ", XF86MonBrightnessUp, exec, light -A 10"
-        ", XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +1%"
-        ", XF86AudioLowerVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ -1%"
-        ", XF86AudioMute, exec, pactl set-sink-mute @DEFAULT_SINK@ toggle"
+        ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%+"
+        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%-"
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_SINK@ toggle"
         
         # Screenshot
-        ", Print, exec, grim -g \"$(${pkgs.slurp}/bin/slurp -d)\" - | ${pkgs.wl-clipboard}/bin/wl-copy -t image/png"
+        ", XF86Cut, exec, grim -g \"$(${pkgs.slurp}/bin/slurp -d)\" - | ${pkgs.wl-clipboard}/bin/wl-copy -t image/png"
       ];
       
       # Window focus behavior

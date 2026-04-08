@@ -7,6 +7,8 @@ let
 	(builtins.attrNames (builtins.readDir modulesDir));
     # nixvim = inputs.nixvim.packages.${pkgs.system}.default.extend config.stylix.targets.nixvim.exportedModule;
     nixvim = inputs.nixvim.packages.${pkgs.system}.default;
+    
+    
 
 	inherit pkgs;
 	inherit inputs;
@@ -17,7 +19,6 @@ in
 	home.username = "${username}";
 	home.homeDirectory = "/home/${username}";
 
-	home.stateVersion = "24.05";
 
 	# Let Home Manager install and manage itself.
 	programs.home-manager.enable = true;

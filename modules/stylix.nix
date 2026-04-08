@@ -2,6 +2,7 @@
 {
     stylix = {
         enable = true;
+        image = ../wallpaper/yabai.jpg;
         targets = {
             vesktop.enable = false;
             nixvim.enable = false;
@@ -20,7 +21,7 @@
             package = pkgs.apple-cursor;
             size = 26;
         };
-        iconTheme = {
+        icons = {
             enable = true;
             package = pkgs.whitesur-icon-theme;
             light = "WhiteSur";

@@ -18,27 +18,22 @@ wayland.windowManager.hyprland = {
     settings = {
         input.kb_layout = "us";
         monitor = [
-            ", highres,auto,1,bitdepth,10,vrr,1,cm,hdr,sdrbrightness, 1.3, sdrsaturation, 1.2"
+            ", highres,auto,2,bitdepth,10,vrr,1,cm,hdr,sdrbrightness, 1.5, sdrsaturation, 1.2"
             # ", highres,auto,1,bitdepth,10,vrr,1"
         ];
-# Environment variables
-        env = [
-            "LIBVA_DRIVER_NAME,nvidia"
-            "__GLX_VENDOR_LIBRARY_NAME,nvidia"
-        ];
-
+        # gesture = ["3, horizontal, workspace"];
     };
 };
 
+
 # MPV
 programs.mpv.config = {
-    profile = "high-quality";
     vo="gpu-next";
-    hwdec="nvdec";
+    hwdec="vulkan";
     gpu-api="vulkan";
     gpu-context="waylandvk";
+    profile="high-quality";
 };
-
 
 home.packages = with pkgs ;[
     r2modman
@@ -51,5 +46,5 @@ home.sessionVariables = {
     ENABLE_HDR_WSI=1;
 };
 
-home.stateVersion = "24.05";
+home.stateVersion = "25.11";
 }
