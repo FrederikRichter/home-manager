@@ -56,7 +56,6 @@ in
 	ripgrep
 	signal-desktop
 	slurp
-	spotify
 	swayidle
 	telegram-desktop
 	transmission_4
@@ -79,6 +78,7 @@ in
     tree
     vlc
     rquickshare
+    overskride
     qalculate-qt
 	];
 
@@ -93,8 +93,8 @@ in
         WEBKIT_DISABLE_COMPOSITING_MODE=1; # HOTFIX
 	};
 
-    systemd.user.sessionVariables = {
-        WEBKIT_DISABLE_COMPOSITING_MODE=1; # HOTFIX
-        GSK_RENDERER="ngl"; # HOTFIX
-    };
+    # systemd.user.sessionVariables = {
+    #     WEBKIT_DISABLE_COMPOSITING_MODE=1; # HOTFIX
+    #     GSK_RENDERER="ngl"; # HOTFIX
+    # };
 }
