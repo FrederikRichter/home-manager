@@ -74,6 +74,7 @@ in
 	zathura
     btop
     mpv
+    overskride
     fastfetch
     tree
     vlc

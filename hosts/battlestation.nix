@@ -48,7 +48,6 @@ home.packages = with pkgs ;[
 ];
 
 home.sessionVariables = {
-    ENABLE_HDR_WSI=1;
 };
 
 home.stateVersion = "24.05";
