@@ -45,6 +45,8 @@ in
       debug.disable_logs = false;
       # Input configuration
       input = {
+        kb_variant = "altgr-intl";
+
         follow_mouse = 0; 
         
         touchpad = {
