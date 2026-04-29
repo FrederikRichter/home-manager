@@ -2,7 +2,7 @@
 {
     stylix = {
         enable = true;
-        image = ../wallpaper/yabai.jpg;
+        image = ../wallpaper/night_hawk.webp;
         targets = {
             vesktop.enable = false;
             nixvim.enable = false;
