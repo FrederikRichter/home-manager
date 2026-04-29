@@ -12,6 +12,10 @@ programs.waybar = {
         modules-left = [ "hyprland/workspaces" "idle_inhibitor" ];
         modules-right = ["pulseaudio" "network" "battery" "cpu" "memory" "disk" "clock" "bluetooth" "tray"];
     };
+    settings.bind = [
+            # Screenshot
+            ", XF86Cut, exec, grim -g \"$(${pkgs.slurp}/bin/slurp -d)\" - | ${pkgs.wl-clipboard}/bin/wl-copy -t image/png"
+    ];
 };
 
 wayland.windowManager.hyprland = {

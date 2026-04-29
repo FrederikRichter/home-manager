@@ -121,9 +121,6 @@ in
         ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%+"
         ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%-"
         ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_SINK@ toggle"
-        
-        # Screenshot
-        ", XF86Cut, exec, grim -g \"$(${pkgs.slurp}/bin/slurp -d)\" - | ${pkgs.wl-clipboard}/bin/wl-copy -t image/png"
       ];
       
       # Window focus behavior

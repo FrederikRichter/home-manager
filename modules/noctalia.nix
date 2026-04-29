@@ -7,6 +7,7 @@
     programs.noctalia-shell = {
         enable = true;
         settings = {
+        dock.enabled = false;
 # configure noctalia here
             bar = {
                 density = "default";

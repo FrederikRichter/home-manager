@@ -18,8 +18,12 @@ wayland.windowManager.hyprland = {
     settings = {
         input.kb_layout = "us";
         monitor = [
-            ", highres,auto,1,bitdepth,10,vrr,1,cm,hdr,sdrbrightness, 1.5, sdrsaturation, 1.2"
-            # ", highres,auto,1,bitdepth,10,vrr,1"
+            # ", highres,auto,1,bitdepth,10,vrr,1,cm,hdr,sdrbrightness, 1.5, sdrsaturation, 1.2"
+            ", highres,auto,1,bitdepth,10,vrr,1"
+        ];
+        bind = [
+            # Screenshot
+            ", Print, exec, grim -g \"$(${pkgs.slurp}/bin/slurp -d)\" - | ${pkgs.wl-clipboard}/bin/wl-copy -t image/png"
         ];
 # Environment variables
         env = [
