@@ -35,7 +35,6 @@ in
 	coreutils
 	dconf
 	dosfstools
-    discord
 	ffmpeg-full
 	fzf
 	gdb
@@ -84,17 +83,15 @@ in
 
 	# set session vars
 	home.sessionVariables = {
+        NIXPKGS_ALLOW_UNFREE = 1;
         EDITOR="nvim";
         XDG_SESSION_TYPE = "wayland";
-        NIXPKGS_ALLOW_UNFREE = 1;
         XDG_CURRENT_DESKTOP = "Hyprland";
         XDG_SESSION_DESKTOP = "Hyprland";
         GSK_RENDERER="ngl"; # HOTFIX
         WEBKIT_DISABLE_COMPOSITING_MODE=1; # HOTFIX
 	};
 
-    # systemd.user.sessionVariables = {
-    #     WEBKIT_DISABLE_COMPOSITING_MODE=1; # HOTFIX
-    #     GSK_RENDERER="ngl"; # HOTFIX
-    # };
+    systemd.user.sessionVariables = {
+    };
 }

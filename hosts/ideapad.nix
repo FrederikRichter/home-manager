@@ -22,6 +22,9 @@ wayland.windowManager.hyprland = {
             # ", highres,auto,1,bitdepth,10,vrr,1"
         ];
         # gesture = ["3, horizontal, workspace"];
+        env = [
+            "ELECTRON_OZONE_PLATFORM_HINT,auto"
+        ];
     };
 };
 
