@@ -7,7 +7,7 @@
       main = {
         shell = "zsh";
         # (Set the font with family and size, adjust if you want a different font)
-        # font = "monospace:size=14";
+        font = lib.mkForce "monospace:size=20";
         pad = "10x10";
       };
       bell = {
