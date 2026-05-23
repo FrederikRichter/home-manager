@@ -27,7 +27,10 @@ in
 
     programs.tofi = {
         enable = true;
-            settings.font-size = lib.mkForce "20";
+            settings = {
+                font-size = lib.mkForce "20";
+                corner-radius = "16";
+            };
         };
 
     xdg.portal = {
@@ -86,6 +89,14 @@ in
           layout = "dwindle";
           allow_tearing = true;
         };
+
+            layerrule = {
+                name      = "tofi-layerrule99";
+                match = { namespace = "launcher" ; };
+                blur = false;
+                ignore_alpha = 0.0;
+            };
+
 
         decoration = {
           rounding = 8;
