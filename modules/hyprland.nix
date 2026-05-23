@@ -14,6 +14,11 @@ in
 
   config = lib.mkIf config.hyprland.enable {
 
+    programs.tofi = {
+        enable = true;
+            settings.font-size = lib.mkForce "20";
+        };
+
     home.packages = with pkgs; [
       hyprsunset
     ];
@@ -126,8 +131,9 @@ in
 
           # Applications
           "$mod, e, exec, ${pkgs.xfce.thunar}/bin/thunar"
-          "$mod, o, exec, ${pkgs.wofi}/bin/wofi -S drun -i --allow-images --no-actions"
-          "$mod, n, exec, ${pkgs.wofi}/bin/wofi --dmenu --prompt='Enter nixpkg: ' | xargs -I {} ${terminal} --hold sh -c 'nix shell nixpkgs#{} --impure'"
+          # "$mod, o, exec, ${pkgs.wofi}/bin/wofi -S drun -i --allow-images --no-actions"
+          "$mod, o, exec, ${pkgs.tofi}/bin/tofi-drun"
+
 
           # System
           "$mod SHIFT, r, exec, hyprctl reload"
