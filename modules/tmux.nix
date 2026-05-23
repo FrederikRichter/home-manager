@@ -1,26 +1,14 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
-# example config
-  tmux-super-fingers = pkgs.tmuxPlugins.mkTmuxPlugin
-    {
-      pluginName = "tmux-super-fingers";
-      version = "unstable-2023-01-06";
-      src = pkgs.fetchFromGitHub {
-        owner = "artemave";
-        repo = "tmux_super_fingers";
-        rev = "2c12044984124e74e21a5a87d00f844083e4bdf7";
-        sha256 = "sha256-cPZCV8xk9QpU49/7H8iGhQYK6JwWjviL29eWabuqruc=";
-      };
-    };
 tmux-nvim = pkgs.tmuxPlugins.mkTmuxPlugin
 {
     pluginName = "tmux.nvim";
-    version = "unstable-2023-01-06";
+    version = "latest";
     src = pkgs.fetchFromGitHub {
         owner = "aserowy";
         repo = "tmux.nvim/";
-        rev = "57220071739c723c3a318e9d529d3e5045f503b8";
-        sha256 = "sha256-zpg7XJky7PRa5sC7sPRsU2ZOjj0wcepITLAelPjEkSI=";
+        rev = "32ceaf2793582955ef9576809730878c4d2d9426";
+        sha256 =  "sha256-dKarwc0NByKV8/rMHnHqwiRTgeiXAPGsviFBP+bOaXI=";
     };
 };
 in
@@ -33,11 +21,6 @@ in
     plugins = with pkgs;
     [
         tmux-nvim
-        tmuxPlugins.sensible
-        {
-            plugin = tmux-super-fingers;
-            extraConfig = "set -g @super-fingers-key f";
-        }
         tmuxPlugins.better-mouse-mode
     ];
         extraConfig = ''
@@ -46,7 +29,7 @@ in
             set -g prefix C-Space
             bind C-Space send-prefix
 
-            unbind-key %
+            unbind-key '%'
             unbind-key '"'
             bind-key - split-window -h
             bind-key = kill-pane

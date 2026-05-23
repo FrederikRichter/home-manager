@@ -13,15 +13,22 @@ in
   };
 
   config = lib.mkIf config.hyprland.enable {
+    # Gamma
+    services.hyprsunset = {
+        enable = true;
+        extraArgs = [
+                "--gamma_max" "140" 
+                "--gamma" "100"
+                "--identity"
+            ];
+        systemdTarget = "hyprland-session.target";
+    };
+
 
     programs.tofi = {
         enable = true;
             settings.font-size = lib.mkForce "20";
         };
-
-    home.packages = with pkgs; [
-      hyprsunset
-    ];
 
     xdg.portal = {
       enable = true;
@@ -39,7 +46,6 @@ in
 
       settings = {
         exec-once = [
-          "hyprsunset --identity --gamma 100"
           "noctalia-shell"
         ];
 
@@ -96,7 +102,7 @@ in
 
         bind = [
           # Terminal
-          "$mod, Return, exec, ${terminal} --hold sh -c '${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new'"
+          "$mod, Return, exec, ${terminal} -e ${pkgs.zsh}/bin/zsh -c '${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new'"
           "$mod SHIFT, Return, exec, ${terminal} --hold sh -c '${pkgs.tmux}/bin/tmux'"
 
           # Window management
@@ -132,7 +138,7 @@ in
           # Applications
           "$mod, e, exec, ${pkgs.xfce.thunar}/bin/thunar"
           # "$mod, o, exec, ${pkgs.wofi}/bin/wofi -S drun -i --allow-images --no-actions"
-          "$mod, o, exec, ${pkgs.tofi}/bin/tofi-drun"
+          "$mod, o, exec, ${pkgs.tofi}/bin/tofi-drun --drun-launch=true"
 
 
           # System
