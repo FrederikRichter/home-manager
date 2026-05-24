@@ -77,7 +77,6 @@ in
     tree
     vlc
     rquickshare
-    overskride
     qalculate-qt
 	];
 
