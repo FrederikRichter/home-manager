@@ -60,6 +60,9 @@ in
           no_update_news = true;
         };
 
+        cursor = {
+            no_hardware_cursors = true;
+        };
         misc = {
 
           focus_on_activate = true;
