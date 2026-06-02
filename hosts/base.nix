@@ -32,6 +32,7 @@ in
     android-tools
     ausweisapp
 	bash
+    blender
 	coreutils
 	dconf
 	dosfstools
@@ -40,6 +41,7 @@ in
 	gdb
     gtrash
 	grim
+    godot
 	htop
 	hugo
     keepassxc
