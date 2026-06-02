@@ -77,7 +77,7 @@ in
         input = {
           kb_variant = "altgr-intl";
 
-          follow_mouse = 0;
+          follow_mouse = 2;
 
           touchpad = {
             tap-to-click = 0;
