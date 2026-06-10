@@ -94,7 +94,7 @@ in
         };
 
             layerrule = {
-                name      = "tofi-layerrule99";
+                name  = "tofi-layerrule99";
                 match = { namespace = "launcher" ; };
                 blur = false;
                 ignore_alpha = 0.0;
