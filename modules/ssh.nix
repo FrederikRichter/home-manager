@@ -2,15 +2,8 @@
 {
     programs.ssh = {
         enable = true;
+        addKeysToAgent = "yes";
         matchBlocks = {
-            "github.com" = {
-                hostname = "github.com";
-                user = "git";
-                identityFile = "~/.ssh/id";
-                extraOptions = {
-                    identitiesOnly = "yes";
-                };
-            };
             "gitlab_ibr" = {
                 hostname = "gitlab.ibr.cs.tu-bs.de";
                 user = "git";
@@ -19,9 +12,11 @@
                     identitiesOnly = "yes";
                 };
             };
-
             "*" = {
-                addKeysToAgent = "yes";
+                identityFile = "~/.ssh/id";
+                extraOptions = {
+                    identitiesOnly = "yes";
+                };
                 forwardAgent = true;
             };
         };
