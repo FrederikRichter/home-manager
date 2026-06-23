@@ -4,11 +4,10 @@
         inputs.noctalia.homeModules.default
     ];
 
-    programs.noctalia-shell = {
+    programs.noctalia = {
         enable = true;
         settings = {
         dock.enabled = false;
-# configure noctalia here
             bar = {
                 density = "default";
                 position = "bottom";
@@ -63,20 +62,20 @@
                     ];
                 };
             };
-            location = {
-                weatherEnabled = true;
-                weatherShowEffects = false;
-                useFahrenheit = false;
-                use12hourFormat = false;
-                showWeekNumberInCalendar = false;
-                showCalendarEvents = false;
-                showCalendarWeather = false;
-                analogClockInCalendar = false;
-                firstDayOfWeek = 0;
-                hideWeatherTimezone = false;
-                hideWeatherCityName = false;
-                autoLocate = true;
-            };
+            # location = {
+            #     weatherEnabled = true;
+            #     weatherShowEffects = false;
+            #     useFahrenheit = false;
+            #     use12hourFormat = false;
+            #     showWeekNumberInCalendar = false;
+            #     showCalendarEvents = false;
+            #     showCalendarWeather = false;
+            #     analogClockInCalendar = false;
+            #     firstDayOfWeek = 0;
+            #     hideWeatherTimezone = false;
+            #     hideWeatherCityName = false;
+            #     autoLocate = true;
+            # };
         };
     };
 }

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 let
   left = "h";
@@ -8,6 +8,7 @@ let
   terminal = "${pkgs.foot}/bin/foot";
 in
 {
+
   options = {
     hyprland.enable = lib.mkEnableOption "Enable hyprland";
   };
@@ -25,13 +26,13 @@ in
     };
 
 
-    programs.tofi = {
-        enable = true;
-            settings = {
-                font-size = lib.mkForce "20";
-                corner-radius = "16";
-            };
-        };
+    # programs.tofi = {
+    #     enable = true;
+    #         settings = {
+    #             font-size = lib.mkForce "20";
+    #             corner-radius = "16";
+    #         };
+    #     };
 
     xdg.portal = {
       enable = true;
@@ -49,7 +50,7 @@ in
 
       settings = {
         exec-once = [
-          "noctalia-shell"
+          "noctalia"
         ];
 
         "$mod" = "SUPER";
@@ -152,7 +153,8 @@ in
           # Applications
           "$mod, e, exec, ${pkgs.xfce.thunar}/bin/thunar"
           # "$mod, o, exec, ${pkgs.wofi}/bin/wofi -S drun -i --allow-images --no-actions"
-          "$mod, o, exec, ${pkgs.tofi}/bin/tofi-drun --drun-launch=true"
+          # "$mod, o, exec, ${pkgs.tofi}/bin/tofi-drun --drun-launch=true"
+          "$mod, o, exec, noctalia msg panel-toggle launcher"
 
 
           # System

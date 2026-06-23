@@ -49,7 +49,6 @@ programs.mpv.config = {
 home.packages = with pkgs ;[
     r2modman
     qbittorrent
-    rustdesk
     xournalpp
 ];
 

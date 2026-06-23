@@ -6,16 +6,17 @@
         matchBlocks = {
             "gitlab_ibr" = {
                 hostname = "gitlab.ibr.cs.tu-bs.de";
+                port = 222;
                 user = "git";
                 identityFile = "~/.ssh/id_tu";
                 extraOptions = {
-                    identitiesOnly = "yes";
+                    IdentitiesOnly = "yes";
                 };
             };
             "*" = {
                 identityFile = "~/.ssh/id";
                 extraOptions = {
-                    identitiesOnly = "yes";
+                    IdentitiesOnly = "yes";
                 };
                 forwardAgent = true;
             };
