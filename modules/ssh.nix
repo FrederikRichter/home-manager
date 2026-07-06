@@ -12,6 +12,16 @@
                 extraOptions = {
                     IdentitiesOnly = "yes";
                 };
+                forwardAgent = true;
+            };
+            "gitlab_rz" = {
+                hostname = "git.rz.tu-bs.de";
+                user = "git";
+                identityFile = "~/.ssh/id_tu";
+                extraOptions = {
+                    IdentitiesOnly = "yes";
+                };
+                forwardAgent = true;
             };
             "*" = {
                 identityFile = "~/.ssh/id";
