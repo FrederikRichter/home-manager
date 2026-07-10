@@ -6,77 +6,77 @@
 
     programs.noctalia = {
         enable = true;
-        settings = {
-        dock.enabled = false;
-            bar = {
-                density = "default";
-                position = "bottom";
-                showCapsule = true;
-                widgets = {
-                    left = [
-                    {
-                        id = "ControlCenter";
-                        useDistroLogo = true;
-                    }
-                    {
-                        hideUnoccupied = true;
-                        id = "Workspace";
-                        labelMode = "index";
-                    }
-                    ];
-                    center = [
-                    {
-                        id = "MediaMini";
-                    }
-                    ];
-                    right = [
-                    {
-                        id = "SystemMonitor";
-                    }
-                    {
-                        id = "Volume";
-                    }
-                    {
-                        id = "Battery";
-                        batteryWarningThreshold = 20;
-                        batteryCriticalThreshold = 5; 
-                        displayMode = "graphic";
-                    }
-                    {
-                        formatHorizontal = "HH:mm";
-                        formatVertical = "HH mm";
-                        id = "Clock";
-                        useMonospacedFont = true;
-                        usePrimaryColor = true;
-                    }
-                    {
-                        id = "Network";
-                    }
-                    {
-                        id = "Bluetooth";
-                        displayMode = "alwaysShow";
-                    }
-                    {
-                        id = "Tray";
-                    }
-                    ];
-                };
-            };
-            # location = {
-            #     weatherEnabled = true;
-            #     weatherShowEffects = false;
-            #     useFahrenheit = false;
-            #     use12hourFormat = false;
-            #     showWeekNumberInCalendar = false;
-            #     showCalendarEvents = false;
-            #     showCalendarWeather = false;
-            #     analogClockInCalendar = false;
-            #     firstDayOfWeek = 0;
-            #     hideWeatherTimezone = false;
-            #     hideWeatherCityName = false;
-            #     autoLocate = true;
-            # };
-        };
+    #     settings = {
+    #     dock.enabled = false;
+    #         bar = {
+    #             density = "default";
+    #             position = "bottom";
+    #             showCapsule = true;
+    #             widgets = {
+    #                 left = [
+    #                 {
+    #                     id = "ControlCenter";
+    #                     useDistroLogo = true;
+    #                 }
+    #                 {
+    #                     hideUnoccupied = true;
+    #                     id = "Workspace";
+    #                     labelMode = "index";
+    #                 }
+    #                 ];
+    #                 center = [
+    #                 {
+    #                     id = "MediaMini";
+    #                 }
+    #                 ];
+    #                 right = [
+    #                 {
+    #                     id = "SystemMonitor";
+    #                 }
+    #                 {
+    #                     id = "Volume";
+    #                 }
+    #                 {
+    #                     id = "Battery";
+    #                     batteryWarningThreshold = 20;
+    #                     batteryCriticalThreshold = 5; 
+    #                     displayMode = "graphic";
+    #                 }
+    #                 {
+    #                     formatHorizontal = "HH:mm";
+    #                     formatVertical = "HH mm";
+    #                     id = "Clock";
+    #                     useMonospacedFont = true;
+    #                     usePrimaryColor = true;
+    #                 }
+    #                 {
+    #                     id = "Network";
+    #                 }
+    #                 {
+    #                     id = "Bluetooth";
+    #                     displayMode = "alwaysShow";
+    #                 }
+    #                 {
+    #                     id = "Tray";
+    #                 }
+    #                 ];
+    #             };
+    #         };
+    #         # location = {
+    #         #     weatherEnabled = true;
+    #         #     weatherShowEffects = false;
+    #         #     useFahrenheit = false;
+    #         #     use12hourFormat = false;
+    #         #     showWeekNumberInCalendar = false;
+    #         #     showCalendarEvents = false;
+    #         #     showCalendarWeather = false;
+    #         #     analogClockInCalendar = false;
+    #         #     firstDayOfWeek = 0;
+    #         #     hideWeatherTimezone = false;
+    #         #     hideWeatherCityName = false;
+    #         #     autoLocate = true;
+    #         # };
+    #     };
     };
 }
 
