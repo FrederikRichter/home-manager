@@ -57,6 +57,7 @@ in
 	ripgrep
 	signal-desktop
 	slurp
+    spotify
 	swayidle
 	telegram-desktop
 	transmission_4

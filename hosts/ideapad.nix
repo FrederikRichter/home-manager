@@ -27,7 +27,8 @@ wayland.windowManager.hyprland = {
         ];
         # gesture = ["3, horizontal, workspace"];
         env = [
-            "ELECTRON_OZONE_PLATFORM_HINT,auto"
+            "NIXOS_OZONE_WL,1"
+            "ELECTRON_OZONE_PLATFORM_HINT,wayland"
         ];
     };
 };
