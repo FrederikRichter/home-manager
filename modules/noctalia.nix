@@ -21,6 +21,7 @@
                     "control-center"
                 ];
                 margin_ends = 10;
+                margin_edge = 10;
                 position = "bottom";
                 scale = 1.1500000096857548;
             };
