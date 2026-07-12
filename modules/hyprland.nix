@@ -61,6 +61,11 @@ in
           no_update_news = true;
         };
 
+        xwayland = {
+            force_zero_scaling = true;
+            use_nearest_neighbor = true;
+        };
+
         cursor = {
             no_hardware_cursors = true;
         };
