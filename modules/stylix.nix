@@ -2,14 +2,14 @@
 {
     stylix = {
         enable = true;
-        image = ../wallpaper/mojave.jpg;
+        image = ../wallpaper/abstract.jpg;
         targets = {
             vesktop.enable = false;
             nixvim.enable = false;
             librewolf.profileNames = [ "default" ];
         };
         autoEnable = true;
-        base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-light-medium.yaml";
+        base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
         fonts = {
             monospace = {
                 package = pkgs.nerd-fonts.jetbrains-mono;

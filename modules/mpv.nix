@@ -6,6 +6,7 @@
     config = {
       save-position-on-quit = "yes";
       wayland-internal-vsync = "no";
+      ao="alsa";
     };
 
     profiles = {
