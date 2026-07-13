@@ -18,6 +18,7 @@
                     "network"
                     "bluetooth"
                     "date"
+                    "tray"
                     "control-center"
                 ];
                 margin_ends = 10;
@@ -100,6 +101,10 @@
                 sysmon = {
                     display = "text";
                     highlight_color = "primary";
+                };
+
+                tray = {
+                    drawer = true;
                 };
 
                 volume = {
