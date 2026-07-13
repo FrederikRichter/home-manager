@@ -19,7 +19,6 @@ wayland.windowManager.hyprland = {
         input.kb_layout = "us";
         monitor = [
             ", highres,auto,1,bitdepth,10,vrr,1,cm,hdr,sdrbrightness, 1.5, sdrsaturation, 1.2"
-            # ", highres,auto,1,bitdepth,10,vrr,1"
         ];
         bind = [
             # Screenshot
@@ -29,7 +28,6 @@ wayland.windowManager.hyprland = {
         env = [
             "LIBVA_DRIVER_NAME,nvidia"
             "__GLX_VENDOR_LIBRARY_NAME,nvidia"
-            "ELECTRON_OZONE_PLATFORM_HINT,wayland"
             "NVD_BACKEND,direct"
         ];
 

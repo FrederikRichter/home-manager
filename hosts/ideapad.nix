@@ -20,15 +20,8 @@ programs.waybar = {
 
 wayland.windowManager.hyprland = {
     settings = {
-        input.kb_layout = "us";
         monitor = [
             ", highres,auto,2,bitdepth,10,vrr,1,cm,hdr,sdrbrightness, 1.5, sdrsaturation, 1.2"
-            # ", highres,auto,1,bitdepth,10,vrr,1"
-        ];
-        # gesture = ["3, horizontal, workspace"];
-        env = [
-            "NIXOS_OZONE_WL,1"
-            "ELECTRON_OZONE_PLATFORM_HINT,wayland"
         ];
     };
 };

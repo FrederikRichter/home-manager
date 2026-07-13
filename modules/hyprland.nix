@@ -49,6 +49,14 @@ in
       systemd.variables = [ "--all" ];
 
       settings = {
+
+        input.kb_layout = "us";
+
+        env = [
+            "NIXOS_OZONE_WL,1"
+            "ELECTRON_OZONE_PLATFORM_HINT,wayland"
+        ];
+
         exec-once = [
           "noctalia"
         ];
