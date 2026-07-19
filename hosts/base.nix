@@ -1,23 +1,21 @@
-{config, pkgs, inputs, username, lib, ... }:
+{config, pkgs, inputs, lib, ... }:
 let	
 	# create nix file loader function
 	modulesDir = ../modules;
 	moduleFiles = builtins.filter
 	(f: builtins.match ".*\\.nix" f != null)
 	(builtins.attrNames (builtins.readDir modulesDir));
-    # nixvim = inputs.nixvim.packages.${pkgs.system}.default.extend config.stylix.targets.nixvim.exportedModule;
-    nixvim = inputs.nixvim.packages.${pkgs.system}.default;
+    nixvim = inputs.nixvim.packages.${pkgs.stdenv.hostPlatform.system}.default;
     
     
 
 	inherit pkgs;
 	inherit inputs;
-	inherit username;
 in
 {
 	# Setup home constants
-	home.username = "${username}";
-	home.homeDirectory = "/home/${username}";
+	home.username = "frederik";
+	home.homeDirectory = "/home/frederik";
 
 
 	# Let Home Manager install and manage itself.
