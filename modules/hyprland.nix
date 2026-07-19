@@ -14,6 +14,8 @@ in
   };
 
   config = lib.mkIf config.hyprland.enable {
+    wayland.windowManager.hyprland.configType = "hyprlang";
+
     # Gamma
     services.hyprsunset = {
         enable = true;
@@ -164,7 +166,7 @@ in
           "$mod, Tab, workspace, previous"
 
           # Applications
-          "$mod, e, exec, ${pkgs.xfce.thunar}/bin/thunar"
+          "$mod, e, exec, ${pkgs.nemo}/bin/nemo"
           # "$mod, o, exec, ${pkgs.wofi}/bin/wofi -S drun -i --allow-images --no-actions"
           # "$mod, o, exec, ${pkgs.tofi}/bin/tofi-drun --drun-launch=true"
           "$mod, o, exec, noctalia msg panel-toggle launcher"

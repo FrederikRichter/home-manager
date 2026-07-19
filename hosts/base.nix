@@ -78,6 +78,7 @@ in
     overskride
     fastfetch
     tree
+    nemo
     vlc
     rquickshare
     qalculate-qt

@@ -17,5 +17,5 @@
     };
     wayland.windowManager.hyprland.settings.input.kb_layout = "us";
 
-    stylix.image = ../wallpaper/akira.jpg;
+    stylix.image = ../assets/wallpaper/akira.jpg;
 }

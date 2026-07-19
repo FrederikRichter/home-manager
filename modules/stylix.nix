@@ -1,8 +1,10 @@
 {config, pkgs, lib,  ...}:
 {
+    home.pointerCursor.enable = true;
+
     stylix = {
         enable = true;
-        image = ../wallpaper/abstract.jpg;
+        image = ../assets/wallpaper/abstract.jpg;
         targets = {
             vesktop.enable = false;
             nixvim.enable = false;
