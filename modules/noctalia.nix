@@ -7,6 +7,8 @@
     programs.noctalia = {
         enable = true;
         settings = {
+            location.auto_locate = true;
+
             bar.widgets = {
                 concave_edge_corners = false;
                 end = [
