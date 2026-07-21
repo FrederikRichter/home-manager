@@ -6,14 +6,6 @@ targets.genericLinux.enable = lib.mkForce false;
 
 hyprland.enable = true;
 
-programs.waybar = {
-    systemd.targets = [ "hyprland-session.target" ];
-    settings.mainBar = {
-        modules-left = [ "hyprland/workspaces" "idle_inhibitor" ];
-        modules-right = ["pulseaudio" "network" "battery" "cpu" "memory" "disk" "clock" "bluetooth" "tray"];
-    };
-};
-
 wayland.windowManager.hyprland = {
     settings = {
         bind = [
