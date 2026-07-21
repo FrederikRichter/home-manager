@@ -10,7 +10,7 @@
 
         settings = {
             user = {
-                user = "Frederik Richter";
+                name = "Frederik Richter";
                 email = "frederik.richter@mailbox.org";
             };
             alias = {

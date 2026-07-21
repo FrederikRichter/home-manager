@@ -30,28 +30,18 @@
             config.allowUnfree = true;
         };
 
-        stylix = inputs.stylix.homeModules.stylix; 
+        stylixModule = inputs.stylix.homeModules.stylix;
+
+        mkHost = hostModule: inputs.home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [ ./hosts/base.nix hostModule stylixModule ];
+            extraSpecialArgs = {
+                inherit inputs;
+            };
+        };
     in {
-        homeConfigurations."thinkpad" = inputs.home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
-            modules = [ ./hosts/base.nix ./hosts/thinkpad.nix stylix ];
-            extraSpecialArgs = {
-                inherit inputs;
-            };
-        };
-        homeConfigurations."ideapad" = inputs.home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
-            modules = [ ./hosts/base.nix ./hosts/ideapad.nix stylix ];
-            extraSpecialArgs = {
-                inherit inputs;
-            };
-        };
-        homeConfigurations."battlestation" = inputs.home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
-            modules = [ ./hosts/base.nix ./hosts/battlestation.nix stylix ];
-            extraSpecialArgs = {
-                inherit inputs;
-            };
-        };
+        homeConfigurations."thinkpad"      = mkHost ./hosts/thinkpad.nix;
+        homeConfigurations."ideapad"       = mkHost ./hosts/ideapad.nix;
+        homeConfigurations."battlestation" = mkHost ./hosts/battlestation.nix;
     };
 }

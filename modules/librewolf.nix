@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }:
 {
-    home.file."/.librewolf/native-messaging-hosts/org.keepassxc.keepassxc_browser.json".text = ''
+    home.file.".librewolf/native-messaging-hosts/org.keepassxc.keepassxc_browser.json".text = ''
     {
         "allowed_extensions": [
             "keepassxc-browser@keepassxc.org"

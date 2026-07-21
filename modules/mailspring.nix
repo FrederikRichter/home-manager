@@ -53,8 +53,8 @@ in
             };
 
         gmail = {
-            address = "frederik.richter@tu-braunschweig.de";
-            maildir.path = "tubs";
+            address = "frederik.twix@gmail.com";
+            maildir.path = "gmail";
             realName = "Frederik Richter";
             userName = "frederik.twix@gmail.com";
             imap = {

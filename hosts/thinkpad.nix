@@ -14,7 +14,7 @@
 
     
     programs.waybar = {
-        systemd.target = "hyprland-session.target";
+        systemd.targets = [ "hyprland-session.target" ];
         settings.mainBar = {
             modules-left = [ "hyprland/workspaces" "idle_inhibitor" ];
             modules-right = ["pulseaudio" "network" "battery" "cpu" "temperature" "memory" "disk" "clock" "tray"];

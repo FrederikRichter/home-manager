@@ -1,10 +1,12 @@
-{config, pkgs, lib,  ...}:
+{config, pkgs, lib, ... }:
 {
-    home.pointerCursor.enable = true;
+    home.pointerCursor = {
+        enable = true;
+    };
 
     stylix = {
         enable = true;
-        image = ../assets/wallpaper/abstract.jpg;
+        image = lib.mkDefault ../assets/wallpaper/abstract.jpg;
         targets = {
             vesktop.enable = false;
             nixvim.enable = false;
