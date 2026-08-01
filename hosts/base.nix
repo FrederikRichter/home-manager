@@ -6,6 +6,7 @@ let
 	(f: builtins.match ".*\\.nix" f != null)
 	(builtins.attrNames (builtins.readDir modulesDir));
 	nixvim = inputs.nixvim.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    helium = inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
 	# Setup home constants
@@ -38,6 +39,7 @@ in
 	godot
 	htop
 	hugo
+    helium
 	keepassxc
 	loupe
 	libnotify
