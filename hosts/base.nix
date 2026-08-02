@@ -45,7 +45,6 @@ in
 	libnotify
 	libreoffice-qt6-fresh
 	libsecret
-	librewolf-bin
 	nixvim
 	ntfs3g
 	pavucontrol
