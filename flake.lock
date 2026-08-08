@@ -189,11 +189,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1785688605,
-        "narHash": "sha256-Pl58uqTclSkF4k+KO95tYLq4ljDAq7EjyrL/EGXddR0=",
+        "lastModified": 1785691151,
+        "narHash": "sha256-wkDMvYa50C50Ks6Y+t1OGAVYcSEvrr2DNzdUIUn3weI=",
         "owner": "FrederikRichter",
         "repo": "helium-browser-nix-flake",
-        "rev": "6bc6c67da96d2e5a9d6001cb146cf073b88a2a4d",
+        "rev": "2e1c0089f1d2d1fdb4814208a7b489d1c9569f01",
         "type": "github"
       },
       "original": {
