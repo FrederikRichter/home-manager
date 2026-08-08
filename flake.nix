@@ -16,10 +16,6 @@
             url = "github:danth/stylix";
             inputs.nixpkgs.follows = "nixpkgs";
         };
-        noctalia = {
-            url = "github:noctalia-dev/noctalia-shell";
-            inputs.nixpkgs.follows = "nixpkgs";
-        };
         helium = {
             url = "github:FrederikRichter/helium-browser-nix-flake";
             inputs.nixpkgs.follows = "nixpkgs";

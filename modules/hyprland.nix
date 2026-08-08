@@ -60,7 +60,7 @@ in
         ];
 
         exec-once = [
-          "noctalia"
+          "${pkgs.noctalia}/bin/noctalia"
         ];
 
         "$mod" = "SUPER";
