@@ -1,4 +1,4 @@
-{pkgs, lib, ...}:
+{pkgs, lib, inputs, ...}:
 {
 shikane.enable = true;
 
@@ -36,7 +36,7 @@ home.packages = with pkgs ;[
     r2modman
     qbittorrent
     xournalpp
-];
+] ++ [inputs.evolved.packages.${pkgs.stdenv.hostPlatform.system}.default];
 
 home.sessionVariables = {
 };

@@ -2,7 +2,6 @@
     description = "Home Manager configuration by FrederikRichter";
 
     inputs = {
-# Specify the source of Home Manager and Nixpkgs.
         nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
         home-manager = {
             url = "github:nix-community/home-manager";
@@ -18,6 +17,10 @@
         };
         helium = {
             url = "github:FrederikRichter/helium-browser-nix-flake";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };        
+        evolved = {
+            url = "path:./flakes/evolved/";
             inputs.nixpkgs.follows = "nixpkgs";
         };        
     };

@@ -89,4 +89,6 @@ in
 		GSK_RENDERER="ngl"; # HOTFIX
 		WEBKIT_DISABLE_COMPOSITING_MODE=1; # HOTFIX
 	};
+
+    nixpkgs.config.allowUnfree = true;
 }
