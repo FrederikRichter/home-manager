@@ -1,5 +1,5 @@
 {
-  description = "Evolve Client - community Evolve Stage 2 launcher, packaged for Nix (VIBE CODED)";
+  description = "Evolve Client - community Evolve Stage 2 launcher, packaged for Nix";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -82,6 +82,7 @@
             cp -r . "$out/opt/modded-evolve/"
 
             chmod +x "$out/opt/modded-evolve/ModdedEvolveLauncher" \
+                     # I think this is unnecessary, we never run SetupLinux.sh but it works this way
                      "$out/opt/modded-evolve/SetupLinux.sh" \
                      "$out/opt/modded-evolve/Compat/Linux/umu/umu-run" 2>/dev/null || true
             find "$out/opt/modded-evolve" -name '*.so' -exec chmod +x {} +
