@@ -1,4 +1,4 @@
-{config, pkgs, lib, ...}:
+{config, pkgs, lib, inputs, ...}:
 {
 shikane.enable = true;
 
@@ -24,11 +24,8 @@ programs.mpv.config = {
     profile="high-quality";
 };
 
-home.packages = with pkgs ;[
-    r2modman
-    qbittorrent
-    xournalpp
-];
+# home.packages = [inputs.evolved.packages.${pkgs.stdenv.hostPlatform.system}.default];
+
 
 home.stateVersion = "25.11";
 }
