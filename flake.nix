@@ -43,7 +43,6 @@
             };
         };
     in {
-        homeConfigurations."thinkpad"      = mkHost ./hosts/thinkpad.nix;
         homeConfigurations."ideapad"       = mkHost ./hosts/ideapad.nix;
         homeConfigurations."battlestation" = mkHost ./hosts/battlestation.nix;
     };
