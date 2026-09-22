@@ -1,7 +1,5 @@
 {pkgs, lib, inputs, ...}:
 {
-shikane.enable = true;
-
 targets.genericLinux.enable = lib.mkForce false;
 
 hyprland.enable = true;
