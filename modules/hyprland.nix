@@ -16,26 +16,6 @@ in
   config = lib.mkIf config.hyprland.enable {
     wayland.windowManager.hyprland.configType = "hyprlang";
 
-    # Gamma
-    services.hyprsunset = {
-        enable = true;
-        extraArgs = [
-                "--gamma_max" "140" 
-                "--gamma" "100"
-                "--identity"
-            ];
-        systemdTarget = "hyprland-session.target";
-    };
-
-
-    # programs.tofi = {
-    #     enable = true;
-    #         settings = {
-    #             font-size = lib.mkForce "20";
-    #             corner-radius = "16";
-    #         };
-    #     };
-
     xdg.portal = {
       enable = true;
       extraPortals = [
@@ -179,8 +159,6 @@ in
           "$mod SHIFT, r, exec, hyprctl reload"
 
           # Media keys
-          ", XF86MonBrightnessDown, exec, hyprctl hyprsunset gamma -5"
-          ", XF86MonBrightnessUp, exec, hyprctl hyprsunset gamma +5"
           ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%+"
           ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%-"
           ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_SINK@ toggle"
