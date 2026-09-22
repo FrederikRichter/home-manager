@@ -11,7 +11,7 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        version = "0.1.64";
+        version = "0.1.66";
 
         # Self-extracting installer: a shell header, a "__PAYLOAD__" marker line,
         # then a gzip'd tar archive appended after it.
@@ -24,7 +24,7 @@
         # (or: nix-prefetch-url <url>)
         src = pkgs.fetchurl {
           url = "https://assets.modded-evolve.com/client/linux/ModdedEvolveClient-Setup.run";
-          sha256 = "sha256-ZzdHB+uVrnDthiR8GzPN1ywQQ1MRCg2nvTIA0hAQVkw=";
+          sha256 = "sha256-vlXACBxMZ06ko68XYmFQ02YLpT9GA5u9tGTWJc9d2YA=";
         };
 
         # Shared between buildInputs (so autoPatchelf can fix up real ELF NEEDED
