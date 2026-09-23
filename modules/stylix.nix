@@ -10,6 +10,7 @@
         targets = {
             vesktop.enable = false;
             nixvim.enable = false;
+            rofi.enable = false;
             librewolf.profileNames = [ "default" ];
         };
         autoEnable = true;
