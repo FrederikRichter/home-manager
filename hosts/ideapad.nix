@@ -5,8 +5,6 @@ targets.genericLinux.enable = lib.mkForce false;
 hyprland.enable = true;
 
 wayland.windowManager.hyprland = {
-    # SDR -> HDR mapping for the internal 1000-nit panel. Same as battlestation
-    # except the output (internal eDP-1 instead of the fallback) and the scale.
     extraConfig = ''
         monitorv2 {
             output = eDP-1
@@ -33,9 +31,6 @@ programs.mpv.config = {
     gpu-context="waylandvk";
     profile="high-quality";
 };
-
-# home.packages = [inputs.evolved.packages.${pkgs.stdenv.hostPlatform.system}.default];
-
 
 home.stateVersion = "25.11";
 }
