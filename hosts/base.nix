@@ -43,7 +43,7 @@ in
 	keepassxc
 	loupe
 	libnotify
-	libreoffice-qt6-fresh
+	libreoffice-qt
 	libsecret
     localsend
 	nixvim
@@ -82,7 +82,6 @@ in
 
 	# set session vars
 	home.sessionVariables = {
-		NIXPKGS_ALLOW_UNFREE = 1;
 		EDITOR="nvim";
 		XDG_SESSION_TYPE = "wayland";
 		XDG_CURRENT_DESKTOP = "Hyprland";
@@ -91,5 +90,11 @@ in
 		WEBKIT_DISABLE_COMPOSITING_MODE=1; # HOTFIX
 	};
 
-    nixpkgs.config.allowUnfree = true;
+	# Allow unfree packages both inside Home Manager and for user-level nix
+	# commands (e.g. `nix-shell -p`, `nix build`, `nix-env`). See
+	# https://nixos.org/manual/nixpkgs/stable/#sec-allow-unfree
+	nixpkgs.config.allowUnfree = true;
+	xdg.configFile."nixpkgs/config.nix".text = ''
+		{ allowUnfree = true; }
+	'';
 }

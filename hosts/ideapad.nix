@@ -5,22 +5,20 @@ targets.genericLinux.enable = lib.mkForce false;
 hyprland.enable = true;
 
 wayland.windowManager.hyprland = {
-    extraConfig = ''
-        monitorv2 {
-            output = eDP-1
-            mode = highres
-            position = auto
-            scale = 2
-            bitdepth = 10
-            cm = hdr
-            vrr = 1
-            sdrbrightness = 1.0
-            sdrsaturation = 1.0
-            sdr_min_luminance = 0.2
-            sdr_max_luminance = 400
-            max_luminance = 1000
-        }
-    '';
+    settings.monitor = {
+        output = "eDP-1";
+        mode = "highres";
+        position = "auto";
+        scale = 2;
+        bitdepth = 10;
+        cm = "hdr";
+        vrr = 1;
+        sdrbrightness = 1.0;
+        sdrsaturation = 1.0;
+        sdr_min_luminance = 0.2;
+        sdr_max_luminance = 400;
+        max_luminance = 1000;
+    };
 };
 
 

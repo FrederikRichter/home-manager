@@ -6,31 +6,30 @@ hyprland.enable = true;
 
 wayland.windowManager.hyprland = {
     settings = {
-        input.kb_layout = "us";
+        config.input.kb_layout = "us";
+
 # Environment variables
         env = [
-            "LIBVA_DRIVER_NAME,nvidia"
-            "__GLX_VENDOR_LIBRARY_NAME,nvidia"
-            "NVD_BACKEND,direct"
+            { _args = [ "LIBVA_DRIVER_NAME" "nvidia" ]; }
+            { _args = [ "__GLX_VENDOR_LIBRARY_NAME" "nvidia" ]; }
+            { _args = [ "NVD_BACKEND" "direct" ]; }
         ];
 
+        monitor = {
+            output = "";
+            mode = "highres";
+            position = "auto";
+            scale = 1;
+            bitdepth = 10;
+            cm = "hdr";
+            vrr = 1;
+            sdrbrightness = 1.0;
+            sdrsaturation = 1.0;
+            sdr_min_luminance = 0.2;
+            sdr_max_luminance = 400;
+            max_luminance = 1000;
+        };
     };
-    extraConfig = ''
-        monitorv2 {
-            output =
-            mode = highres
-            position = auto
-            scale = 1
-            bitdepth = 10
-            cm = hdr
-            vrr = 1
-            sdrbrightness = 1.0
-            sdrsaturation = 1.0
-            sdr_min_luminance = 0.2
-            sdr_max_luminance = 400
-            max_luminance = 1000
-        }
-    '';
 };
 
 # MPV
@@ -45,7 +44,7 @@ programs.mpv.config = {
 home.packages = with pkgs ;[
     r2modman
     xournalpp
-] ++ [inputs.evolved.packages.${pkgs.stdenv.hostPlatform.system}.default];
+] ++ [ (inputs.evolved.lib.mkModdedEvolve pkgs) ];
 
 home.sessionVariables = {
 };

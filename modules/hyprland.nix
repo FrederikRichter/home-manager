@@ -6,6 +6,18 @@ let
   up = "k";
   right = "l";
   terminal = "${pkgs.foot}/bin/foot";
+
+  lua = lib.generators.mkLuaInline;
+
+  bind = keys: dispatcher: {
+    _args = [ keys dispatcher ];
+  };
+
+  bindWith = keys: dispatcher: opts: {
+    _args = [ keys dispatcher opts ];
+  };
+
+  modKey = key: lua ''mod .. " + ${key}"'';
 in
 {
 
@@ -14,8 +26,6 @@ in
   };
 
   config = lib.mkIf config.hyprland.enable {
-    wayland.windowManager.hyprland.configType = "hyprlang";
-
     xdg.portal = {
       enable = true;
       extraPortals = [
@@ -26,146 +36,154 @@ in
 
     wayland.windowManager.hyprland = {
       enable = true;
+      configType = "lua";
 
       systemd.enable = true;
       systemd.variables = [ "--all" ];
 
       settings = {
-
-        input.kb_layout = "us";
-
-        env = [
-            "NIXOS_OZONE_WL,1"
-            "ELECTRON_OZONE_PLATFORM_HINT,wayland"
-        ];
-
-        exec-once = [
-          "${pkgs.noctalia}/bin/noctalia"
-        ];
-
-        "$mod" = "SUPER";
-
-        debug.disable_logs = false;
-
-        ecosystem = {
-          no_update_news = true;
+        mod = {
+          _var = "SUPER";
         };
 
-        xwayland = {
-            force_zero_scaling = true;
-            use_nearest_neighbor = true;
-        };
+        config = {
+          input = {
+            kb_layout = "us";
+            kb_variant = "altgr-intl";
 
-        cursor = {
-            no_hardware_cursors = true;
-        };
+            follow_mouse = 2;
 
-        misc = {
-          focus_on_activate = true;
-          disable_hyprland_logo = true;
-          disable_splash_rendering = true;
-        };
-
-        animations = {
-          enabled = false;
-        };
-
-        render = {
-            direct_scanout = 1;
-        };
-
-        input = {
-          kb_variant = "altgr-intl";
-
-          follow_mouse = 2;
-
-          touchpad = {
-            tap-to-click = 0;
-            natural_scroll = true;
+            touchpad = {
+              tap_to_click = 0;
+              natural_scroll = true;
+            };
           };
-        };
 
-        general = {
-          gaps_in = 10;
-          gaps_out = 10;
-          border_size = 0;
-          layout = "dwindle";
-          allow_tearing = true;
-        };
+          general = {
+            gaps_in = 10;
+            gaps_out = 10;
+            border_size = 0;
+            layout = "dwindle";
+            allow_tearing = true;
+          };
 
-            layerrule = {
-                name  = "tofi-layerrule99";
-                match = { namespace = "launcher" ; };
-                blur = false;
-                ignore_alpha = 0.0;
+          decoration = {
+            rounding = 8;
+            rounding_power = 3.0;
+
+            blur = {
+              enabled = false;
             };
 
+            shadow = {
+              enabled = false;
+            };
+          };
 
-        decoration = {
-          rounding = 8;
-          rounding_power = 3.0;
-
-          blur = {
+          animations = {
             enabled = false;
           };
 
-          shadow = {
-            enabled = false;
+          render = {
+            direct_scanout = 1;
           };
+
+          xwayland = {
+            force_zero_scaling = true;
+            use_nearest_neighbor = true;
+          };
+
+          cursor = {
+            no_hardware_cursors = true;
+          };
+
+          misc = {
+            focus_on_activate = true;
+            disable_hyprland_logo = true;
+            disable_splash_rendering = true;
+          };
+
+          ecosystem = {
+            no_update_news = true;
+          };
+
+          debug = {
+            disable_logs = false;
+          };
+        };
+
+        env = [
+          { _args = [ "NIXOS_OZONE_WL" "1" ]; }
+          { _args = [ "ELECTRON_OZONE_PLATFORM_HINT" "wayland" ]; }
+        ];
+
+        layer_rule = {
+          name = "tofi-layerrule99";
+          match = { namespace = "launcher"; };
+          blur = false;
+          ignore_alpha = 0.0;
+        };
+
+        on = {
+          _args = [
+            "hyprland.start"
+            (lua ''
+              function()
+                hl.exec_cmd("${pkgs.noctalia}/bin/noctalia")
+              end
+            '')
+          ];
         };
 
         bind = [
           # Screenshot
-          ", Print, exec, grim -g \"$(${pkgs.slurp}/bin/slurp -d)\" - | ${pkgs.wl-clipboard}/bin/wl-copy -t image/png"
+          (bind "Print" (lua ''hl.dsp.exec_cmd("grim -g \"$(${pkgs.slurp}/bin/slurp -d)\" - | ${pkgs.wl-clipboard}/bin/wl-copy -t image/png")''))
 
           # Terminal
-          "$mod, Return, exec, ${terminal} -e ${pkgs.zsh}/bin/zsh -c '${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new'"
-          "$mod SHIFT, Return, exec, ${terminal} --hold sh -c '${pkgs.tmux}/bin/tmux'"
+          (bind (modKey "Return") (lua ''hl.dsp.exec_cmd("${terminal} -e ${pkgs.zsh}/bin/zsh -c '${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new'")''))
+          (bind (modKey "SHIFT + Return") (lua ''hl.dsp.exec_cmd("${terminal} --hold sh -c '${pkgs.tmux}/bin/tmux'")''))
 
           # Window management
-          "$mod, q, killactive"
+          (bind (modKey "q") (lua "hl.dsp.window.kill()"))
 
           # Focus movement
-          "$mod, ${left}, movefocus, l"
-          "$mod, ${down}, movefocus, d"
-          "$mod, ${up}, movefocus, u"
-          "$mod, ${right}, movefocus, r"
+          (bind (modKey left) (lua ''hl.dsp.focus({ direction = "left" })''))
+          (bind (modKey down) (lua ''hl.dsp.focus({ direction = "down" })''))
+          (bind (modKey up) (lua ''hl.dsp.focus({ direction = "up" })''))
+          (bind (modKey right) (lua ''hl.dsp.focus({ direction = "right" })''))
 
           # Window movement
-          "$mod SHIFT, ${left}, movewindow, l"
-          "$mod SHIFT, ${down}, movewindow, d"
-          "$mod SHIFT, ${up}, movewindow, u"
-          "$mod SHIFT, ${right}, movewindow, r"
+          (bind (modKey "SHIFT + ${left}") (lua ''hl.dsp.window.move({ direction = "left" })''))
+          (bind (modKey "SHIFT + ${down}") (lua ''hl.dsp.window.move({ direction = "down" })''))
+          (bind (modKey "SHIFT + ${up}") (lua ''hl.dsp.window.move({ direction = "up" })''))
+          (bind (modKey "SHIFT + ${right}") (lua ''hl.dsp.window.move({ direction = "right" })''))
 
           # Workspace switching
-          "$mod, a, workspace, 1"
-          "$mod, s, workspace, 2"
-          "$mod, d, workspace, 3"
-          "$mod, f, workspace, 4"
+          (bind (modKey "a") (lua "hl.dsp.focus({ workspace = 1 })"))
+          (bind (modKey "s") (lua "hl.dsp.focus({ workspace = 2 })"))
+          (bind (modKey "d") (lua "hl.dsp.focus({ workspace = 3 })"))
+          (bind (modKey "f") (lua "hl.dsp.focus({ workspace = 4 })"))
 
           # Move to workspace
-          "$mod SHIFT, a, movetoworkspace, 1"
-          "$mod SHIFT, s, movetoworkspace, 2"
-          "$mod SHIFT, d, movetoworkspace, 3"
-          "$mod SHIFT, f, movetoworkspace, 4"
+          (bind (modKey "SHIFT + a") (lua "hl.dsp.window.move({ workspace = 1 })"))
+          (bind (modKey "SHIFT + s") (lua "hl.dsp.window.move({ workspace = 2 })"))
+          (bind (modKey "SHIFT + d") (lua "hl.dsp.window.move({ workspace = 3 })"))
+          (bind (modKey "SHIFT + f") (lua "hl.dsp.window.move({ workspace = 4 })"))
 
           # Workspace back and forth
-          "$mod, Tab, workspace, previous"
+          (bind (modKey "Tab") (lua ''hl.dsp.focus({ workspace = "previous" })''))
 
           # Applications
-          "$mod, e, exec, ${pkgs.nemo}/bin/nemo"
-          # "$mod, o, exec, ${pkgs.wofi}/bin/wofi -S drun -i --allow-images --no-actions"
-          # "$mod, o, exec, ${pkgs.tofi}/bin/tofi-drun --drun-launch=true"
-          "$mod, o, exec, noctalia msg panel-toggle launcher"
-
+          (bind (modKey "e") (lua ''hl.dsp.exec_cmd("${pkgs.nemo}/bin/nemo")''))
+          (bind (modKey "o") (lua ''hl.dsp.exec_cmd("noctalia msg panel-toggle launcher")''))
 
           # System
-          "$mod SHIFT, r, exec, hyprctl reload"
+          (bind (modKey "SHIFT + r") (lua ''hl.dsp.exec_cmd("hyprctl reload")''))
 
           # Media keys
-          ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%+"
-          ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_SINK@ 5%-"
-          ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_SINK@ toggle"
+          (bindWith "XF86AudioRaiseVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%+")'') { locked = true; repeating = true; })
+          (bindWith "XF86AudioLowerVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%-")'') { locked = true; repeating = true; })
+          (bindWith "XF86AudioMute" (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SINK@ toggle")'') { locked = true; repeating = true; })
         ];
       };
     };
