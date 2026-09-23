@@ -70,6 +70,10 @@ in
           enabled = false;
         };
 
+        render = {
+            direct_scanout = 1;
+        };
+
         input = {
           kb_variant = "altgr-intl";
 
