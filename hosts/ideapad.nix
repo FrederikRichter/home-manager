@@ -15,7 +15,7 @@ wayland.windowManager.hyprland = {
         vrr = 1;
         sdrbrightness = 1.0;
         sdrsaturation = 1.0;
-        sdr_min_luminance = 0.2;
+        sdr_min_luminance = 0.02;
         sdr_max_luminance = 400;
         max_luminance = 1000;
     };

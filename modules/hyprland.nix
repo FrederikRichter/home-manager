@@ -23,15 +23,15 @@ let
   # that only sdrbrightness changes when adjusting it at runtime.
   monitorSettings = config.wayland.windowManager.hyprland.settings.monitor or { };
   baseMonitor = lib.generators.toLua { } (
-    builtins.removeAttrs (if lib.isAttrs monitorSettings then monitorSettings else { }) [ "output" ]
+    removeAttrs (if lib.isAttrs monitorSettings then monitorSettings else { }) [ "output" ]
   );
 
   sdrBrightnessAdjust = lua ''
     (function()
       local base = ${baseMonitor}
       local levels = {}
-      local min_level = 0.1
-      local max_level = 2.0
+      local min_level = 0.02
+      local max_level = 3.0
       return function(delta)
         local monitor = hl.get_active_monitor()
         if monitor == nil then
@@ -227,8 +227,8 @@ in
           (bindWith "XF86AudioMute" (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SINK@ toggle")'') { locked = true; repeating = true; })
 
           # SDR brightness (HDR mode)
-          (bindWith "XF86MonBrightnessDown" (lua "function() sdr_brightness_adjust(-0.05) end") { locked = true; repeating = true; })
-          (bindWith "XF86MonBrightnessUp" (lua "function() sdr_brightness_adjust(0.05) end") { locked = true; repeating = true; })
+          (bindWith "XF86MonBrightnessDown" (lua "function() sdr_brightness_adjust(-0.2) end") { locked = true; repeating = true; })
+          (bindWith "XF86MonBrightnessUp" (lua "function() sdr_brightness_adjust(0.2) end") { locked = true; repeating = true; })
         ];
       };
     };
