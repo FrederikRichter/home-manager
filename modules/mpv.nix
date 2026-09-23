@@ -11,13 +11,14 @@
 
     profiles = {
       hdr = {
-        profile-cond = "p[\"video-params/primaries\"] == \"bt.2020\" or p[\"video-params/gamma\"] == \"pq\"";
-
+        profile-cond = "p[\"video-params/gamma\"] == \"pq\" or p[\"video-params/gamma\"] == \"hlg\"";
         target-peak = "1000";
-        target-colorspace-hint = "yes";
+        target-colorspace-hint = "no";
         target-prim = "display-p3";
         target-trc = "pq";
         hdr-compute-peak = "yes";
+        profile-restore = "copy-equal";
+        vo="gpu-next";
       };
     };
   };

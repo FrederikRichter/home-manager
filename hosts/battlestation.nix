@@ -42,7 +42,6 @@ wayland.windowManager.hyprland = {
 # MPV
 programs.mpv.config = {
     profile = "high-quality";
-    vo="gpu-next";
     hwdec="nvdec";
     gpu-api="vulkan";
     gpu-context="waylandvk";
