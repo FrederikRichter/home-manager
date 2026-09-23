@@ -18,6 +18,49 @@ let
   };
 
   modKey = key: lua ''mod .. " + ${key}"'';
+
+  # Monitor properties are defined per-host; reuse them as the base spec so
+  # that only sdrbrightness changes when adjusting it at runtime.
+  monitorSettings = config.wayland.windowManager.hyprland.settings.monitor or { };
+  baseMonitor = lib.generators.toLua { } (
+    builtins.removeAttrs (if lib.isAttrs monitorSettings then monitorSettings else { }) [ "output" ]
+  );
+
+  sdrBrightnessAdjust = lua ''
+    (function()
+      local base = ${baseMonitor}
+      local levels = {}
+      local min_level = 0.1
+      local max_level = 2.0
+      return function(delta)
+        local monitor = hl.get_active_monitor()
+        if monitor == nil then
+          return
+        end
+        local name = monitor.name
+        if levels[name] == nil then
+          levels[name] = base.sdrbrightness or 1.0
+        end
+        local level = levels[name] + delta
+        if level < min_level then level = min_level end
+        if level > max_level then level = max_level end
+        levels[name] = level
+        local spec = {}
+        for key, value in pairs(base) do
+          spec[key] = value
+        end
+        spec.output = name
+        spec.sdrbrightness = level
+        hl.monitor(spec)
+        pcall(function()
+          hl.notification.create({
+            text = string.format("SDR brightness: %.2f", level),
+            timeout = 1000,
+          })
+        end)
+      end
+    end)()
+  '';
 in
 {
 
@@ -44,6 +87,10 @@ in
       settings = {
         mod = {
           _var = "SUPER";
+        };
+
+        sdr_brightness_adjust = {
+          _var = sdrBrightnessAdjust;
         };
 
         config = {
@@ -184,6 +231,10 @@ in
           (bindWith "XF86AudioRaiseVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%+")'') { locked = true; repeating = true; })
           (bindWith "XF86AudioLowerVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%-")'') { locked = true; repeating = true; })
           (bindWith "XF86AudioMute" (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SINK@ toggle")'') { locked = true; repeating = true; })
+
+          # SDR brightness (HDR mode)
+          (bindWith "XF86MonBrightnessDown" (lua "function() sdr_brightness_adjust(-0.05) end") { locked = true; repeating = true; })
+          (bindWith "XF86MonBrightnessUp" (lua "function() sdr_brightness_adjust(0.05) end") { locked = true; repeating = true; })
         ];
       };
     };
