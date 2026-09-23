@@ -52,12 +52,6 @@ let
         spec.output = name
         spec.sdrbrightness = level
         hl.monitor(spec)
-        pcall(function()
-          hl.notification.create({
-            text = string.format("SDR brightness: %.2f", level),
-            timeout = 1000,
-          })
-        end)
       end
     end)()
   '';
