@@ -29,10 +29,10 @@ outputs = { nixpkgs, ... }@inputs:
 let
     system = "x86_64-linux";
 
-    overlays = [
-        inputs.helium.overlays.default
-        inputs.evolved.overlays.default
-        inputs.nixvim.overlays.default
+    overlays = with inputs; [
+        helium.overlays.default
+        evolved.overlays.default
+        nixvim.overlays.default
     ];
 
     pkgs = import nixpkgs {

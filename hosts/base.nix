@@ -18,6 +18,7 @@
 
 	# define home packages
 	home.packages = with pkgs; [
+    antigravity-cli
 	android-tools
 	ausweisapp
 	bash
