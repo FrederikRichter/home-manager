@@ -25,11 +25,22 @@
         };        
     };
 
-    outputs = {nixpkgs, ... }@inputs:
+    outputs = { nixpkgs, ... }@inputs:
         let
         system = "x86_64-linux";
+
+        overlays = [
+            inputs.helium.overlays.default
+            inputs.evolved.overlays.default
+            (final: prev: {
+                nixvim = inputs.nixvim.packages.${prev.stdenv.hostPlatform.system}.default;
+                nvim = inputs.nixvim.packages.${prev.stdenv.hostPlatform.system}.default;
+                evolved = final.modded-evolve;
+            })
+        ];
+
         pkgs = import nixpkgs {
-            inherit system;
+            inherit system overlays;
             config.allowUnfree = true;
         };
 
@@ -37,12 +48,20 @@
 
         mkHost = hostModule: inputs.home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
-            modules = [ ./hosts/base.nix hostModule stylixModule ];
+            modules = [
+                {
+                    nixpkgs.overlays = overlays;
+                }
+                ./hosts/base.nix
+                hostModule
+                stylixModule
+            ];
             extraSpecialArgs = {
                 inherit inputs;
             };
         };
     in {
+        overlays.default = nixpkgs.lib.composeManyExtensions overlays;
         homeConfigurations."ideapad"       = mkHost ./hosts/ideapad.nix;
         homeConfigurations."battlestation" = mkHost ./hosts/battlestation.nix;
     };

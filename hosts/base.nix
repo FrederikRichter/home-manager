@@ -1,13 +1,5 @@
-{config, pkgs, inputs, lib, ... }:
-let
-	# create nix file loader function
-	modulesDir = ../modules;
-	moduleFiles = builtins.filter
-	(f: builtins.match ".*\\.nix" f != null)
-	(builtins.attrNames (builtins.readDir modulesDir));
-	nixvim = inputs.nixvim.packages.${pkgs.stdenv.hostPlatform.system}.default;
-    helium = inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.default;
-in
+{ config, pkgs, lib, ... }:
+
 {
 	# Setup home constants
 	home.username = "frederik";
@@ -20,7 +12,9 @@ in
 	home.stateVersion = lib.mkDefault "25.11";
 
 	# load all nix files from ./modules
-	imports = map (f: modulesDir + "/${f}") moduleFiles;
+	imports = [
+		../modules
+	];
 
 	# define home packages
 	home.packages = with pkgs; [

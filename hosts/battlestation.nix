@@ -1,4 +1,4 @@
-{pkgs, lib, inputs, ...}:
+{ pkgs, lib, ... }:
 {
 targets.genericLinux.enable = lib.mkForce false;
 
@@ -41,10 +41,11 @@ programs.mpv.config = {
 };
 
 
-home.packages = with pkgs ;[
+home.packages = with pkgs; [
     r2modman
     xournalpp
-] ++ [ (inputs.evolved.lib.mkModdedEvolve pkgs) ];
+    modded-evolve
+];
 
 home.sessionVariables = {
 };
