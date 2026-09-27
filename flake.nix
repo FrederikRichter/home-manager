@@ -20,7 +20,7 @@
             inputs.nixpkgs.follows = "nixpkgs";
         };        
         evolved = {
-            url = "path:./flakes/evolved/";
+            url = "github:FrederikRichter/evolve-stage2-nix";
             inputs.nixpkgs.follows = "nixpkgs";
         };        
     };
