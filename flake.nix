@@ -25,44 +25,51 @@
         };        
     };
 
-    outputs = { nixpkgs, ... }@inputs:
-        let
-        system = "x86_64-linux";
+outputs = { nixpkgs, ... }@inputs:
+let
+    system = "x86_64-linux";
 
-        overlays = [
-            inputs.helium.overlays.default
-            inputs.evolved.overlays.default
-            (final: prev: {
-                nixvim = inputs.nixvim.packages.${prev.stdenv.hostPlatform.system}.default;
-                nvim = inputs.nixvim.packages.${prev.stdenv.hostPlatform.system}.default;
-                evolved = final.modded-evolve;
-            })
-        ];
+    overlays = [
+        inputs.helium.overlays.default
+        inputs.evolved.overlays.default
+        inputs.nixvim.overlays.default
+    ];
 
-        pkgs = import nixpkgs {
-            inherit system overlays;
-            config.allowUnfree = true;
-        };
+    pkgs = import nixpkgs {
+        inherit system;
+    };
 
-        stylixModule = inputs.stylix.homeModules.stylix;
+    stylixModule = inputs.stylix.homeModules.stylix;
 
-        mkHost = hostModule: inputs.home-manager.lib.homeManagerConfiguration {
+    mkHost = hostModule:
+        inputs.home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
+
             modules = [
                 {
-                    nixpkgs.overlays = overlays;
+                    nixpkgs = {
+                        inherit overlays;
+                        config.allowUnfree = true;
+                    };
                 }
+
                 ./hosts/base.nix
                 hostModule
                 stylixModule
             ];
+
             extraSpecialArgs = {
                 inherit inputs;
             };
         };
-    in {
-        overlays.default = nixpkgs.lib.composeManyExtensions overlays;
-        homeConfigurations."ideapad"       = mkHost ./hosts/ideapad.nix;
-        homeConfigurations."battlestation" = mkHost ./hosts/battlestation.nix;
-    };
+in {
+    overlays.default = nixpkgs.lib.composeManyExtensions overlays;
+
+    homeConfigurations.ideapad =
+        mkHost ./hosts/ideapad.nix;
+
+    homeConfigurations.battlestation =
+        mkHost ./hosts/battlestation.nix;
+};
 }
+
