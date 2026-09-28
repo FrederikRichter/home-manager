@@ -20,13 +20,13 @@ let
   modKey = key: lua ''mod .. " + ${key}"'';
 
   # Monitor properties are defined per-host; reuse them as the base spec so
-  # that only sdrbrightness changes when adjusting it at runtime.
+  # that only brightness changes when adjusting it at runtime.
   monitorSettings = config.wayland.windowManager.hyprland.settings.monitor or { };
   baseMonitor = lib.generators.toLua { } (
     removeAttrs (if lib.isAttrs monitorSettings then monitorSettings else { }) [ "output" ]
   );
 
-  sdrBrightnessAdjust = lua ''
+  brightnessAdjust = lua ''
     (function()
       local base = ${baseMonitor}
       local levels = {}
@@ -39,7 +39,7 @@ let
         end
         local name = monitor.name
         if levels[name] == nil then
-          levels[name] = base.sdrbrightness or 1.0
+          levels[name] = base.brightness or base.sdrbrightness or 1.0
         end
         local level = levels[name] + delta
         if level < min_level then level = min_level end
@@ -50,7 +50,7 @@ let
           spec[key] = value
         end
         spec.output = name
-        spec.sdrbrightness = level
+        spec.brightness = level
         hl.monitor(spec)
       end
     end)()
@@ -71,6 +71,18 @@ in
       ];
     };
 
+    programs.zsh.loginExtra = ''
+      if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
+        exec ${config.wayland.windowManager.hyprland.package}/bin/start-hyprland
+      fi
+    '';
+
+    programs.bash.profileExtra = ''
+      if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
+        exec ${config.wayland.windowManager.hyprland.package}/bin/start-hyprland
+      fi
+    '';
+
     wayland.windowManager.hyprland = {
       enable = true;
       configType = "lua";
@@ -83,8 +95,12 @@ in
           _var = "SUPER";
         };
 
+        brightness_adjust = {
+          _var = brightnessAdjust;
+        };
+
         sdr_brightness_adjust = {
-          _var = sdrBrightnessAdjust;
+          _var = brightnessAdjust;
         };
 
         config = {
@@ -226,9 +242,9 @@ in
           (bindWith "XF86AudioLowerVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%-")'') { locked = true; repeating = true; })
           (bindWith "XF86AudioMute" (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SINK@ toggle")'') { locked = true; repeating = true; })
 
-          # SDR brightness (HDR mode)
-          (bindWith "XF86MonBrightnessDown" (lua "function() sdr_brightness_adjust(-0.2) end") { locked = true; repeating = true; })
-          (bindWith "XF86MonBrightnessUp" (lua "function() sdr_brightness_adjust(0.2) end") { locked = true; repeating = true; })
+          # Brightness (scales both SDR & HDR in HDR mode)
+          (bindWith "XF86MonBrightnessDown" (lua "function() brightness_adjust(-0.2) end") { locked = true; repeating = true; })
+          (bindWith "XF86MonBrightnessUp" (lua "function() brightness_adjust(0.2) end") { locked = true; repeating = true; })
         ];
       };
     };

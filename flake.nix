@@ -3,6 +3,7 @@
 
     inputs = {
         nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+        nixpkgs-hyprland.url = "github:nixos/nixpkgs/e158d9ed9b51c98974c5e66e1ba1c9e0255fecaa";
         home-manager = {
             url = "github:nix-community/home-manager";
             inputs.nixpkgs.follows = "nixpkgs";
@@ -33,6 +34,16 @@ let
         helium.overlays.default
         evolved.overlays.default
         nixvim.overlays.default
+        (final: prev: {
+            hyprland = (import nixpkgs-hyprland {
+                inherit system;
+                config.allowUnfree = true;
+            }).hyprland.overrideAttrs (oldAttrs: {
+                patches = (oldAttrs.patches or [ ]) ++ [
+                    ./patches/hyprland-unified-hdr-brightness.patch
+                ];
+            });
+        })
     ];
 
     pkgs = import nixpkgs {
