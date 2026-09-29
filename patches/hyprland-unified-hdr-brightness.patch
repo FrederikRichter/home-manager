@@ -1,12 +1,14 @@
-From 8779f03f26a894d186f7a79302fb38d3b2850ed4 Mon Sep 17 00:00:00 2001
+From 05e7a78b9a02550e812358a84c9bb3db6a246b1c Mon Sep 17 00:00:00 2001
 From: Frederik Richter <frederik.richter@mailbox.org>
-Date: Tue, 29 Sep 2026 19:47:06 +0200
+Date: Tue, 29 Sep 2026 22:57:51 +0200
 Subject: [PATCH] feat(config/render): unify sdr and hdr brightness settings in
  monitor definition
 
 - Add hdrbrightness monitor rule setting to scale HDR content brightness on HDR monitors
 - Add unified brightness monitor rule setting to adjust both SDR and HDR brightness simultaneously
 - Add Lua config bindings and legacy ConfigManager (monitor and monitorv2) bindings for brightness and hdrbrightness
+- Fall back to active monitor rule in hl.monitor when no rule exists for output
+- Expose brightness, sdr_brightness, and hdr_brightness on Lua HL.Monitor object
 - Fix min brightness (0.0) making the screen completely black instead of jumping to 100%
 - Fix direct scanout bypassing HDR brightness scaling
 - Fix targetImageDescription check in Renderer getCMSettings
@@ -14,10 +16,11 @@ Subject: [PATCH] feat(config/render): unify sdr and hdr brightness settings in
 - Guard blurprepare against division by zero when brightness is zero
 - Validate non-negative and finite brightness values in parsers and bindings
 - Expose hdrBrightness in hyprctl monitors JSON and text outputs
-- Expand unit test coverage in tests/config/MonitorParser.cpp for brightness, hdrbrightness, minimum zero, negative rejection, and precedence
+- Expand unit test coverage in tests/config/MonitorParser.cpp
 ---
  src/config/legacy/ConfigManager.cpp           | 19 ++++-
- .../lua/bindings/LuaBindingsConfigRules.cpp   | 14 +++-
+ .../lua/bindings/LuaBindingsConfigRules.cpp   | 23 +++++-
+ src/config/lua/objects/LuaMonitor.cpp         |  4 +
  src/config/shared/monitor/MonitorRule.cpp     |  6 +-
  src/config/shared/monitor/MonitorRule.hpp     |  1 +
  src/config/shared/monitor/Parser.cpp          | 39 +++++++++-
@@ -28,7 +31,7 @@ Subject: [PATCH] feat(config/render): unify sdr and hdr brightness settings in
  src/render/Renderer.cpp                       | 74 +++++++++++--------
  src/render/shaders/glsl/blurprepare.glsl      |  5 +-
  tests/config/MonitorParser.cpp                | 67 +++++++++++++++++
- 12 files changed, 200 insertions(+), 42 deletions(-)
+ 13 files changed, 212 insertions(+), 43 deletions(-)
 
 diff --git a/src/config/legacy/ConfigManager.cpp b/src/config/legacy/ConfigManager.cpp
 index 4f1b11f..56a1446 100644
@@ -78,10 +81,19 @@ index 4f1b11f..56a1446 100644
              parser.parseTransform(std::string(ARGS[argno + 1]));
              argno++;
 diff --git a/src/config/lua/bindings/LuaBindingsConfigRules.cpp b/src/config/lua/bindings/LuaBindingsConfigRules.cpp
-index 8095b17..0fd85c3 100644
+index 8095b17..f113fd0 100644
 --- a/src/config/lua/bindings/LuaBindingsConfigRules.cpp
 +++ b/src/config/lua/bindings/LuaBindingsConfigRules.cpp
-@@ -122,9 +122,21 @@ namespace {
+@@ -19,6 +19,8 @@
+ #include "../../shared/monitor/MonitorRuleManager.hpp"
+ #include "../../shared/monitor/Parser.hpp"
+ #include "../../shared/workspace/WorkspaceRuleManager.hpp"
++#include "../../../state/MonitorState.hpp"
++#include "../../../output/Monitor.hpp"
+ 
+ #include "../../../desktop/rule/Engine.hpp"
+ #include "../../../desktop/rule/layerRule/LayerRule.hpp"
+@@ -122,9 +124,21 @@ namespace {
               p.rule().m_sdrEotf = NTransferFunction::fromString(*sc<const Config::STRING*>(v->data()));
               return true;
           }},
@@ -104,6 +116,37 @@ index 8095b17..0fd85c3 100644
               return true;
           }},
          {"sdrsaturation", []() -> ILuaConfigValue* { return new CLuaConfigFloat(1.F); },
+@@ -1121,9 +1135,14 @@ static int hlMonitor(lua_State* L) {
+ 
+     CMonitorRuleParser parser(output);
+ 
+-    const auto         existing = std::ranges::find_if(Config::monitorRuleMgr()->all(), [&output](const auto& rule) { return rule.m_name == output; });
++    const auto existing = std::ranges::find_if(Config::monitorRuleMgr()->all(), [&output](const auto& rule) { return rule.m_name == output; });
+     if (existing != Config::monitorRuleMgr()->all().end())
+         parser.rule() = *existing;
++    else if (State::monitorState()) {
++        const auto pMonitor = State::monitorState()->query().name(output).run();
++        if (pMonitor)
++            parser.rule() = pMonitor->m_activeMonitorRule;
++    }
+ 
+     lua_pushnil(L);
+     while (lua_next(L, 1) != 0) {
+diff --git a/src/config/lua/objects/LuaMonitor.cpp b/src/config/lua/objects/LuaMonitor.cpp
+index 68d4d77..58d69fa 100644
+--- a/src/config/lua/objects/LuaMonitor.cpp
++++ b/src/config/lua/objects/LuaMonitor.cpp
+@@ -169,6 +169,10 @@ static int monitorIndex(lua_State* L) {
+         lua_pushboolean(L, mon == Desktop::focusState()->monitor());
+     else if (key == "cm")
+         lua_pushstring(L, NCMType::toString(mon->m_cmType).c_str());
++    else if (key == "brightness" || key == "sdr_brightness")
++        lua_pushnumber(L, mon->m_sdrBrightness);
++    else if (key == "hdr_brightness")
++        lua_pushnumber(L, mon->m_hdrBrightness);
+     else if (key == "reserved") {
+         lua_newtable(L);
+         lua_pushnumber(L, mon->m_reservedArea.top());
 diff --git a/src/config/shared/monitor/MonitorRule.cpp b/src/config/shared/monitor/MonitorRule.cpp
 index cbc7da6..5f227e1 100644
 --- a/src/config/shared/monitor/MonitorRule.cpp

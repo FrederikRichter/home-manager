@@ -19,16 +19,8 @@ let
 
   modKey = key: lua ''mod .. " + ${key}"'';
 
-  # Monitor properties are defined per-host; reuse them as the base spec so
-  # that only brightness changes when adjusting it at runtime.
-  monitorSettings = config.wayland.windowManager.hyprland.settings.monitor or { };
-  baseMonitor = lib.generators.toLua { } (
-    removeAttrs (if lib.isAttrs monitorSettings then monitorSettings else { }) [ "output" ]
-  );
-
   brightnessAdjust = lua ''
     (function()
-      local base = ${baseMonitor}
       local levels = {}
       local min_level = 0.0
       local max_level = 3.0
@@ -39,21 +31,16 @@ let
         end
         local name = monitor.name
         if levels[name] == nil then
-          levels[name] = base.brightness or base.sdrbrightness or 1.0
+          levels[name] = monitor.brightness or 1.0
         end
         local level = levels[name] + delta
         if level < min_level then level = min_level end
         if level > max_level then level = max_level end
         levels[name] = level
-        local spec = {}
-        for key, value in pairs(base) do
-          spec[key] = value
-        end
-        spec.sdrbrightness = nil
-        spec.hdrbrightness = nil
-        spec.output = name
-        spec.brightness = level
-        hl.monitor(spec)
+        hl.monitor({
+          output = name,
+          brightness = level,
+        })
       end
     end)()
   '';
