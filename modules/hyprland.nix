@@ -30,7 +30,7 @@ let
     (function()
       local base = ${baseMonitor}
       local levels = {}
-      local min_level = 0.02
+      local min_level = 0.0
       local max_level = 3.0
       return function(delta)
         local monitor = hl.get_active_monitor()
@@ -49,6 +49,8 @@ let
         for key, value in pairs(base) do
           spec[key] = value
         end
+        spec.sdrbrightness = nil
+        spec.hdrbrightness = nil
         spec.output = name
         spec.brightness = level
         hl.monitor(spec)

@@ -1,57 +1,109 @@
-From 89fbf280b4cfb4c1d091fe1a99483c36b0404d54 Mon Sep 17 00:00:00 2001
+From 8779f03f26a894d186f7a79302fb38d3b2850ed4 Mon Sep 17 00:00:00 2001
 From: Frederik Richter <frederik.richter@mailbox.org>
-Date: Mon, 28 Sep 2026 13:22:17 +0200
+Date: Tue, 29 Sep 2026 19:47:06 +0200
 Subject: [PATCH] feat(config/render): unify sdr and hdr brightness settings in
  monitor definition
 
 - Add hdrbrightness monitor rule setting to scale HDR content brightness on HDR monitors
 - Add unified brightness monitor rule setting to adjust both SDR and HDR brightness simultaneously
-- Add Lua config bindings for brightness and hdrbrightness in hl.monitor rules
-- Integrate HDR brightness scaling into Renderer's color management pipeline (sdrBrightnessMultiplier / needsMod)
-- Adjust tone mapping maxLuminance dynamically when HDR brightness is scaled
+- Add Lua config bindings and legacy ConfigManager (monitor and monitorv2) bindings for brightness and hdrbrightness
+- Fix min brightness (0.0) making the screen completely black instead of jumping to 100%
+- Fix direct scanout bypassing HDR brightness scaling
+- Fix targetImageDescription check in Renderer getCMSettings
+- Remove corrupting maxLuminance scaling that threw off tonemapper calculations
+- Guard blurprepare against division by zero when brightness is zero
+- Validate non-negative and finite brightness values in parsers and bindings
 - Expose hdrBrightness in hyprctl monitors JSON and text outputs
-- Add unit test coverage in tests/config/MonitorParser.cpp for brightness and hdrbrightness parsing
+- Expand unit test coverage in tests/config/MonitorParser.cpp for brightness, hdrbrightness, minimum zero, negative rejection, and precedence
 ---
- .../lua/bindings/LuaBindingsConfigRules.cpp   | 12 +++
+ src/config/legacy/ConfigManager.cpp           | 19 ++++-
+ .../lua/bindings/LuaBindingsConfigRules.cpp   | 14 +++-
  src/config/shared/monitor/MonitorRule.cpp     |  6 +-
  src/config/shared/monitor/MonitorRule.hpp     |  1 +
- src/config/shared/monitor/Parser.cpp          | 22 ++++++
+ src/config/shared/monitor/Parser.cpp          | 39 +++++++++-
  src/config/shared/monitor/Parser.hpp          |  2 +
- src/ipc/s1/Commands.cpp                       | 13 ++--
- src/output/Monitor.cpp                        |  3 +-
+ src/debug/HyprCtl.cpp                         |  7 +-
+ src/output/Monitor.cpp                        |  7 +-
  src/output/Monitor.hpp                        |  1 +
- src/render/Renderer.cpp                       | 75 +++++++++++--------
- tests/config/MonitorParser.cpp                | 21 ++++++
- 10 files changed, 116 insertions(+), 40 deletions(-)
+ src/render/Renderer.cpp                       | 74 +++++++++++--------
+ src/render/shaders/glsl/blurprepare.glsl      |  5 +-
+ tests/config/MonitorParser.cpp                | 67 +++++++++++++++++
+ 12 files changed, 200 insertions(+), 42 deletions(-)
 
+diff --git a/src/config/legacy/ConfigManager.cpp b/src/config/legacy/ConfigManager.cpp
+index 4f1b11f..56a1446 100644
+--- a/src/config/legacy/ConfigManager.cpp
++++ b/src/config/legacy/ConfigManager.cpp
+@@ -574,7 +574,9 @@ CConfigManager::CConfigManager() {
+     m_config->addSpecialConfigValue("monitorv2", "bitdepth", {STRVAL_EMPTY}); // TODO use correct type
+     m_config->addSpecialConfigValue("monitorv2", "cm", {"auto"});
+     m_config->addSpecialConfigValue("monitorv2", "sdr_eotf", {"default"});
++    m_config->addSpecialConfigValue("monitorv2", "brightness", Hyprlang::FLOAT{1.0});
+     m_config->addSpecialConfigValue("monitorv2", "sdrbrightness", Hyprlang::FLOAT{1.0});
++    m_config->addSpecialConfigValue("monitorv2", "hdrbrightness", Hyprlang::FLOAT{1.0});
+     m_config->addSpecialConfigValue("monitorv2", "sdrsaturation", Hyprlang::FLOAT{1.0});
+     m_config->addSpecialConfigValue("monitorv2", "vrr", Hyprlang::INT{0});
+     m_config->addSpecialConfigValue("monitorv2", "transform", {STRVAL_EMPTY}); // TODO use correct type
+@@ -829,9 +831,18 @@ std::optional<std::string> CConfigManager::handleMonitorv2(const std::string& ou
+         else
+             parser.rule().m_sdrEotf = NTransferFunction::fromString(value);
+     }
++    VAL = m_config->getSpecialConfigValuePtr("monitorv2", "brightness", output.c_str());
++    if (VAL && VAL->m_bSetByUser) {
++        const auto val           = std::max(0.F, sc<float>(std::any_cast<Hyprlang::FLOAT>(VAL->getValue())));
++        parser.rule().m_sdrBrightness = val;
++        parser.rule().m_hdrBrightness = val;
++    }
+     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "sdrbrightness", output.c_str());
+     if (VAL && VAL->m_bSetByUser)
+-        parser.rule().m_sdrBrightness = std::any_cast<Hyprlang::FLOAT>(VAL->getValue());
++        parser.rule().m_sdrBrightness = std::max(0.F, sc<float>(std::any_cast<Hyprlang::FLOAT>(VAL->getValue())));
++    VAL = m_config->getSpecialConfigValuePtr("monitorv2", "hdrbrightness", output.c_str());
++    if (VAL && VAL->m_bSetByUser)
++        parser.rule().m_hdrBrightness = std::max(0.F, sc<float>(std::any_cast<Hyprlang::FLOAT>(VAL->getValue())));
+     VAL = m_config->getSpecialConfigValuePtr("monitorv2", "sdrsaturation", output.c_str());
+     if (VAL && VAL->m_bSetByUser)
+         parser.rule().m_sdrSaturation = std::any_cast<Hyprlang::FLOAT>(VAL->getValue());
+@@ -1364,6 +1375,12 @@ std::optional<std::string> CConfigManager::handleMonitor(const std::string& comm
+         } else if (ARGS[argno] == "sdrbrightness") {
+             parser.parseSDRBrightness(std::string(ARGS[argno + 1]));
+             argno++;
++        } else if (ARGS[argno] == "hdrbrightness") {
++            parser.parseHDRBrightness(std::string(ARGS[argno + 1]));
++            argno++;
++        } else if (ARGS[argno] == "brightness") {
++            parser.parseBrightness(std::string(ARGS[argno + 1]));
++            argno++;
+         } else if (ARGS[argno] == "transform") {
+             parser.parseTransform(std::string(ARGS[argno + 1]));
+             argno++;
 diff --git a/src/config/lua/bindings/LuaBindingsConfigRules.cpp b/src/config/lua/bindings/LuaBindingsConfigRules.cpp
-index cc6108f..252d51d 100644
+index 8095b17..0fd85c3 100644
 --- a/src/config/lua/bindings/LuaBindingsConfigRules.cpp
 +++ b/src/config/lua/bindings/LuaBindingsConfigRules.cpp
-@@ -122,11 +122,23 @@ namespace {
+@@ -122,9 +122,21 @@ namespace {
               p.rule().m_sdrEotf = NTransferFunction::fromString(*sc<const Config::STRING*>(v->data()));
               return true;
           }},
 +        {"brightness", []() -> ILuaConfigValue* { return new CLuaConfigFloat(1.F); },
 +         [](ILuaConfigValue* v, CMonitorRuleParser& p) {
-+             const auto val           = *sc<const Config::FLOAT*>(v->data());
++             const auto val           = std::max(0.F, *sc<const Config::FLOAT*>(v->data()));
 +             p.rule().m_sdrBrightness = val;
 +             p.rule().m_hdrBrightness = val;
 +             return true;
 +         }},
          {"sdrbrightness", []() -> ILuaConfigValue* { return new CLuaConfigFloat(1.F); },
           [](ILuaConfigValue* v, CMonitorRuleParser& p) {
-              p.rule().m_sdrBrightness = *sc<const Config::FLOAT*>(v->data());
-              return true;
-          }},
-+        {"hdrbrightness", []() -> ILuaConfigValue* { return new CLuaConfigFloat(1.F); },
-+         [](ILuaConfigValue* v, CMonitorRuleParser& p) {
-+             p.rule().m_hdrBrightness = *sc<const Config::FLOAT*>(v->data());
+-             p.rule().m_sdrBrightness = *sc<const Config::FLOAT*>(v->data());
++             p.rule().m_sdrBrightness = std::max(0.F, *sc<const Config::FLOAT*>(v->data()));
 +             return true;
 +         }},
++        {"hdrbrightness", []() -> ILuaConfigValue* { return new CLuaConfigFloat(1.F); },
++         [](ILuaConfigValue* v, CMonitorRuleParser& p) {
++             p.rule().m_hdrBrightness = std::max(0.F, *sc<const Config::FLOAT*>(v->data()));
+              return true;
+          }},
          {"sdrsaturation", []() -> ILuaConfigValue* { return new CLuaConfigFloat(1.F); },
-          [](ILuaConfigValue* v, CMonitorRuleParser& p) {
-              p.rule().m_sdrSaturation = *sc<const Config::FLOAT*>(v->data());
 diff --git a/src/config/shared/monitor/MonitorRule.cpp b/src/config/shared/monitor/MonitorRule.cpp
 index cbc7da6..5f227e1 100644
 --- a/src/config/shared/monitor/MonitorRule.cpp
@@ -82,16 +134,28 @@ index b5ebb48..0376334 100644
          std::string                  m_iccFile;
  
 diff --git a/src/config/shared/monitor/Parser.cpp b/src/config/shared/monitor/Parser.cpp
-index 87b2780..b7742d4 100644
+index 20681b3..b84e33d 100644
 --- a/src/config/shared/monitor/Parser.cpp
 +++ b/src/config/shared/monitor/Parser.cpp
-@@ -243,6 +243,18 @@ bool CMonitorRuleParser::parseCM(const std::string& value) {
+@@ -7,6 +7,7 @@
+ #include <hyprutils/string/String.hpp>
+ #include <string>
+ #include <algorithm>
++#include <cmath>
+ 
+ using namespace Config;
+ using namespace Hyprutils::String;
+@@ -241,9 +242,30 @@ bool CMonitorRuleParser::parseCM(const std::string& value) {
      return true;
  }
  
 +bool CMonitorRuleParser::parseBrightness(const std::string& value) {
 +    try {
-+        const auto val         = stof(value);
++        const auto val = stof(value);
++        if (val < 0.0f || !std::isfinite(val)) {
++            m_error += "invalid brightness ";
++            return false;
++        }
 +        m_rule.m_sdrBrightness = val;
 +        m_rule.m_hdrBrightness = val;
 +    } catch (...) {
@@ -103,14 +167,28 @@ index 87b2780..b7742d4 100644
 +
  bool CMonitorRuleParser::parseSDRBrightness(const std::string& value) {
      try {
-         m_rule.m_sdrBrightness = stof(value);
-@@ -253,6 +265,16 @@ bool CMonitorRuleParser::parseSDRBrightness(const std::string& value) {
+-        m_rule.m_sdrBrightness = stof(value);
++        const auto val = stof(value);
++        if (val < 0.0f || !std::isfinite(val)) {
++            m_error += "invalid sdrbrightness ";
++            return false;
++        }
++        m_rule.m_sdrBrightness = val;
+     } catch (...) {
+         m_error += "invalid sdrbrightness ";
+         return false;
+@@ -251,6 +273,21 @@ bool CMonitorRuleParser::parseSDRBrightness(const std::string& value) {
      return true;
  }
  
 +bool CMonitorRuleParser::parseHDRBrightness(const std::string& value) {
 +    try {
-+        m_rule.m_hdrBrightness = stof(value);
++        const auto val = stof(value);
++        if (val < 0.0f || !std::isfinite(val)) {
++            m_error += "invalid hdrbrightness ";
++            return false;
++        }
++        m_rule.m_hdrBrightness = val;
 +    } catch (...) {
 +        m_error += "invalid hdrbrightness ";
 +        return false;
@@ -136,7 +214,7 @@ index 1b3fce1..b9ba4d9 100644
          bool                       parseVRR(const std::string& value);
          bool                       parseICC(const std::string& value);
 diff --git a/src/debug/HyprCtl.cpp b/src/debug/HyprCtl.cpp
-index 060e25b..4b7dde9 100644
+index 060e25b..f57bcdc 100644
 --- a/src/debug/HyprCtl.cpp
 +++ b/src/debug/HyprCtl.cpp
 @@ -268,6 +268,7 @@ std::string CHyprCtl::getMonitorData(PHLMONITOR m, eHyprCtlOutputFormat format)
@@ -156,18 +234,15 @@ index 060e25b..4b7dde9 100644
              (!m->shouldUseSoftwareCursors() ? "true" : "false"));
  
      } else {
-@@ -294,9 +295,9 @@ std::string CHyprCtl::getMonitorData(PHLMONITOR m, eHyprCtlOutputFormat format)
+@@ -294,7 +295,7 @@ std::string CHyprCtl::getMonitorData(PHLMONITOR m, eHyprCtlOutputFormat format)
              "dpmsStatus: {}\n\tvrr: {}\n\tsolitary: {:x}\n\tsolitaryBlockedBy: {}\n\tactivelyTearing: {}\n\ttearingBlockedBy: {}\n\tdirectScanoutTo: "
              "{:x}\n\tdirectScanoutBlockedBy: {}\n\tdisabled: "
              "{}\n\tcurrentFormat: {}\n\tmirrorOf: "
 -            "{}\n\tavailableModes: {}\n\tcolorManagementPreset: {}\n\tsdrBrightness: {}\n\tsdrSaturation: {}\n\tsdrMinLuminance: {}\n\tsdrMaxLuminance: "
 +            "{}\n\tavailableModes: {}\n\tcolorManagementPreset: {}\n\tsdrBrightness: {}\n\thdrBrightness: {}\n\tsdrSaturation: {}\n\tsdrMinLuminance: {}\n\tsdrMaxLuminance: "
              "{}\n\thardwareCursorsInUse: {}\n\n",
--            m->m_name, m->m_id, sc<int>(m->m_pixelSize.x), sc<int>(m->m_pixelSize.y), m->m_refreshRate, sc<int>(m->m_position.x), sc<int>(m->m_position.y), m->m_shortDescription,
-+            m->m_name, m->m_id, sc<int>(m->m_pixelSize.x), sc<int>(m->m_pixelSize.y), m->m_refreshRate, sc<int>(m->m_position.x), sc<int>(m->m_position.y), m->m_shortDescription,
+             m->m_name, m->m_id, sc<int>(m->m_pixelSize.x), sc<int>(m->m_pixelSize.y), m->m_refreshRate, sc<int>(m->m_position.x), sc<int>(m->m_position.y), m->m_shortDescription,
              m->m_output->make, m->m_output->model, sc<int>(m->m_output->physicalSize.x), sc<int>(m->m_output->physicalSize.y), m->m_output->serial, m->activeWorkspaceID(),
-             (!m->m_activeWorkspace ? "" : m->m_activeWorkspace->m_name), m->activeSpecialWorkspaceID(), (m->m_activeSpecialWorkspace ? m->m_activeSpecialWorkspace->m_name : ""),
-             sc<int>(m->m_reservedArea.left()), sc<int>(m->m_reservedArea.top()), sc<int>(m->m_reservedArea.right()), sc<int>(m->m_reservedArea.bottom()), m->m_scale,
 @@ -304,7 +305,7 @@ std::string CHyprCtl::getMonitorData(PHLMONITOR m, eHyprCtlOutputFormat format)
              rc<uint64_t>(m->m_solitaryClient.get()), getSolitaryBlockedReason(m, format), m->m_tearingState.activelyTearing, getTearingBlockedReason(m, format),
              rc<uint64_t>(m->m_lastScanout.get()), getDSBlockedReason(m, format), !m->m_enabled, formatToString(m->m_output->state->state().drmFormat),
@@ -178,10 +253,10 @@ index 060e25b..4b7dde9 100644
  
      return result;
 diff --git a/src/output/Monitor.cpp b/src/output/Monitor.cpp
-index 386c366..04189dd 100644
+index e69d8dd..209416e 100644
 --- a/src/output/Monitor.cpp
 +++ b/src/output/Monitor.cpp
-@@ -650,6 +650,7 @@ bool CMonitor::applyMonitorRuleSoft(Config::CMonitorRule&& pMonitorRule) {
+@@ -681,6 +681,7 @@ bool CMonitor::applyMonitorRuleSoft(Config::CMonitorRule&& pMonitorRule) {
  
          m_sdrSaturation = m_activeMonitorRule.m_sdrSaturation;
          m_sdrBrightness = m_activeMonitorRule.m_sdrBrightness;
@@ -189,20 +264,31 @@ index 386c366..04189dd 100644
      } else {
          auto image = NColorManagement::SImageDescription::fromICC(m_activeMonitorRule.m_iccFile);
          if (!image) {
-@@ -2662,7 +2663,7 @@ bool CMonitor::needsUnmodifiedCopy() {
+@@ -2095,6 +2096,8 @@ uint16_t CMonitor::isDSBlocked(bool full) {
+             reasons |= DS_BLOCK_CM; // block SDR that needs CM while non-shader CM isn't available
+         else if (surfaceIsHDR && !inHDR())
+             reasons |= DS_BLOCK_CM; // block HDR while monitor isn't in HDR mode
++        else if (surfaceIsHDR && m_hdrBrightness != 1.0f)
++            reasons |= DS_BLOCK_CM; // block HDR while HDR brightness is scaled
+     }
+ 
+     return reasons;
+@@ -2715,8 +2718,8 @@ bool CMonitor::needsUnmodifiedCopy() {
+     if (*PKEEP == 1)
          return true;
  
-     const bool HAS_MODS = m_sdrMinLuminance != SDR_MIN_LUMINANCE || m_sdrMaxLuminance != SDR_MAX_LUMINANCE || (m_sdrBrightness > 0 && m_sdrBrightness != 1.0) ||
+-    const bool HAS_MODS = m_sdrMinLuminance != SDR_MIN_LUMINANCE || m_sdrMaxLuminance != SDR_MAX_LUMINANCE || (m_sdrBrightness > 0 && m_sdrBrightness != 1.0) ||
 -        (m_sdrSaturation > 0 && m_sdrSaturation != 1.0);
-+        (m_hdrBrightness > 0 && m_hdrBrightness != 1.0) || (m_sdrSaturation > 0 && m_sdrSaturation != 1.0);
++    const bool HAS_MODS = m_sdrMinLuminance != SDR_MIN_LUMINANCE || m_sdrMaxLuminance != SDR_MAX_LUMINANCE || (m_sdrBrightness >= 0 && m_sdrBrightness != 1.0) ||
++        (m_hdrBrightness >= 0 && m_hdrBrightness != 1.0) || (m_sdrSaturation >= 0 && m_sdrSaturation != 1.0);
  
      if (!HAS_MODS)
          return false;
 diff --git a/src/output/Monitor.hpp b/src/output/Monitor.hpp
-index f818785..7ba76fc 100644
+index 945fecd..eb76e65 100644
 --- a/src/output/Monitor.hpp
 +++ b/src/output/Monitor.hpp
-@@ -111,6 +111,7 @@ namespace Monitor {
+@@ -110,6 +110,7 @@ namespace Monitor {
          NTransferFunction::eTF      m_sdrEotf          = NTransferFunction::TF_DEFAULT;
          float                       m_sdrSaturation    = 1.0f;
          float                       m_sdrBrightness    = 1.0f;
@@ -211,10 +297,10 @@ index f818785..7ba76fc 100644
          int                         m_sdrMaxLuminance  = 80;
          bool                        m_createdByUser    = false;
 diff --git a/src/render/Renderer.cpp b/src/render/Renderer.cpp
-index 97044f7..7ba398a 100644
+index 249f084..900df94 100644
 --- a/src/render/Renderer.cpp
 +++ b/src/render/Renderer.cpp
-@@ -1998,42 +1998,57 @@ SCMSettings IHyprRenderer::getCMSettings(const NColorManagement::PImageDescripti
+@@ -1936,42 +1936,56 @@ SCMSettings IHyprRenderer::getCMSettings(const NColorManagement::PImageDescripti
      } else
          srcTF = imageDescription->value().transferFunction;
  
@@ -228,8 +314,8 @@ index 97044f7..7ba398a 100644
 +    const bool needsHDRmod  = !needsSDRmod && isHDR2SDR(imageDescription->value(), targetImageDescription->value());
 +    const bool isHDRsurface = imageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_ST2084_PQ ||
 +        imageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_HLG;
-+    const bool isMonitorHDR = m_renderData.pMonitor->m_imageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_ST2084_PQ ||
-+        m_renderData.pMonitor->m_imageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_HLG;
++    const bool isTargetHDR = targetImageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_ST2084_PQ ||
++        targetImageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_HLG;
  
 -    auto        matrix = imageDescription->getPrimaries()->convertMatrix(targetImageDescription->getPrimaries());
 -    auto        toXYZ  = targetImageDescription->getPrimaries()->value().toXYZ();
@@ -243,19 +329,18 @@ index 97044f7..7ba398a 100644
 +    auto       matrix = imageDescription->getPrimaries()->convertMatrix(targetImageDescription->getPrimaries());
 +    auto       toXYZ  = targetImageDescription->getPrimaries()->value().toXYZ();
 +
-+    const bool needsSDRbrightnessMod = needsSDRmod && (m_renderData.pMonitor->m_sdrBrightness > 0 && m_renderData.pMonitor->m_sdrBrightness != 1.0f);
++    const bool needsSDRbrightnessMod = needsSDRmod && (m_renderData.pMonitor->m_sdrBrightness >= 0 && m_renderData.pMonitor->m_sdrBrightness != 1.0f);
 +    const bool needsSDRsatMod        = needsSDRmod && (m_renderData.pMonitor->m_sdrSaturation > 0 && m_renderData.pMonitor->m_sdrSaturation != 1.0f);
 +    const bool needsHDRbrightnessMod =
-+        isMonitorHDR && isHDRsurface && !needsHDRmod && (m_renderData.pMonitor->m_hdrBrightness > 0 && m_renderData.pMonitor->m_hdrBrightness != 1.0f);
++        isTargetHDR && isHDRsurface && !needsHDRmod && (m_renderData.pMonitor->m_hdrBrightness >= 0 && m_renderData.pMonitor->m_hdrBrightness != 1.0f);
 +
 +    const bool needsMod = needsSDRsatMod || needsSDRbrightnessMod || needsHDRbrightnessMod;
 +
 +    float      brightnessMultiplier = 1.0f;
-+    if (needsSDRmod && m_renderData.pMonitor->m_sdrBrightness > 0)
++    if (needsSDRmod && m_renderData.pMonitor->m_sdrBrightness >= 0)
 +        brightnessMultiplier = m_renderData.pMonitor->m_sdrBrightness;
-+    else if (isMonitorHDR && isHDRsurface && !needsHDRmod && m_renderData.pMonitor->m_hdrBrightness > 0) {
++    else if (isTargetHDR && isHDRsurface && !needsHDRmod && m_renderData.pMonitor->m_hdrBrightness >= 0) {
 +        brightnessMultiplier = m_renderData.pMonitor->m_hdrBrightness;
-+        maxLuminance *= brightnessMultiplier;
 +    }
  
      const bool needsTonemap = maxLuminance >= dstMaxLuminance * 1.01;
@@ -302,22 +387,63 @@ index 97044f7..7ba398a 100644
      };
  
      m_cmSettingsCache.push_back({
+diff --git a/src/render/shaders/glsl/blurprepare.glsl b/src/render/shaders/glsl/blurprepare.glsl
+index 69acb47..a63cfcb 100644
+--- a/src/render/shaders/glsl/blurprepare.glsl
++++ b/src/render/shaders/glsl/blurprepare.glsl
+@@ -19,7 +19,10 @@ vec4 blurPrepare(vec4 pixColor, float contrast, float brightness
+ ) {
+ #if USE_CM
+     if (sourceTF == CM_TRANSFER_FUNCTION_ST2084_PQ) {
+-        pixColor.rgb /= sdrBrightnessMultiplier;
++        if (sdrBrightnessMultiplier > 0.0001)
++            pixColor.rgb /= sdrBrightnessMultiplier;
++        else
++            pixColor.rgb = vec3(0.0);
+     }
+     pixColor.rgb = convertMatrix * toLinearRGB(pixColor.rgb, sourceTF);
+     pixColor     = toNit(pixColor, srcTFRange);
 diff --git a/tests/config/MonitorParser.cpp b/tests/config/MonitorParser.cpp
-index d64da05..0482da8 100644
+index d64da05..582605b 100644
 --- a/tests/config/MonitorParser.cpp
 +++ b/tests/config/MonitorParser.cpp
-@@ -227,6 +227,27 @@ TEST(Config, monitorParserSDRBrightness) {
-     EXPECT_TRUE(p2.getError().has_value());
- }
+@@ -222,9 +222,76 @@ TEST(Config, monitorParserSDRBrightness) {
+     EXPECT_TRUE(parser.parseSDRBrightness("1.5"));
+     EXPECT_FLOAT_EQ(parser.rule().m_sdrBrightness, 1.5f);
  
++    CMonitorRuleParser pZero("DP-1");
++    EXPECT_TRUE(pZero.parseSDRBrightness("0.0"));
++    EXPECT_FLOAT_EQ(pZero.rule().m_sdrBrightness, 0.0f);
++
++    CMonitorRuleParser pNeg("DP-1");
++    EXPECT_FALSE(pNeg.parseSDRBrightness("-0.5"));
++    EXPECT_TRUE(pNeg.getError().has_value());
++    EXPECT_NE(pNeg.getError()->find("invalid sdrbrightness"), std::string::npos);
++
+     CMonitorRuleParser p2("DP-1");
+     EXPECT_FALSE(p2.parseSDRBrightness("notanumber"));
+     EXPECT_TRUE(p2.getError().has_value());
++    EXPECT_NE(p2.getError()->find("invalid sdrbrightness"), std::string::npos);
++}
++
 +TEST(Config, monitorParserHDRBrightness) {
 +    CMonitorRuleParser parser("DP-1");
 +    EXPECT_TRUE(parser.parseHDRBrightness("1.5"));
 +    EXPECT_FLOAT_EQ(parser.rule().m_hdrBrightness, 1.5f);
 +
++    CMonitorRuleParser pZero("DP-1");
++    EXPECT_TRUE(pZero.parseHDRBrightness("0.0"));
++    EXPECT_FLOAT_EQ(pZero.rule().m_hdrBrightness, 0.0f);
++
++    CMonitorRuleParser pNeg("DP-1");
++    EXPECT_FALSE(pNeg.parseHDRBrightness("-0.5"));
++    EXPECT_TRUE(pNeg.getError().has_value());
++    EXPECT_NE(pNeg.getError()->find("invalid hdrbrightness"), std::string::npos);
++
 +    CMonitorRuleParser p2("DP-1");
 +    EXPECT_FALSE(p2.parseHDRBrightness("notanumber"));
 +    EXPECT_TRUE(p2.getError().has_value());
++    EXPECT_NE(p2.getError()->find("invalid hdrbrightness"), std::string::npos);
 +}
 +
 +TEST(Config, monitorParserBrightness) {
@@ -326,14 +452,38 @@ index d64da05..0482da8 100644
 +    EXPECT_FLOAT_EQ(parser.rule().m_sdrBrightness, 1.5f);
 +    EXPECT_FLOAT_EQ(parser.rule().m_hdrBrightness, 1.5f);
 +
++    // Minimum brightness sets both to 0.0 (black screen)
++    CMonitorRuleParser pZero("DP-1");
++    EXPECT_TRUE(pZero.parseBrightness("0.0"));
++    EXPECT_FLOAT_EQ(pZero.rule().m_sdrBrightness, 0.0f);
++    EXPECT_FLOAT_EQ(pZero.rule().m_hdrBrightness, 0.0f);
++
++    CMonitorRuleParser pNeg("DP-1");
++    EXPECT_FALSE(pNeg.parseBrightness("-1.0"));
++    EXPECT_TRUE(pNeg.getError().has_value());
++    EXPECT_NE(pNeg.getError()->find("invalid brightness"), std::string::npos);
++
 +    CMonitorRuleParser p2("DP-1");
 +    EXPECT_FALSE(p2.parseBrightness("notanumber"));
 +    EXPECT_TRUE(p2.getError().has_value());
++    EXPECT_NE(p2.getError()->find("invalid brightness"), std::string::npos);
 +}
 +
++TEST(Config, monitorParserBrightnessPrecedence) {
++    CMonitorRuleParser p1("DP-1");
++    EXPECT_TRUE(p1.parseBrightness("1.5"));
++    EXPECT_TRUE(p1.parseHDRBrightness("0.8"));
++    EXPECT_FLOAT_EQ(p1.rule().m_sdrBrightness, 1.5f);
++    EXPECT_FLOAT_EQ(p1.rule().m_hdrBrightness, 0.8f);
++
++    CMonitorRuleParser p2("DP-1");
++    EXPECT_TRUE(p2.parseBrightness("1.5"));
++    EXPECT_TRUE(p2.parseSDRBrightness("0.5"));
++    EXPECT_FLOAT_EQ(p2.rule().m_sdrBrightness, 0.5f);
++    EXPECT_FLOAT_EQ(p2.rule().m_hdrBrightness, 1.5f);
+ }
+ 
  TEST(Config, monitorParserICC) {
-     CMonitorRuleParser p1("DP-1");
-     EXPECT_TRUE(p1.parseICC("/path/to/profile.icc"));
 -- 
 2.55.0
 
