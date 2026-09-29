@@ -16,7 +16,7 @@ wayland.windowManager.hyprland = {
         ];
 
         monitor = {
-            output = "";
+            output = "DP-1";
             mode = "highres";
             position = "auto";
             scale = 1;
