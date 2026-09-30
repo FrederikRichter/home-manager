@@ -1,40 +1,40 @@
-From 4617a7bbc6ce088b0fcf4afda9eda56d36933438 Mon Sep 17 00:00:00 2001
+From 7712aa97dac2598e37c3ecc82b2a2e1bedec5776 Mon Sep 17 00:00:00 2001
 From: Frederik Richter <frederik.richter@mailbox.org>
-Date: Tue, 29 Sep 2026 23:55:47 +0200
+Date: Wed, 30 Sep 2026 09:25:57 +0200
 Subject: [PATCH] feat(config/render): unify sdr and hdr brightness settings in
  monitor definition
 
 - Add hdrbrightness monitor rule setting to scale HDR content brightness on HDR monitors
 - Add unified brightness monitor rule setting to adjust both SDR and HDR brightness simultaneously
 - Add Lua config bindings and legacy ConfigManager (monitor and monitorv2) bindings for brightness and hdrbrightness
-- Fall back to active monitor rule in hl.monitor when no rule exists for output
-- Expose brightness, sdr_brightness, and hdr_brightness on Lua HL.Monitor object
-- Fix skipCM in OpenGL renderToFBInternal bypassing shader brightness scaling for HDR surfaces on HDR outputs
-- Avoid redundant applyCMType calls in applyMonitorRuleSoft when only brightness/saturation changes
+- Fix HDR surface brightness scaling in Renderer getCMSettings and OpenGL renderToFBInternal by recognizing the EXT_LINEAR work buffer on HDR monitors
+- Support Windows scRGB / extended linear surfaces in HDR surface detection
+- Ensure skipCM does not bypass CM shader when brightness/saturation modifications are active
+- Preserve monitor rule output name when falling back to active monitor rule in Lua hl.monitor
+- Expose brightness, sdr_brightness, and hdr_brightness on Lua HL.Monitor object (resolving active brightness based on HDR state)
+- Avoid redundant applyCMType calls in applyMonitorRuleSoft while ensuring immediate monitor damage and blur invalidation on brightness change
+- Fix direct scanout bypassing HDR and SDR brightness scaling
 - Fix min brightness (0.0) making the screen completely black instead of jumping to 100%
-- Fix direct scanout bypassing HDR brightness scaling
-- Fix targetImageDescription check in Renderer getCMSettings
-- Remove corrupting maxLuminance scaling that threw off tonemapper calculations
 - Guard blurprepare against division by zero when brightness is zero
 - Validate non-negative and finite brightness values in parsers and bindings
 - Expose hdrBrightness in hyprctl monitors JSON and text outputs
 - Expand unit test coverage in tests/config/MonitorParser.cpp
 ---
  src/config/legacy/ConfigManager.cpp           | 19 ++++-
- .../lua/bindings/LuaBindingsConfigRules.cpp   | 23 +++++-
- src/config/lua/objects/LuaMonitor.cpp         |  4 +
+ .../lua/bindings/LuaBindingsConfigRules.cpp   | 25 +++++-
+ src/config/lua/objects/LuaMonitor.cpp         |  6 ++
  src/config/shared/monitor/MonitorRule.cpp     |  6 +-
  src/config/shared/monitor/MonitorRule.hpp     |  1 +
- src/config/shared/monitor/Parser.cpp          | 39 +++++++++-
+ src/config/shared/monitor/Parser.cpp          | 39 ++++++++-
  src/config/shared/monitor/Parser.hpp          |  2 +
  src/debug/HyprCtl.cpp                         |  7 +-
- src/output/Monitor.cpp                        | 16 +++-
+ src/output/Monitor.cpp                        | 26 +++++-
  src/output/Monitor.hpp                        |  1 +
- src/render/OpenGL.cpp                         | 18 ++++-
- src/render/Renderer.cpp                       | 74 +++++++++++--------
+ src/render/OpenGL.cpp                         | 23 ++++-
+ src/render/Renderer.cpp                       | 83 ++++++++++++-------
  src/render/shaders/glsl/blurprepare.glsl      |  5 +-
- tests/config/MonitorParser.cpp                | 67 +++++++++++++++++
- 14 files changed, 234 insertions(+), 48 deletions(-)
+ tests/config/MonitorParser.cpp                | 67 +++++++++++++++
+ 14 files changed, 260 insertions(+), 50 deletions(-)
 
 diff --git a/src/config/legacy/ConfigManager.cpp b/src/config/legacy/ConfigManager.cpp
 index 4f1b11f..56a1446 100644
@@ -84,7 +84,7 @@ index 4f1b11f..56a1446 100644
              parser.parseTransform(std::string(ARGS[argno + 1]));
              argno++;
 diff --git a/src/config/lua/bindings/LuaBindingsConfigRules.cpp b/src/config/lua/bindings/LuaBindingsConfigRules.cpp
-index 8095b17..f113fd0 100644
+index 8095b17..0e763fc 100644
 --- a/src/config/lua/bindings/LuaBindingsConfigRules.cpp
 +++ b/src/config/lua/bindings/LuaBindingsConfigRules.cpp
 @@ -19,6 +19,8 @@
@@ -119,7 +119,7 @@ index 8095b17..f113fd0 100644
               return true;
           }},
          {"sdrsaturation", []() -> ILuaConfigValue* { return new CLuaConfigFloat(1.F); },
-@@ -1121,9 +1135,14 @@ static int hlMonitor(lua_State* L) {
+@@ -1121,9 +1135,16 @@ static int hlMonitor(lua_State* L) {
  
      CMonitorRuleParser parser(output);
  
@@ -129,21 +129,25 @@ index 8095b17..f113fd0 100644
          parser.rule() = *existing;
 +    else if (State::monitorState()) {
 +        const auto pMonitor = State::monitorState()->query().name(output).run();
-+        if (pMonitor)
-+            parser.rule() = pMonitor->m_activeMonitorRule;
++        if (pMonitor) {
++            parser.rule()        = pMonitor->m_activeMonitorRule;
++            parser.rule().m_name = output;
++        }
 +    }
  
      lua_pushnil(L);
      while (lua_next(L, 1) != 0) {
 diff --git a/src/config/lua/objects/LuaMonitor.cpp b/src/config/lua/objects/LuaMonitor.cpp
-index 68d4d77..58d69fa 100644
+index 68d4d77..5529ccd 100644
 --- a/src/config/lua/objects/LuaMonitor.cpp
 +++ b/src/config/lua/objects/LuaMonitor.cpp
-@@ -169,6 +169,10 @@ static int monitorIndex(lua_State* L) {
+@@ -169,6 +169,12 @@ static int monitorIndex(lua_State* L) {
          lua_pushboolean(L, mon == Desktop::focusState()->monitor());
      else if (key == "cm")
          lua_pushstring(L, NCMType::toString(mon->m_cmType).c_str());
-+    else if (key == "brightness" || key == "sdr_brightness")
++    else if (key == "brightness")
++        lua_pushnumber(L, mon->inHDR() ? mon->m_hdrBrightness : mon->m_sdrBrightness);
++    else if (key == "sdr_brightness")
 +        lua_pushnumber(L, mon->m_sdrBrightness);
 +    else if (key == "hdr_brightness")
 +        lua_pushnumber(L, mon->m_hdrBrightness);
@@ -299,7 +303,7 @@ index 060e25b..f57bcdc 100644
  
      return result;
 diff --git a/src/output/Monitor.cpp b/src/output/Monitor.cpp
-index e69d8dd..247aa5e 100644
+index e69d8dd..ea3df81 100644
 --- a/src/output/Monitor.cpp
 +++ b/src/output/Monitor.cpp
 @@ -659,6 +659,12 @@ bool CMonitor::applyMonitorRuleSoft(Config::CMonitorRule&& pMonitorRule) {
@@ -315,13 +319,21 @@ index e69d8dd..247aa5e 100644
          m_cmType = m_activeMonitorRule.m_cmType;
          switch (m_cmType) {
              case NCMType::CM_AUTO: m_cmType = m_enabled10bit && supportsWideColor() ? NCMType::CM_WIDE : NCMType::CM_SRGB; break;
-@@ -677,10 +683,12 @@ bool CMonitor::applyMonitorRuleSoft(Config::CMonitorRule&& pMonitorRule) {
+@@ -677,10 +683,20 @@ bool CMonitor::applyMonitorRuleSoft(Config::CMonitorRule&& pMonitorRule) {
          m_maxLuminance    = m_activeMonitorRule.m_maxLuminance;
          m_maxAvgLuminance = m_activeMonitorRule.m_maxAvgLuminance;
  
 -        applyCMType(m_cmType, m_sdrEotf);
++        const bool modsChanged = m_sdrBrightness != m_activeMonitorRule.m_sdrBrightness ||
++            m_hdrBrightness != m_activeMonitorRule.m_hdrBrightness ||
++            m_sdrSaturation != m_activeMonitorRule.m_sdrSaturation;
++
 +        if (oldCMType != m_cmType || oldEotf != m_sdrEotf || oldMinLum != m_minLuminance || oldMaxLum != m_maxLuminance || oldMaxAvg != m_maxAvgLuminance)
 +            applyCMType(m_cmType, m_sdrEotf);
++        else if (modsChanged) {
++            m_blurFBDirty = true;
++            g_pHyprRenderer->damageMonitor(m_self.lock());
++        }
  
          m_sdrSaturation = m_activeMonitorRule.m_sdrSaturation;
          m_sdrBrightness = m_activeMonitorRule.m_sdrBrightness;
@@ -329,16 +341,18 @@ index e69d8dd..247aa5e 100644
      } else {
          auto image = NColorManagement::SImageDescription::fromICC(m_activeMonitorRule.m_iccFile);
          if (!image) {
-@@ -2095,6 +2103,8 @@ uint16_t CMonitor::isDSBlocked(bool full) {
-             reasons |= DS_BLOCK_CM; // block SDR that needs CM while non-shader CM isn't available
-         else if (surfaceIsHDR && !inHDR())
-             reasons |= DS_BLOCK_CM; // block HDR while monitor isn't in HDR mode
-+        else if (surfaceIsHDR && m_hdrBrightness != 1.0f)
-+            reasons |= DS_BLOCK_CM; // block HDR while HDR brightness is scaled
-     }
+@@ -2090,6 +2106,10 @@ uint16_t CMonitor::isDSBlocked(bool full) {
  
-     return reasons;
-@@ -2715,8 +2725,8 @@ bool CMonitor::needsUnmodifiedCopy() {
+     if (surfaceIsScRGB)
+         reasons |= DS_BLOCK_CM; // block scRGB
++    else if (surfaceIsHDR && m_hdrBrightness != 1.0f)
++        reasons |= DS_BLOCK_CM; // block HDR while HDR brightness is scaled
++    else if (!surfaceIsHDR && (m_sdrBrightness != 1.0f || m_sdrSaturation != 1.0f))
++        reasons |= DS_BLOCK_CM; // block SDR while brightness/saturation is modified
+     else if (*PNONSHADER != CM_NS_IGNORE) {
+         if (!surfaceIsHDR && needsCM() && !canNoShaderCM(true))
+             reasons |= DS_BLOCK_CM; // block SDR that needs CM while non-shader CM isn't available
+@@ -2715,8 +2735,8 @@ bool CMonitor::needsUnmodifiedCopy() {
      if (*PKEEP == 1)
          return true;
  
@@ -362,17 +376,22 @@ index 945fecd..eb76e65 100644
          int                         m_sdrMaxLuminance  = 80;
          bool                        m_createdByUser    = false;
 diff --git a/src/render/OpenGL.cpp b/src/render/OpenGL.cpp
-index baee1ad..fc840b7 100644
+index baee1ad..4657971 100644
 --- a/src/render/OpenGL.cpp
 +++ b/src/render/OpenGL.cpp
-@@ -1361,9 +1361,19 @@ WP<CShader> CHyprOpenGLImpl::renderToFBInternal(SP<ITexture> tex, const STexture
+@@ -1361,9 +1361,24 @@ WP<CShader> CHyprOpenGLImpl::renderToFBInternal(SP<ITexture> tex, const STexture
      if (data.discardActive)
          shaderFeatures |= SH_FEAT_DISCARD;
  
++    const bool monitorIsHDR = g_pHyprRenderer->m_renderData.pMonitor &&
++        g_pHyprRenderer->m_renderData.pMonitor->m_imageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_ST2084_PQ;
 +    const bool surfaceIsHDR = SOURCE_IMAGE_DESCRIPTION->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_ST2084_PQ ||
-+        SOURCE_IMAGE_DESCRIPTION->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_HLG;
++        SOURCE_IMAGE_DESCRIPTION->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_HLG ||
++        (SOURCE_IMAGE_DESCRIPTION->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_EXT_LINEAR &&
++         SOURCE_IMAGE_DESCRIPTION->value().primariesNamed == NColorManagement::CM_PRIMARIES_SRGB);
 +    const bool targetIsHDR = TARGET_IMAGE_DESCRIPTION->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_ST2084_PQ ||
-+        TARGET_IMAGE_DESCRIPTION->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_HLG;
++        TARGET_IMAGE_DESCRIPTION->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_HLG ||
++        (TARGET_IMAGE_DESCRIPTION->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_EXT_LINEAR && monitorIsHDR);
 +
 +    const bool needsMonitorMod = !data.finalMonitorCM && ((surfaceIsHDR && targetIsHDR) ?
 +        (g_pHyprRenderer->m_renderData.pMonitor->m_hdrBrightness >= 0 && g_pHyprRenderer->m_renderData.pMonitor->m_hdrBrightness != 1.0f) :
@@ -387,7 +406,7 @@ index baee1ad..fc840b7 100644
          ;
  
      if (g_pHyprRenderer->m_renderData.pMonitor->needsACopyFB())
-@@ -1758,7 +1768,7 @@ SP<IFramebuffer> CHyprOpenGLImpl::blurFramebufferWithDamage(float a, CRegion* or
+@@ -1758,7 +1773,7 @@ SP<IFramebuffer> CHyprOpenGLImpl::blurFramebufferWithDamage(float a, CRegion* or
                                          m_renderData.pMonitor->m_sdrSaturation :
                                          1.0f);
              shader->setUniformFloat(SHADER_SDR_BRIGHTNESS,
@@ -396,7 +415,7 @@ index baee1ad..fc840b7 100644
                                              g_pHyprRenderer->workBufferImageDescription()->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_ST2084_PQ ?
                                          m_renderData.pMonitor->m_sdrBrightness :
                                          1.0f);
-@@ -1881,7 +1891,7 @@ SP<IFramebuffer> CHyprOpenGLImpl::blurFramebufferWithDamage(float a, CRegion* or
+@@ -1881,7 +1896,7 @@ SP<IFramebuffer> CHyprOpenGLImpl::blurFramebufferWithDamage(float a, CRegion* or
                                          m_renderData.pMonitor->m_sdrSaturation :
                                          1.0f);
              shader->setUniformFloat(SHADER_SDR_BRIGHTNESS,
@@ -406,10 +425,10 @@ index baee1ad..fc840b7 100644
                                          m_renderData.pMonitor->m_sdrBrightness :
                                          1.0f);
 diff --git a/src/render/Renderer.cpp b/src/render/Renderer.cpp
-index 249f084..900df94 100644
+index 249f084..1532871 100644
 --- a/src/render/Renderer.cpp
 +++ b/src/render/Renderer.cpp
-@@ -1936,42 +1936,56 @@ SCMSettings IHyprRenderer::getCMSettings(const NColorManagement::PImageDescripti
+@@ -1936,42 +1936,61 @@ SCMSettings IHyprRenderer::getCMSettings(const NColorManagement::PImageDescripti
      } else
          srcTF = imageDescription->value().transferFunction;
  
@@ -419,22 +438,29 @@ index 249f084..900df94 100644
 -        imageDescription->value().getTFMaxLuminance(-1) :
 -        (imageDescription->value().luminances.max > 0 ? imageDescription->value().luminances.max : imageDescription->value().luminances.reference);
 -    const auto  dstMaxLuminance = targetImageDescription->value().luminances.max > 0 ? targetImageDescription->value().luminances.max : 10000;
-+    const bool needsSDRmod  = modifySDR && isSDR2HDR(imageDescription->value(), targetImageDescription->value());
-+    const bool needsHDRmod  = !needsSDRmod && isHDR2SDR(imageDescription->value(), targetImageDescription->value());
-+    const bool isHDRsurface = imageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_ST2084_PQ ||
-+        imageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_HLG;
-+    const bool isTargetHDR = targetImageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_ST2084_PQ ||
-+        targetImageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_HLG;
- 
+-
 -    auto        matrix = imageDescription->getPrimaries()->convertMatrix(targetImageDescription->getPrimaries());
 -    auto        toXYZ  = targetImageDescription->getPrimaries()->value().toXYZ();
-+    float      maxLuminance    = needsHDRmod ? imageDescription->value().getTFMaxLuminance(-1) :
-+                                               (imageDescription->value().luminances.max > 0 ? imageDescription->value().luminances.max : imageDescription->value().luminances.reference);
-+    const auto dstMaxLuminance = targetImageDescription->value().luminances.max > 0 ? targetImageDescription->value().luminances.max : 10000;
- 
+-
 -    const bool  needsMod = needsSDRmod &&
 -        ((m_renderData.pMonitor->m_sdrSaturation > 0 && m_renderData.pMonitor->m_sdrSaturation != 1.0f) ||
 -         (m_renderData.pMonitor->m_sdrBrightness > 0 && m_renderData.pMonitor->m_sdrBrightness != 1.0f));
++    const bool needsSDRmod  = modifySDR && isSDR2HDR(imageDescription->value(), targetImageDescription->value());
++    const bool needsHDRmod  = !needsSDRmod && isHDR2SDR(imageDescription->value(), targetImageDescription->value());
++    const bool monitorIsHDR = m_renderData.pMonitor &&
++        m_renderData.pMonitor->m_imageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_ST2084_PQ;
++    const bool isHDRsurface = imageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_ST2084_PQ ||
++        imageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_HLG ||
++        (imageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_EXT_LINEAR &&
++         imageDescription->value().primariesNamed == NColorManagement::CM_PRIMARIES_SRGB);
++    const bool isTargetHDR = targetImageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_ST2084_PQ ||
++        targetImageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_HLG ||
++        (targetImageDescription->value().transferFunction == NColorManagement::CM_TRANSFER_FUNCTION_EXT_LINEAR && monitorIsHDR);
++
++    float      maxLuminance    = needsHDRmod ? imageDescription->value().getTFMaxLuminance(-1) :
++                                               (imageDescription->value().luminances.max > 0 ? imageDescription->value().luminances.max : imageDescription->value().luminances.reference);
++    const auto dstMaxLuminance = targetImageDescription->value().luminances.max > 0 ? targetImageDescription->value().luminances.max : 10000;
++
 +    auto       matrix = imageDescription->getPrimaries()->convertMatrix(targetImageDescription->getPrimaries());
 +    auto       toXYZ  = targetImageDescription->getPrimaries()->value().toXYZ();
 +
