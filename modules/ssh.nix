@@ -11,7 +11,7 @@
       ForwardAgent = "yes";
     };
 
-    settings.gitlab_ibr = {
+    settings."gitlab_ibr gitlab.ibr.cs.tu-bs.de" = {
       HostName = "gitlab.ibr.cs.tu-bs.de";
       Port = 222;
       User = "git";
@@ -21,7 +21,7 @@
       AddKeysToAgent = "yes";
     };
 
-    settings.gitlab_rz = {
+    settings."gitlab_rz git.rz.tu-bs.de" = {
       HostName = "git.rz.tu-bs.de";
       User = "git";
       IdentityFile = "~/.ssh/id_tu";
