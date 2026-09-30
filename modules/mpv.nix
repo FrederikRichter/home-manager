@@ -13,12 +13,21 @@
 
     profiles = {
       hdr = {
-        profile-cond = "p[\"video-params/gamma\"] == \"pq\" or p[\"video-params/gamma\"] == \"hlg\"";
+        profile-cond = "(p[\"video-params/gamma\"] == \"pq\" or p[\"video-params/gamma\"] == \"hlg\") and not (p[\"display-names\"] and table.concat(p[\"display-names\"], \",\"):find(\"HDMI%-A%-1\"))";
         target-peak = "1000";
         target-prim = "display-p3";
         target-trc = "pq";
         hdr-compute-peak = "yes";
-        vo="gpu-next";
+        vo = "gpu-next";
+      };
+
+      hdr-tv = {
+        profile-cond = "(p[\"video-params/gamma\"] == \"pq\" or p[\"video-params/gamma\"] == \"hlg\") and (p[\"display-names\"] and table.concat(p[\"display-names\"], \",\"):find(\"HDMI%-A%-1\") ~= nil)";
+        target-peak = "387";
+        target-prim = "display-p3";
+        target-trc = "pq";
+        hdr-compute-peak = "yes";
+        vo = "gpu-next";
       };
     };
   };
