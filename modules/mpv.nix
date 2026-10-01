@@ -26,7 +26,6 @@
         target-peak = "387";
         target-prim = "display-p3";
         target-trc = "pq";
-        hdr-compute-peak = "yes";
         vo = "gpu-next";
       };
     };

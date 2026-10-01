@@ -46,11 +46,11 @@ wayland.windowManager.hyprland = {
     extraConfig = ''
       local internal_monitor = ${lib.generators.toLua { } internalMonitor}
 
-      local function auto_toggle_edp(removed_name)
+      local function check_external()
         local has_external = false
         for _, m in ipairs(hl.get_monitors()) do
           local mname = (type(m) == "userdata" or type(m) == "table") and m.name or tostring(m)
-          if mname ~= "eDP-1" and (not removed_name or mname ~= removed_name) then
+          if mname ~= "eDP-1" and mname ~= "FALLBACK" then
             has_external = true
             break
           end
@@ -65,25 +65,23 @@ wayland.windowManager.hyprland = {
 
       hl.on("monitor.added", function(mon)
         local mname = (type(mon) == "userdata" or type(mon) == "table") and mon.name or tostring(mon)
-        if mname ~= "eDP-1" then
+        if mname ~= "eDP-1" and mname ~= "FALLBACK" then
           hl.monitor({ output = "eDP-1", disabled = true })
-        else
-          auto_toggle_edp(nil)
         end
       end)
 
       hl.on("monitor.removed", function(mon)
         local mname = (type(mon) == "userdata" or type(mon) == "table") and mon.name or tostring(mon)
-        if mname ~= "eDP-1" then
-          auto_toggle_edp(mname)
+        if mname ~= "eDP-1" and mname ~= "FALLBACK" then
+          hl.monitor(internal_monitor)
         end
       end)
 
       hl.on("hyprland.start", function()
-        auto_toggle_edp(nil)
+        check_external()
       end)
 
-      auto_toggle_edp(nil)
+      check_external()
     '';
 };
 
@@ -93,7 +91,6 @@ programs.mpv.config = {
     hwdec="vulkan";
     gpu-api="vulkan";
     gpu-context="waylandvk";
-    profile="high-quality";
 };
 
 home.stateVersion = "25.11";
