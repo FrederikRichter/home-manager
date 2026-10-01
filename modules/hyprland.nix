@@ -131,7 +131,7 @@ in
           };
 
           render = {
-            direct_scanout = 1;
+            direct_scanout = false;
           };
 
           xwayland = {
