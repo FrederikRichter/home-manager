@@ -73,6 +73,7 @@
 	vlc
 	rquickshare
 	qalculate-qt
+    zig
 	];
 
 	# set session vars
