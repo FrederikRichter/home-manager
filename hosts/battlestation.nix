@@ -16,7 +16,7 @@ let
     };
     tv = {
         output = "HDMI-A-1";
-        mode = "4096x2160@60.00Hz";
+        mode = "4096x2160@30.00Hz";
         position = "auto";
         scale = 2;
         bitdepth = 10;
