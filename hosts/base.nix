@@ -86,6 +86,10 @@
 		WEBKIT_DISABLE_COMPOSITING_MODE=1; # HOTFIX
 	};
 
+    # Disable gnome open with
+    xdg.portal.xdgOpenUsePortal = false;
+
+
 	# Allow unfree packages both inside Home Manager and for user-level nix
 	# commands (e.g. `nix-shell -p`, `nix build`, `nix-env`). See
 	# https://nixos.org/manual/nixpkgs/stable/#sec-allow-unfree
