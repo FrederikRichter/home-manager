@@ -18,7 +18,7 @@ let
 
   externalMonitor = {
     output = "HDMI-A-1";
-    mode = "4096x2160@50.00Hz";
+    mode = "3840x2160@60.00Hz";
     position = "auto";
     scale = 2;
     bitdepth = 10;
@@ -89,8 +89,6 @@ wayland.windowManager.hyprland = {
 # MPV
 programs.mpv.config = {
     hwdec="vulkan";
-    gpu-api="vulkan";
-    gpu-context="waylandvk";
 };
 
 home.stateVersion = "25.11";
