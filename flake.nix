@@ -3,7 +3,6 @@
 
     inputs = {
         nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-        nixpkgs-hyprland.url = "github:nixos/nixpkgs/nixos-unstable";
         home-manager = {
             url = "github:nix-community/home-manager";
             inputs.nixpkgs.follows = "nixpkgs";
@@ -35,7 +34,7 @@ let
         evolved.overlays.default
         nixvim.overlays.default
         (final: prev: {
-            hyprland = (import nixpkgs-hyprland {
+            hyprland = (import nixpkgs {
                 inherit system;
                 config.allowUnfree = true;
             }).hyprland.overrideAttrs (oldAttrs: {
