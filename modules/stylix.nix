@@ -1,4 +1,4 @@
-{config, pkgs, lib, ... }:
+{pkgs, lib, ... }:
 {
     home.pointerCursor = {
         enable = true;
@@ -6,6 +6,7 @@
 
     stylix = {
         enable = true;
+        polarity = "dark";
         image = lib.mkDefault ../assets/wallpaper/abstract.jpg;
         targets = {
             vesktop.enable = false;
