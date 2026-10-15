@@ -12,6 +12,8 @@ programs.mpv = {
     gpu-api = "vulkan";
     gpu-context = "waylandvk";
     profile = "high-quality";
+    demuxer-max-bytes = "1G";
+
 
     target-colorspace-hint = "auto";
   };
@@ -35,7 +37,6 @@ programs.mpv = {
         + " and (p[\"display-names\"] and table.concat(p[\"display-names\"], \",\"):find(\"HDMI%-A%-1\") ~= nil)";
 
       profile-restore = "copy";
-
       target-peak = "387";
       target-prim = "display-p3";
       target-trc = "pq";
