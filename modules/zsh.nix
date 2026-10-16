@@ -16,6 +16,7 @@
             rm = "echo Use forcerm, consider using trash";
             forcerm = "rm";
             trash = "${pkgs.gtrash}/bin/gtrash";
+            javacmp = "javac -d out $(find src -name \"*.java\") && jar --create --file app.jar --main-class Main -C out .";
 		};
 		history = {
 			size = 10000;
