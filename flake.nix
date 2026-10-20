@@ -11,6 +11,10 @@
             url = "github:FrederikRichter/nixvim";
             inputs.nixpkgs.follows = "nixpkgs";
         };
+        llm-agents =  {
+            url = "github:numtide/llm-agents.nix";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
         stylix = {
             url = "github:danth/stylix";
             inputs.nixpkgs.follows = "nixpkgs";
@@ -25,61 +29,62 @@
         };        
     };
 
-outputs = { nixpkgs, ... }@inputs:
-let
-    system = "x86_64-linux";
+    outputs = { nixpkgs, ... }@inputs:
+        let
+            system = "x86_64-linux";
 
-    overlays = with inputs; [
-        helium.overlays.default
-        evolved.overlays.default
-        nixvim.overlays.default
-        (final: prev: {
-            hyprland = (import nixpkgs {
-                inherit system;
-                config.allowUnfree = true;
-            }).hyprland.overrideAttrs (oldAttrs: {
-                patches = (oldAttrs.patches or [ ]) ++ [
-                    ./patches/hyprland-unified-hdr-brightness.patch
-                ];
-            });
-        })
-    ];
-
-    pkgs = import nixpkgs {
-        inherit system;
-    };
-
-    stylixModule = inputs.stylix.homeModules.stylix;
-
-    mkHost = hostModule:
-        inputs.home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
-
-            modules = [
-                {
-                    nixpkgs = {
-                        inherit overlays;
+            overlays = with inputs; [
+                helium.overlays.default
+                evolved.overlays.default
+                nixvim.overlays.default
+                llm-agents.overlays.shared-nixpkgs
+                (final: prev: {
+                    hyprland = (import nixpkgs {
+                        inherit system;
                         config.allowUnfree = true;
-                    };
-                }
-
-                ./hosts/base.nix
-                hostModule
-                stylixModule
+                    }).hyprland.overrideAttrs (oldAttrs: {
+                            patches = (oldAttrs.patches or [ ]) ++ [
+                                ./patches/hyprland-unified-hdr-brightness.patch
+                            ];
+                        });
+                })
             ];
 
-            extraSpecialArgs = {
-                inherit inputs;
+            pkgs = import nixpkgs {
+                inherit system;
             };
+
+            stylixModule = inputs.stylix.homeModules.stylix;
+
+            mkHost = hostModule:
+                inputs.home-manager.lib.homeManagerConfiguration {
+                    inherit pkgs;
+
+                    modules = [
+                        {
+                            nixpkgs = {
+                                inherit overlays;
+                                config.allowUnfree = true;
+                            };
+                        }
+
+                        ./hosts/base.nix
+                        hostModule
+                        stylixModule
+                    ];
+
+                    extraSpecialArgs = {
+                        inherit inputs;
+                    };
+                };
+        in {
+            overlays.default = nixpkgs.lib.composeManyExtensions overlays;
+
+            homeConfigurations.ideapad =
+                mkHost ./hosts/ideapad.nix;
+
+            homeConfigurations.battlestation =
+                mkHost ./hosts/battlestation.nix;
         };
-in {
-    overlays.default = nixpkgs.lib.composeManyExtensions overlays;
-
-    homeConfigurations.ideapad =
-        mkHost ./hosts/ideapad.nix;
-
-    homeConfigurations.battlestation =
-        mkHost ./hosts/battlestation.nix;
-};
 }
 

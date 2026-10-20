@@ -74,9 +74,9 @@
 	rquickshare
 	qalculate-qt
     zig
+    llm-agents.dsh
 	];
-
-	# set session vars
+    # set session vars
 	home.sessionVariables = {
 		EDITOR="nvim";
 		XDG_SESSION_TYPE = "wayland";
