@@ -31,7 +31,6 @@
 	gdb
 	gtrash
 	grim
-	godot
 	htop
 	hugo
     helium
