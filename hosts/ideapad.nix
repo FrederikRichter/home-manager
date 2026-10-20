@@ -91,5 +91,7 @@ programs.mpv.config = {
     hwdec="vulkan";
 };
 
+programs.foot.settings.main.font = lib.mkForce "monospace:size=12";
+
 home.stateVersion = "25.11";
 }

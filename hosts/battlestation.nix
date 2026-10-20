@@ -57,6 +57,9 @@ programs.mpv.config = {
     hwdec="nvdec";
 };
 
+programs.foot.settings.main.font = lib.mkForce "monospace:size=16";
+
+
     home.packages = with pkgs; [
         r2modman
         xournalpp
