@@ -170,6 +170,23 @@ in
           ignore_alpha = 0.0;
         };
 
+        window_rule = [
+          {
+            name = "minecraft-fullscreen-title";
+            match = {
+              title = "(?i)^Minecraft.*";
+            };
+            fullscreen = true;
+          }
+          {
+            name = "minecraft-fullscreen-class";
+            match = {
+              class = "(?i)^Minecraft.*";
+            };
+            fullscreen = true;
+          }
+        ];
+
         on = {
           _args = [
             "hyprland.start"
