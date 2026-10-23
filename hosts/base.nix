@@ -73,6 +73,7 @@
 	rquickshare
 	qalculate-qt
     zig
+    zotero
     llm-agents.dsh
 	];
     # set session vars

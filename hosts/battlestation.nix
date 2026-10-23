@@ -64,6 +64,7 @@ programs.foot.settings.main.font = lib.mkForce "monospace:size=16";
         r2modman
         xournalpp
         modded-evolve
+        prismlauncher
     ];
 
     home.sessionVariables = {
