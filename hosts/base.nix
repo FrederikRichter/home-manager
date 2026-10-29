@@ -93,7 +93,12 @@
 	# Allow unfree packages both inside Home Manager and for user-level nix
 	# commands (e.g. `nix-shell -p`, `nix build`, `nix-env`). See
 	# https://nixos.org/manual/nixpkgs/stable/#sec-allow-unfree
-	nixpkgs.config.allowUnfree = true;
+	nixpkgs.config = {
+        allowUnfree = true;
+        permittedInsecurePackages = [
+                "firefox-esr-140-bin-unwrapped-140.17.0esr"
+        ];
+    };
 	xdg.configFile."nixpkgs/config.nix".text = ''
 		{ allowUnfree = true; }
 	'';
