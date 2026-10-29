@@ -27,6 +27,10 @@
             url = "github:FrederikRichter/evolve-stage2-nix";
             inputs.nixpkgs.follows = "nixpkgs";
         };        
+        nix-microchip = {
+            url = "github:cormacc/nix-microchip";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };        
     };
 
     outputs = { nixpkgs, ... }@inputs:
@@ -38,7 +42,14 @@
                 evolved.overlays.default
                 nixvim.overlays.default
                 llm-agents.overlays.shared-nixpkgs
+                nix-microchip.overlays.default
                 (final: prev: {
+                    xc-cli = prev.xc-cli.override {
+                        compilers = [ prev.xc8 ];
+                    };
+                    mplab-x = prev.mplab-x.override {
+                        xc-cli = final.xc-cli;
+                    };
                     hyprland = (import nixpkgs {
                         inherit system;
                         config.allowUnfree = true;
