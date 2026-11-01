@@ -28,7 +28,6 @@
 	dosfstools
 	ffmpeg-full
 	fzf
-	gdb
 	gtrash
 	grim
 	htop
@@ -75,14 +74,6 @@
     zig
     zotero
     llm-agents.dsh
-
-    # Microchip & AVR development (e.g. ATmega1284P)
-    mplab-x
-    xc-cli
-    pkgsCross.avr.buildPackages.gcc
-    pkgsCross.avr.buildPackages.binutils
-    pkgsCross.avr.buildPackages.gdb
-    avrdude
     gnumake
 	];
     # set session vars
