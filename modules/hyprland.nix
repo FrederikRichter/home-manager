@@ -188,7 +188,7 @@ in
           {
             name = "noscreenshare";
             match = {
-                class = "^(org.telegram.desktop|signal|discord|nemo|org.keepassxc.KeePassXC|helium)";
+                class = "^(org.telegram.desktop|signal|discord|nemo|org.keepassxc.KeePassXC)";
             };
             no_screen_share = true;
           }
@@ -233,12 +233,14 @@ in
           (bind (modKey "s") (lua "hl.dsp.focus({ workspace = 2 })"))
           (bind (modKey "d") (lua "hl.dsp.focus({ workspace = 3 })"))
           (bind (modKey "f") (lua "hl.dsp.focus({ workspace = 4 })"))
+          (bind (modKey "0") (lua "hl.dsp.focus({ workspace = 0 })"))
 
           # Move to workspace
           (bind (modKey "SHIFT + a") (lua "hl.dsp.window.move({ workspace = 1 })"))
           (bind (modKey "SHIFT + s") (lua "hl.dsp.window.move({ workspace = 2 })"))
           (bind (modKey "SHIFT + d") (lua "hl.dsp.window.move({ workspace = 3 })"))
           (bind (modKey "SHIFT + f") (lua "hl.dsp.window.move({ workspace = 4 })"))
+          (bind (modKey "SHIFT + f") (lua "hl.dsp.window.move({ workspace = 0 })"))
 
           # Workspace back and forth
           (bind (modKey "Tab") (lua ''hl.dsp.focus({ workspace = "previous" })''))

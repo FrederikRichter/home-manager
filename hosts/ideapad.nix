@@ -16,7 +16,7 @@ let
     disabled = false;
   };
 
-  externalMonitor = {
+  tv = {
     output = "HDMI-A-1";
     mode = "3840x2160@60.00Hz";
     position = "auto";
@@ -31,6 +31,13 @@ let
     min_luminance = 0.045;
     max_luminance = 387;
   };
+
+    hdmi = {
+    output = "HDMI-A-1";
+    mode = "preferred";
+    position = "auto-left";
+  };
+
 in
 {
 targets.genericLinux.enable = lib.mkForce false;
@@ -38,51 +45,62 @@ targets.genericLinux.enable = lib.mkForce false;
 hyprland.enable = true;
 
 wayland.windowManager.hyprland = {
-    settings.monitor = [
-      internalMonitor
-      externalMonitor
-    ];
+    settings = {
+            monitor = [
+                internalMonitor
+                #tv
+                hdmi
+            ];
+            workspace = [
+                "0, monitor:HDMI-A-1, default:true"
+                "1, monitor:eDP-1"
+                "2, monitor:eDP-1"
+                "3, monitor:eDP-1"
+                "4, monitor:eDP-1, default:true"
+            ];
 
-    extraConfig = ''
-      local internal_monitor = ${lib.generators.toLua { } internalMonitor}
-
-      local function check_external()
-        local has_external = false
-        for _, m in ipairs(hl.get_monitors()) do
-          local mname = (type(m) == "userdata" or type(m) == "table") and m.name or tostring(m)
-          if mname ~= "eDP-1" and mname ~= "FALLBACK" then
-            has_external = true
-            break
-          end
-        end
-
-        if has_external then
-          hl.monitor({ output = "eDP-1", disabled = true })
-        else
-          hl.monitor(internal_monitor)
-        end
-      end
-
-      hl.on("monitor.added", function(mon)
-        local mname = (type(mon) == "userdata" or type(mon) == "table") and mon.name or tostring(mon)
-        if mname ~= "eDP-1" and mname ~= "FALLBACK" then
-          hl.monitor({ output = "eDP-1", disabled = true })
-        end
-      end)
-
-      hl.on("monitor.removed", function(mon)
-        local mname = (type(mon) == "userdata" or type(mon) == "table") and mon.name or tostring(mon)
-        if mname ~= "eDP-1" and mname ~= "FALLBACK" then
-          hl.monitor(internal_monitor)
-        end
-      end)
-
-      hl.on("hyprland.start", function()
-        check_external()
-      end)
-
-      check_external()
-    '';
+        };
+    #
+    # extraConfig = ''
+    #   local internal_monitor = ${lib.generators.toLua { } internalMonitor}
+    #
+    #   local function check_external()
+    #     local has_external = false
+    #     for _, m in ipairs(hl.get_monitors()) do
+    #       local mname = (type(m) == "userdata" or type(m) == "table") and m.name or tostring(m)
+    #       if mname ~= "eDP-1" and mname ~= "FALLBACK" then
+    #         has_external = true
+    #         break
+    #       end
+    #     end
+    #
+    #     if has_external then
+    #       hl.monitor({ output = "eDP-1", disabled = true })
+    #     else
+    #       hl.monitor(internal_monitor)
+    #     end
+    #   end
+    #
+    #   hl.on("monitor.added", function(mon)
+    #     local mname = (type(mon) == "userdata" or type(mon) == "table") and mon.name or tostring(mon)
+    #     if mname ~= "eDP-1" and mname ~= "FALLBACK" then
+    #       hl.monitor({ output = "eDP-1", disabled = true })
+    #     end
+    #   end)
+    #
+    #   hl.on("monitor.removed", function(mon)
+    #     local mname = (type(mon) == "userdata" or type(mon) == "table") and mon.name or tostring(mon)
+    #     if mname ~= "eDP-1" and mname ~= "FALLBACK" then
+    #       hl.monitor(internal_monitor)
+    #     end
+    #   end)
+    #
+    #   hl.on("hyprland.start", function()
+    #     check_external()
+    #   end)
+    #
+    #   check_external()
+    # '';
 };
 
 
