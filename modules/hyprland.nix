@@ -185,6 +185,13 @@ in
             };
             fullscreen = true;
           }
+          {
+            name = "noscreenshare";
+            match = {
+                class = "^(org.telegram.desktop|signal|discord|nemo|org.keepassxc.KeePassXC|helium)";
+            };
+            no_screen_share = true;
+          }
         ];
 
         on = {
