@@ -233,14 +233,14 @@ in
           (bind (modKey "s") (lua "hl.dsp.focus({ workspace = 2 })"))
           (bind (modKey "d") (lua "hl.dsp.focus({ workspace = 3 })"))
           (bind (modKey "f") (lua "hl.dsp.focus({ workspace = 4 })"))
-          (bind (modKey "0") (lua "hl.dsp.focus({ workspace = 0 })"))
+          (bind (modKey "g") (lua "hl.dsp.focus({ workspace = 5 })"))
 
           # Move to workspace
           (bind (modKey "SHIFT + a") (lua "hl.dsp.window.move({ workspace = 1 })"))
           (bind (modKey "SHIFT + s") (lua "hl.dsp.window.move({ workspace = 2 })"))
           (bind (modKey "SHIFT + d") (lua "hl.dsp.window.move({ workspace = 3 })"))
           (bind (modKey "SHIFT + f") (lua "hl.dsp.window.move({ workspace = 4 })"))
-          (bind (modKey "SHIFT + f") (lua "hl.dsp.window.move({ workspace = 0 })"))
+          (bind (modKey "SHIFT + g") (lua "hl.dsp.window.move({ workspace = 5 })"))
 
           # Workspace back and forth
           (bind (modKey "Tab") (lua ''hl.dsp.focus({ workspace = "previous" })''))

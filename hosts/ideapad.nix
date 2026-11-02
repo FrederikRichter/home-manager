@@ -51,12 +51,29 @@ wayland.windowManager.hyprland = {
                 #tv
                 hdmi
             ];
-            workspace = [
-                "0, monitor:HDMI-A-1, default:true"
-                "1, monitor:eDP-1"
-                "2, monitor:eDP-1"
-                "3, monitor:eDP-1"
-                "4, monitor:eDP-1, default:true"
+            workspace_rule = [
+                {
+                    workspace = "5";
+                    monitor = "HDMI-A-1";
+                    default = true;
+                }
+                {
+                    workspace = "1";
+                    monitor = "eDP-1";
+                }
+                {
+                    workspace = "2";
+                    monitor = "eDP-1";
+                }
+                {
+                    workspace = "3";
+                    monitor = "eDP-1";
+                }
+                {
+                    workspace = "4";
+                    monitor = "eDP-1";
+                    default = true;
+                }
             ];
 
         };
