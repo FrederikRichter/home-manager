@@ -1,105 +1,87 @@
-{pkgs, ...}:
+{ pkgs, lib, ... }:
+
+let
+  # KeePassXC exposes its database as the default Secret Service collection.
+  # Wait until that collection is unlocked before starting Mailspring, otherwise
+  # Mailspring 1.26+ fails with "Password Management Error" / "encryption is not
+  # available".
+  startMailspring = pkgs.writeShellScript "start-mailspring" ''
+    set -u
+    export PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.systemd ]}:$PATH
+
+    # Wait for KeePassXC to publish org.freedesktop.secrets.
+    for _ in $(seq 1 30); do
+      if busctl --user status org.freedesktop.secrets >/dev/null 2>&1; then
+        break
+      fi
+      sleep 1
+    done
+
+    # Wait for the default collection to be unlocked. The collection is not
+    # hardcoded here: KeePassXC names it after the database, so use the
+    # "default" alias instead.
+    echo "Waiting for the KeePassXC default collection to be unlocked..." >&2
+    locked=""
+    for _ in $(seq 1 300); do
+      locked="$(busctl --user get-property \
+        org.freedesktop.secrets \
+        /org/freedesktop/secrets/aliases/default \
+        org.freedesktop.Secret.Collection Locked 2>/dev/null || true)"
+      if [ "$locked" = "b false" ]; then
+        break
+      fi
+      sleep 1
+    done
+
+    if [ "$locked" != "b false" ]; then
+      echo "KeePassXC is still locked;" >&2
+      exit
+    fi
+
+    # On Hyprland the sync fallback would otherwise use basic_text instead of
+    # KeePassXC's Secret Service.
+    exec ${pkgs.mailspring}/bin/mailspring \
+      --background \
+      --password-store=gnome-libsecret \
+      "$@"
+  '';
+in
 {
-# let
-#     keepassxc-script = (pkgs.writeShellScriptBin "start-mailspring-when-unlocked.sh" ''
-#           #!${pkgs.bash}/bin/bash
-#
-#             export PATH=${pkgs.gnugrep}/bin:${pkgs.systemd}/bin:${pkgs.coreutils}/bin:$PATH
-# # Wait until at least one unlocked item is visible under the secret collection
-#             while ! busctl --user tree org.freedesktop.secrets | grep -q '/org/freedesktop/secrets/collection/Database/'; do
-#             echo "Waiting for KeepassXC database to be unlocked..."
-#             sleep 2
-#             done
-#
-#             echo "Database unlocked. Starting Mailspring..."
-#             exec ${pkgs.mailspring}/bin/mailspring --background --password-store=gnome-libsecret
-#             '');
-# in
-# {
-#     accounts.email.accounts = {
-#         mailbox = {
-#             address = "frederik.richter@mailbox.org";
-#             maildir.path = "mailbox";
-#             realName = "Frederik Richter";
-#             primary = true;
-#             userName = "frederik.richter@mailbox.org";
-#             imap = {
-#                 host = "imap.mailbox.org";
-#                 port = 993;
-#             };
-#             smtp = {
-#                 host = "smtp.mailbox.org";
-#                 port = 465;
-#             };
-#             aliases = [
-#                 "fredster@mailbox.org"
-#                 "frederik.shopping@mailbox.org"
-#                 "frederik.gaming@mailbox.org"
-#             ];
-#         };
-#         tu-bs = {
-#             address = "frederik.richter@tu-braunschweig.de";
-#             maildir.path = "tubs";
-#             realName = "Frederik Richter";
-#             userName = "AD\\y0117852";
-#             imap = {
-#                 host = "mail.tu-braunschweig.de";
-#                 port = 993;
-#             };
-#             smtp = {
-#                 host = "mail.tu-braunschweig.de";
-#                 port = 587;
-#                 tls.useStartTls = true;
-#             };
-#             };
-#
-#         gmail = {
-#             address = "frederik.twix@gmail.com";
-#             maildir.path = "gmail";
-#             realName = "Frederik Richter";
-#             userName = "frederik.twix@gmail.com";
-#             imap = {
-#                 host = "imap.gmail.com";
-#                 port = 993;
-#             };
-#             smtp = {
-#                 host = "smtp.gmail.com";
-#                 port = 465;
-#             };
-#         };
-#     };
-#
-#
-#     home.packages = [
-#         pkgs.libsecret
-#     ];
-#
-#
-#
-#     systemd.user.services.mailspring = {
-#         Unit = {
-#             Description = "mailspring autostart";
-#             After = [ "graphical-session.target" "keepassxc.service" ];
-#             PartOf = [ "graphical-session.target" ];
-#             Requires = [ "graphical-session.target" ];
-#         };
-#
-#         Service = {
-#             ExecStart = "${keepassxc-script}/bin/start-mailspring-when-unlocked.sh";
-#             Restart = "on-failure";
-#         };
-#
-#         Install = {
-#             WantedBy = [ "graphical-session.target" ];
-#         };
-#     };
-#
-#     xdg.desktopEntries.mailspring = {
-#       name = "Mailspring";
-#       exec = "${pkgs.mailspring}/bin/mailspring --password-store=gnome-libsecret";
-#       icon = "mailspring";
-#       terminal = false;
-#       comment = "A beautiful, modern email client";
-#       categories = [ "Network" "Email" ];
-#     };
+  home.packages = [ pkgs.mailspring ];
+
+  systemd.user.services.mailspring = {
+    Unit = {
+      Description = "Mailspring mail client";
+      After = [ "graphical-session.target" "keepassxc.service" ];
+      PartOf = [ "graphical-session.target" ];
+      Wants = [ "keepassxc.service" ];
+    };
+
+    Service = {
+      ExecStart = "${startMailspring}";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
+
+  # Shadow the desktop file shipped by the Mailspring package so that manual
+  # launches also get the KeePassXC password-store flag.  Using xdg.dataFile
+  # instead of xdg.desktopEntries avoids the makeDesktopItem/extraConfig
+  # incompatibility between this nixpkgs and home-manager revision.
+  xdg.dataFile."applications/Mailspring.desktop".text = ''
+    [Desktop Entry]
+    Type=Application
+    Name=Mailspring
+    GenericName=Mail Client
+    Comment=A beautiful, modern email client
+    Exec=${pkgs.mailspring}/bin/mailspring --password-store=gnome-libsecret %U
+    Icon=mailspring
+    Terminal=false
+    Categories=Network;Email;
+    MimeType=x-scheme-handler/mailto;x-scheme-handler/mailspring;
+  '';
 }
