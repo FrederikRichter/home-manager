@@ -42,16 +42,11 @@ let
     "inode/directory" = "nemo.desktop";
     "text/markdown" = editor;
     "text/plain" = editor;
-    "x-scheme-handler/claude-cli" = "claude-code-url-handler.desktop";
     "x-scheme-handler/discord" = "discord.desktop";
-    "x-scheme-handler/discord-1221314350216646828" = "discord-1221314350216646828.desktop";
     "x-scheme-handler/mailspring" = "Mailspring.desktop";
     "x-scheme-handler/mailto" = "Mailspring.desktop";
     "x-scheme-handler/sgnl" = "signal.desktop";
     "x-scheme-handler/signalcaptcha" = "signal.desktop";
-    "x-scheme-handler/tg" = "userapp-Telegram Desktop-RFQB82.desktop";
-    "x-scheme-handler/ton" = "org.telegram.desktop.desktop";
-    "x-scheme-handler/tonsite" = "userapp-Telegram Desktop-ITMB82.desktop";
   };
 in
 {
@@ -81,8 +76,6 @@ in
         "application/pdf" = "org.pwmt.zathura-pdf-mupdf.desktop";
         "image/svg+xml" = "org.pwmt.zathura-pdf-mupdf.desktop";
         "inode/directory" = "nemo.desktop";
-        "x-scheme-handler/tg" = "userapp-Telegram Desktop-RFQB82.desktop";
-        "x-scheme-handler/tonsite" = "userapp-Telegram Desktop-ITMB82.desktop";
       };
     };
 

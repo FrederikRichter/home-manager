@@ -50,7 +50,6 @@
     slurp
     spotify
     swayidle
-    telegram-desktop
     transmission_4
     tree
     typst
