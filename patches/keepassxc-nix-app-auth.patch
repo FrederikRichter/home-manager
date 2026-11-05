@@ -1,24 +1,25 @@
-From d2423a9a06bba31a794494bd4f8d1b75c15ddd43 Mon Sep 17 00:00:00 2001
+From 23c2115b6c0752fbd379458b06f6a05907529290 Mon Sep 17 00:00:00 2001
 From: Frederik Richter <frederik.richter@mailbox.org>
 Date: Thu, 5 Nov 2026 21:14:17 +0100
 Subject: [PATCH] fdosecrets: persist NixOS app authorizations in database
  CustomData
 
 ---
- src/core/CustomData.cpp                   |   3 +-
- src/core/CustomData.h                     |   1 +
- src/fdosecrets/FdoSecretsSettings.cpp     |   3 +-
- src/fdosecrets/FdoSecretsSettings.h       |   1 +
- src/fdosecrets/dbus/DBusClient.cpp        |  48 ++-
- src/fdosecrets/dbus/DBusClient.h          |  19 +-
- src/fdosecrets/dbus/DBusMgr.cpp           | 396 +++++++++++++++++++++-
- src/fdosecrets/dbus/DBusMgr.h             |  25 ++
- src/fdosecrets/objects/Collection.cpp     |   1 +
- src/fdosecrets/objects/Prompt.cpp         |   4 +-
- src/fdosecrets/widgets/SettingsModels.cpp |   5 +-
- tests/TestFdoSecrets.cpp                  | 101 ++++++
- tests/TestFdoSecrets.h                    |   1 +
- 13 files changed, 599 insertions(+), 9 deletions(-)
+ src/core/CustomData.cpp                       |   3 +-
+ src/core/CustomData.h                         |   1 +
+ src/fdosecrets/FdoSecretsSettings.cpp         |   3 +-
+ src/fdosecrets/FdoSecretsSettings.h           |   1 +
+ src/fdosecrets/dbus/DBusClient.cpp            |  48 +-
+ src/fdosecrets/dbus/DBusClient.h              |  19 +-
+ src/fdosecrets/dbus/DBusMgr.cpp               | 436 +++++++++++++++++-
+ src/fdosecrets/dbus/DBusMgr.h                 |  27 ++
+ src/fdosecrets/objects/Collection.cpp         |   1 +
+ src/fdosecrets/objects/Prompt.cpp             |  30 +-
+ .../widgets/AccessControlDialog.cpp           |   1 +
+ src/fdosecrets/widgets/SettingsModels.cpp     |   5 +-
+ tests/TestFdoSecrets.cpp                      | 123 +++++
+ tests/TestFdoSecrets.h                        |   1 +
+ 14 files changed, 689 insertions(+), 10 deletions(-)
 
 diff --git a/src/core/CustomData.cpp b/src/core/CustomData.cpp
 index 5376150a..2672c0eb 100644
@@ -240,7 +241,7 @@ index 3d9e94d0..96397d3d 100644
          PeerInfo m_process;
  
 diff --git a/src/fdosecrets/dbus/DBusMgr.cpp b/src/fdosecrets/dbus/DBusMgr.cpp
-index 3765e6f0..d6dedd87 100644
+index 3765e6f0..83a4bd85 100644
 --- a/src/fdosecrets/dbus/DBusMgr.cpp
 +++ b/src/fdosecrets/dbus/DBusMgr.cpp
 @@ -23,8 +23,21 @@
@@ -265,7 +266,7 @@ index 3765e6f0..d6dedd87 100644
  
  #ifdef __FreeBSD__
  #include <string.h>
-@@ -221,6 +234,133 @@ namespace FdoSecrets
+@@ -221,6 +234,183 @@ namespace FdoSecrets
          return info;
      }
  
@@ -273,6 +274,9 @@ index 3765e6f0..d6dedd87 100644
 +    {
 +        bool hasUntrustedEnv(uint pid)
 +        {
++            if (pid == 0) {
++                return false;
++            }
 +            QFile envFile(QStringLiteral("/proc/%1/environ").arg(pid));
 +            if (!envFile.open(QIODevice::ReadOnly)) {
 +                return true;
@@ -316,13 +320,31 @@ index 3765e6f0..d6dedd87 100644
 +            if (baseName != QStringLiteral("electron") && !baseName.startsWith(QStringLiteral(".electron"))) {
 +                return {};
 +            }
-+            QDir fdDir(QStringLiteral("/proc/%1/fd").arg(pid));
-+            const auto fdEntries = fdDir.entryInfoList(QDir::NoDotAndDotDot);
-+            for (const auto& fdInfo : fdEntries) {
-+                const auto target = fdInfo.symLinkTarget();
-+                if (target.startsWith(QStringLiteral("/nix/store/")) && target.endsWith(QStringLiteral(".asar"))
-+                    && command.contains(target)) {
-+                    const auto canonical = QFileInfo(target).canonicalFilePath();
++            if (pid > 0) {
++                QDir fdDir(QStringLiteral("/proc/%1/fd").arg(pid));
++                const auto fdEntries =
++                    fdDir.entryInfoList(QDir::Dirs | QDir::Files | QDir::System | QDir::NoDotAndDotDot);
++                for (const auto& fdInfo : fdEntries) {
++                    const auto target = fdInfo.symLinkTarget();
++                    if (target.startsWith(QStringLiteral("/nix/store/")) && target.endsWith(QStringLiteral(".asar"))
++                        && !target.endsWith(QStringLiteral("/default_app.asar")) && command.contains(target)) {
++                        const auto canonical = QFileInfo(target).canonicalFilePath();
++                        if (canonical.startsWith(QStringLiteral("/nix/store/"))
++                            && canonical.endsWith(QStringLiteral(".asar"))) {
++                            return canonical;
++                        }
++                    }
++                }
++            }
++            static const QRegularExpression cmdAsarRe(
++                QStringLiteral(R"((/nix/store/[a-z0-9]{32}-[^/\s]+/\S+?\.asar)\b)"));
++            auto it = cmdAsarRe.globalMatch(command);
++            while (it.hasNext()) {
++                const auto match = it.next();
++                const auto candidate = match.captured(1);
++                if (!candidate.endsWith(QStringLiteral("/default_app.asar"))) {
++                    const auto canonical =
++                        (pid == 0) ? QDir::cleanPath(candidate) : QFileInfo(candidate).canonicalFilePath();
 +                    if (canonical.startsWith(QStringLiteral("/nix/store/"))
 +                        && canonical.endsWith(QStringLiteral(".asar"))) {
 +                        return canonical;
@@ -332,6 +354,35 @@ index 3765e6f0..d6dedd87 100644
 +            return {};
 +        }
 +    } // namespace
++
++    void DBusMgr::resolveProcessIdentity(uint pid, QList<ProcInfo>& hierarchy, QString& appId, bool& untrustedCli)
++    {
++        if (hierarchy.isEmpty()) {
++            appId.clear();
++            untrustedCli = true;
++            return;
++        }
++        auto& front = hierarchy.front();
++        const bool badEnv = hasUntrustedEnv(pid);
++        const bool badCmd = hasUntrustedCmdline(front.command);
++        if (!badEnv && !badCmd) {
++            for (const auto& proc : asConst(hierarchy)) {
++                const auto asarPath = resolveElectronAsarPath(proc.pid, proc.exePath, proc.command);
++                if (!asarPath.isEmpty()) {
++                    front.exePath = asarPath;
++                    static const QRegularExpression nixPkgRe(
++                        QStringLiteral(R"(^/nix/store/[a-z0-9]{32}-([a-zA-Z0-9._+-]+?)(?:-[0-9][^/]*)?/)"));
++                    const auto pkgMatch = nixPkgRe.match(asarPath);
++                    if (pkgMatch.hasMatch()) {
++                        front.name = pkgMatch.captured(1);
++                    }
++                    break;
++                }
++            }
++        }
++        appId = normalizeNixStorePath(front.exePath);
++        untrustedCli = badEnv || badCmd || isUntrustedCliExecutable(front.exePath, appId);
++    }
 +
 +    QString DBusMgr::normalizeNixStorePath(const QString& path)
 +    {
@@ -399,28 +450,16 @@ index 3765e6f0..d6dedd87 100644
      DBusMgr::DBusMgr()
          : m_conn(QDBusConnection::sessionBus())
      {
-@@ -269,6 +409,20 @@ namespace FdoSecrets
+@@ -269,6 +459,8 @@ namespace FdoSecrets
              ppid = proc.ppid;
          }
  
-+        if (!info.hierarchy.isEmpty()) {
-+            auto& front = info.hierarchy.front();
-+            const bool badEnv = hasUntrustedEnv(info.pid);
-+            const bool badCmd = hasUntrustedCmdline(front.command);
-+            if (!badEnv && !badCmd) {
-+                const auto asarPath = resolveElectronAsarPath(info.pid, front.exePath, front.command);
-+                if (!asarPath.isEmpty()) {
-+                    front.exePath = asarPath;
-+                }
-+            }
-+            info.appId = normalizeNixStorePath(front.exePath);
-+            info.untrustedCli = badEnv || badCmd || isUntrustedCliExecutable(front.exePath, info.appId);
-+        }
++        resolveProcessIdentity(info.pid, info.hierarchy, info.appId, info.untrustedCli);
 +
          // check if the exe file is valid
          // (assuming for now that an accessible file is valid)
          info.valid = QFileInfo::exists(info.exePath());
-@@ -641,6 +795,16 @@ namespace FdoSecrets
+@@ -641,6 +833,16 @@ namespace FdoSecrets
  
          auto client = DBusClientPtr(new DBusClient(this, info));
  
@@ -437,7 +476,7 @@ index 3765e6f0..d6dedd87 100644
          emit clientConnected(client);
          m_watcher.addWatchedService(addr);
  
-@@ -653,13 +817,243 @@ namespace FdoSecrets
+@@ -653,13 +855,245 @@ namespace FdoSecrets
              return;
          }
  
@@ -488,6 +527,7 @@ index 3765e6f0..d6dedd87 100644
 +
 +        syncRememberedClient(appId);
 +        saveDatabaseAuth();
++        emit appAuthChanged(appId);
 +    }
 +
 +    void DBusMgr::setAppAllAuthorized(const QString& appId, AuthDecision auth)
@@ -509,6 +549,7 @@ index 3765e6f0..d6dedd87 100644
 +
 +        syncRememberedClient(appId);
 +        saveDatabaseAuth();
++        emit appAuthChanged(appId);
 +    }
 +
 +    void DBusMgr::clearAppAuthorization(const QString& appId)
@@ -683,7 +724,7 @@ index 3765e6f0..d6dedd87 100644
  
      void DBusMgr::dbusServiceUnregistered(const QString& service)
 diff --git a/src/fdosecrets/dbus/DBusMgr.h b/src/fdosecrets/dbus/DBusMgr.h
-index 4ca6a353..60e86fc9 100644
+index 4ca6a353..bc7e9925 100644
 --- a/src/fdosecrets/dbus/DBusMgr.h
 +++ b/src/fdosecrets/dbus/DBusMgr.h
 @@ -32,6 +32,7 @@
@@ -694,7 +735,7 @@ index 4ca6a353..60e86fc9 100644
  class TestFdoSecrets;
  
  namespace FdoSecrets
-@@ -209,6 +210,28 @@ namespace FdoSecrets
+@@ -209,9 +210,33 @@ namespace FdoSecrets
          // Force client to be a specific object, used for testing
          void overrideClient(const DBusClientPtr& fake);
  
@@ -712,6 +753,7 @@ index 4ca6a353..60e86fc9 100644
 +
 +        static QString normalizeNixStorePath(const QString& path);
 +        static bool isUntrustedCliExecutable(const QString& exePath, const QString& appId);
++        static void resolveProcessIdentity(uint pid, QList<ProcInfo>& hierarchy, QString& appId, bool& untrustedCli);
 +
 +        AppAuthState appAuthState(const QString& appId) const;
 +        void setAppItemAuthorized(const QString& appId, const QUuid& uuid, AuthDecision auth);
@@ -723,7 +765,11 @@ index 4ca6a353..60e86fc9 100644
      signals:
          void clientConnected(const DBusClientPtr& client);
          void clientDisconnected(const DBusClientPtr& client);
-@@ -319,10 +342,12 @@ namespace FdoSecrets
++        void appAuthChanged(const QString& appId);
+         void error(const QString& msg);
+ 
+     private slots:
+@@ -319,10 +344,12 @@ namespace FdoSecrets
           * @param client
           */
          void removeClient(DBusClient* client);
@@ -749,10 +795,21 @@ index 44b0f036..1a986b94 100644
          // Attach signal to update exposed group settings if the group was removed.
          //
 diff --git a/src/fdosecrets/objects/Prompt.cpp b/src/fdosecrets/objects/Prompt.cpp
-index f2fc3d3a..e4838ef6 100644
+index f2fc3d3a..f9bc1389 100644
 --- a/src/fdosecrets/objects/Prompt.cpp
 +++ b/src/fdosecrets/objects/Prompt.cpp
-@@ -404,8 +404,10 @@ namespace FdoSecrets
+@@ -391,7 +391,9 @@ namespace FdoSecrets
+                 auto entry = item->backend();
+                 auto uuid = entry->uuid();
+                 if (client->itemKnown(uuid) || !FdoSecrets::settings()->confirmAccessItem()) {
+-                    if (!client->itemAuthorized(uuid)) {
++                    if (client->itemAuthorized(uuid)) {
++                        m_unlocked += item->objectPath();
++                    } else {
+                         m_numRejected += 1;
+                     }
+                     // Already saw this entry
+@@ -404,10 +406,34 @@ namespace FdoSecrets
          }
          if (!entries.isEmpty()) {
              QString app = tr("%1 (PID: %2)").arg(client->name()).arg(client->pid());
@@ -763,7 +820,43 @@ index f2fc3d3a..e4838ef6 100644
 +                findWindow(m_windowId), entries, app, client->processInfo(), authOpt);
              connect(ac, &AccessControlDialog::finished, this, &UnlockPrompt::itemUnlockFinished);
              connect(ac, &AccessControlDialog::finished, ac, &AccessControlDialog::deleteLater);
++            connect(dbus().data(), &DBusMgr::appAuthChanged, ac, [this, ac, clientAppId = client->appId()](const QString& changedAppId) {
++                if (clientAppId.isEmpty() || changedAppId != clientAppId) {
++                    return;
++                }
++                auto currentClient = m_client.lock();
++                if (!currentClient) {
++                    return;
++                }
++                QHash<QUuid, AuthDecision> autoDecisions;
++                for (auto it = m_entryToItems.constBegin(); it != m_entryToItems.constEnd(); ++it) {
++                    const auto& uuid = it.key();
++                    if (!currentClient->itemKnown(uuid)) {
++                        return;
++                    }
++                    autoDecisions[uuid] = currentClient->itemAuthorized(uuid) ? AuthDecision::AllowedOnce
++                                                                              : AuthDecision::DeniedOnce;
++                }
++                if (!autoDecisions.isEmpty()) {
++                    Q_EMIT ac->finished(autoDecisions, AuthDecision::Undecided);
++                    ac->close();
++                }
++            });
              // the dialog is asking about entries that do not survive the database
+             // locking or closing. Withdraw the question in that case, as if the
+             // user rejected it.
+diff --git a/src/fdosecrets/widgets/AccessControlDialog.cpp b/src/fdosecrets/widgets/AccessControlDialog.cpp
+index 39d0b34e..030cf671 100644
+--- a/src/fdosecrets/widgets/AccessControlDialog.cpp
++++ b/src/fdosecrets/widgets/AccessControlDialog.cpp
+@@ -116,6 +116,7 @@ AccessControlDialog::AccessControlDialog(QWindow* parent,
+     if (!authOptions.testFlag(AuthOption::Remember)) {
+         m_rememberCheck->hide();
+         m_rememberCheck->setChecked(false);
++        allowAllButton->hide();
+     }
+     if (!authOptions.testFlag(AuthOption::PerEntryDeny)) {
+         m_ui->itemsTable->horizontalHeader()->setSectionHidden(2, true);
 diff --git a/src/fdosecrets/widgets/SettingsModels.cpp b/src/fdosecrets/widgets/SettingsModels.cpp
 index d68ee4b0..319b14c2 100644
 --- a/src/fdosecrets/widgets/SettingsModels.cpp
@@ -788,7 +881,7 @@ index d68ee4b0..319b14c2 100644
              // give some visual clues if the path is invalid
              if (!info.valid) {
 diff --git a/tests/TestFdoSecrets.cpp b/tests/TestFdoSecrets.cpp
-index be660099..18f59e4b 100644
+index be660099..7f5f2b32 100644
 --- a/tests/TestFdoSecrets.cpp
 +++ b/tests/TestFdoSecrets.cpp
 @@ -17,9 +17,15 @@
@@ -807,7 +900,7 @@ index be660099..18f59e4b 100644
  #include "fdosecrets/objects/Collection.h"
  #include "fdosecrets/objects/SessionCipher.h"
  
-@@ -129,3 +135,98 @@ void TestFdoSecrets::testDBusPathParse()
+@@ -129,3 +135,120 @@ void TestFdoSecrets::testDBusPathParse()
      parsed = DBusMgr::parsePath(QStringLiteral("/org"));
      QCOMPARE(parsed.type, PathType::Unknown);
  }
@@ -840,7 +933,29 @@ index be660099..18f59e4b 100644
 +    const auto secretToolAppId = DBusMgr::normalizeNixStorePath(secretToolPath);
 +    QCOMPARE(secretToolAppId, QStringLiteral("nix:libsecret:/bin/secret-tool"));
 +
-+    // 2. Test trusted vs untrusted CLI classification
++    // 2. Test trusted vs untrusted CLI classification & Electron .asar resolution
++    {
++        PeerInfo electronPeer{
++            QStringLiteral(":1.50"),
++            0,
++            true,
++            {ProcInfo{
++                0,
++                1,
++                QStringLiteral("/nix/store/rs2nyh0mmp8hc73hr0v04jsdsfjncf58-electron-unwrapped-44.9.3/libexec/electron/electron"),
++                QStringLiteral("electron"),
++                QStringLiteral("/nix/store/rs2nyh0mmp8hc73hr0v04jsdsfjncf58-electron-unwrapped-44.9.3/libexec/electron/electron --password-store=gnome-libsecret /nix/store/mxj168gkxnriq7mkh8yp8d57f5265c8d-mailspring-1.26.0/share/mailspring/resources/app.asar"),
++            }},
++            {},
++            false,
++        };
++        DBusMgr::resolveProcessIdentity(
++            electronPeer.pid, electronPeer.hierarchy, electronPeer.appId, electronPeer.untrustedCli);
++        QCOMPARE(electronPeer.appId, QStringLiteral("nix:mailspring:/share/mailspring/resources/app.asar"));
++        QVERIFY(!electronPeer.untrustedCli);
++        QCOMPARE(electronPeer.hierarchy.front().name, QStringLiteral("mailspring"));
++    }
++
 +    QVERIFY(!DBusMgr::isUntrustedCliExecutable(
 +        QStringLiteral("/nix/store/mxj168gkxnriq7mkh8yp8d57f5265c8d-mailspring-1.26.0/share/mailspring/resources/app.asar"),
 +        mailspringV1));
