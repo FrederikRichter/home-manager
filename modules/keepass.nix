@@ -1,18 +1,7 @@
 { pkgs, ... }:
 {
-  programs.keepassxc = {
-    enable = true;
-    settings = {
-      Browser = {
-        Enabled = true;
-        UseCustomBrowser = true;
-        CustomBrowserType = 2;
-      };
-      GUI.CheckForUpdates = false;
-      Security.ClearClipboardTimeout = 20;
-      FdoSecrets.Enabled = true;
-    };
-  };
+  # KeePassXC writes settings and KeeShare secrets to its config; keep it GUI-managed.
+  programs.keepassxc.enable = true;
 
   # KeePassXC must run before Mailspring needs the Secret Service.
   systemd.user.services.keepassxc = {
