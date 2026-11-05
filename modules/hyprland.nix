@@ -184,14 +184,6 @@ in
             };
             no_screen_share = true;
           }
-          {
-            # Keep Steam from re-raising itself from tray/update events.
-            name = "steam-no-activate";
-            match = {
-              class = "^(steam)$";
-            };
-            suppress_event = "activate activatefocus";
-          }
         ];
 
         on = {
@@ -211,7 +203,7 @@ in
           (bind (modKey "Return") (lua ''hl.dsp.exec_cmd("${terminal} -e ${pkgs.zsh}/bin/zsh -c '${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new'")''))
           (bind (modKey "SHIFT + Return") (lua ''hl.dsp.exec_cmd("${terminal} --hold sh -c '${pkgs.tmux}/bin/tmux'")''))
 
-          (bind (modKey "q") (lua "hl.dsp.window.kill()"))
+          (bind (modKey "q") (lua "hl.dsp.window.close()"))
 
           (bind (modKey left) (lua ''hl.dsp.focus({ direction = "left" })''))
           (bind (modKey down) (lua ''hl.dsp.focus({ direction = "down" })''))
