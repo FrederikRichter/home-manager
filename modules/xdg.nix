@@ -74,11 +74,14 @@ in
     mimeApps = {
       enable = true;
       defaultApplications = defaults // lib.genAttrs browserMimeTypes (_: browser);
-      associations.added = lib.genAttrs editorMimeTypes (_: [ editor ]) // {
-        "application/pdf" = [ pdfViewer ];
-        "image/svg+xml" = [ pdfViewer ];
-        "inode/directory" = [ fileManager ];
-      };
+      associations.added =
+        lib.genAttrs browserMimeTypes (_: [ browser ])
+        // lib.genAttrs editorMimeTypes (_: [ editor ])
+        // {
+          "application/pdf" = [ pdfViewer ];
+          "image/svg+xml" = [ pdfViewer ];
+          "inode/directory" = [ fileManager ];
+        };
     };
 
     userDirs = {
@@ -87,6 +90,16 @@ in
     };
   };
 
-  home.sessionVariables.BROWSER = "helium";
+  home = {
+    packages = [
+      pkgs.glib
+      pkgs.xdg-utils
+    ];
+
+    sessionVariables = {
+      BROWSER = "helium";
+      CHROME_DESKTOP = browser;
+    };
+  };
 }
 
