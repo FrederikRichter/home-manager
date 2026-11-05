@@ -11,7 +11,7 @@
             url = "github:FrederikRichter/nixvim";
             inputs.nixpkgs.follows = "nixpkgs";
         };
-        llm-agents =  {
+        llm-agents = {
             url = "github:numtide/llm-agents.nix";
             inputs.nixpkgs.follows = "nixpkgs";
         };
@@ -22,11 +22,11 @@
         helium = {
             url = "github:FrederikRichter/helium-browser-nix-flake";
             inputs.nixpkgs.follows = "nixpkgs";
-        };        
+        };
         evolved = {
             url = "github:FrederikRichter/evolve-stage2-nix";
             inputs.nixpkgs.follows = "nixpkgs";
-        };        
+        };
     };
 
     outputs = { nixpkgs, ... }@inputs:
@@ -43,15 +43,16 @@
                         inherit system;
                         config.allowUnfree = true;
                     }).hyprland.overrideAttrs (oldAttrs: {
-                            patches = (oldAttrs.patches or [ ]) ++ [
-                                ./patches/hyprland-unified-hdr-brightness.patch
-                            ];
-                        });
+                        patches = (oldAttrs.patches or [ ]) ++ [
+                            ./patches/hyprland-unified-hdr-brightness.patch
+                        ];
+                    });
                 })
             ];
 
             pkgs = import nixpkgs {
                 inherit system;
+                config.allowUnfree = true;
             };
 
             stylixModule = inputs.stylix.homeModules.stylix;
@@ -87,4 +88,3 @@
                 mkHost ./hosts/battlestation.nix;
         };
 }
-

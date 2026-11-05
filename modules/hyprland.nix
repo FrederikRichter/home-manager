@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   left = "h";
@@ -88,10 +88,6 @@ in
           _var = brightnessAdjust;
         };
 
-        sdr_brightness_adjust = {
-          _var = brightnessAdjust;
-        };
-
         config = {
           input = {
             kb_layout = "us";
@@ -152,10 +148,6 @@ in
           ecosystem = {
             no_update_news = true;
           };
-
-          debug = {
-            disable_logs = false;
-          };
         };
 
         env = [
@@ -164,7 +156,7 @@ in
         ];
 
         layer_rule = {
-          name = "tofi-layerrule99";
+          name = "noctalia-launcher";
           match = { namespace = "launcher"; };
           blur = false;
           ignore_alpha = 0.0;
@@ -192,6 +184,14 @@ in
             };
             no_screen_share = true;
           }
+          {
+            # Keep Steam from re-raising itself from tray/update events.
+            name = "steam-no-activate";
+            match = {
+              class = "^(steam)$";
+            };
+            suppress_event = "activate activatefocus";
+          }
         ];
 
         on = {
@@ -206,58 +206,46 @@ in
         };
 
         bind = [
-          # Screenshot
           (bind "Print" (lua ''hl.dsp.exec_cmd("grim -g \"$(${pkgs.slurp}/bin/slurp -d)\" - | ${pkgs.wl-clipboard}/bin/wl-copy -t image/png")''))
 
-          # Terminal
           (bind (modKey "Return") (lua ''hl.dsp.exec_cmd("${terminal} -e ${pkgs.zsh}/bin/zsh -c '${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new'")''))
           (bind (modKey "SHIFT + Return") (lua ''hl.dsp.exec_cmd("${terminal} --hold sh -c '${pkgs.tmux}/bin/tmux'")''))
 
-          # Window management
           (bind (modKey "q") (lua "hl.dsp.window.kill()"))
 
-          # Focus movement
           (bind (modKey left) (lua ''hl.dsp.focus({ direction = "left" })''))
           (bind (modKey down) (lua ''hl.dsp.focus({ direction = "down" })''))
           (bind (modKey up) (lua ''hl.dsp.focus({ direction = "up" })''))
           (bind (modKey right) (lua ''hl.dsp.focus({ direction = "right" })''))
 
-          # Window movement
           (bind (modKey "SHIFT + ${left}") (lua ''hl.dsp.window.move({ direction = "left" })''))
           (bind (modKey "SHIFT + ${down}") (lua ''hl.dsp.window.move({ direction = "down" })''))
           (bind (modKey "SHIFT + ${up}") (lua ''hl.dsp.window.move({ direction = "up" })''))
           (bind (modKey "SHIFT + ${right}") (lua ''hl.dsp.window.move({ direction = "right" })''))
 
-          # Workspace switching
           (bind (modKey "a") (lua "hl.dsp.focus({ workspace = 1 })"))
           (bind (modKey "s") (lua "hl.dsp.focus({ workspace = 2 })"))
           (bind (modKey "d") (lua "hl.dsp.focus({ workspace = 3 })"))
           (bind (modKey "f") (lua "hl.dsp.focus({ workspace = 4 })"))
           (bind (modKey "g") (lua "hl.dsp.focus({ workspace = 5 })"))
 
-          # Move to workspace
           (bind (modKey "SHIFT + a") (lua "hl.dsp.window.move({ workspace = 1 })"))
           (bind (modKey "SHIFT + s") (lua "hl.dsp.window.move({ workspace = 2 })"))
           (bind (modKey "SHIFT + d") (lua "hl.dsp.window.move({ workspace = 3 })"))
           (bind (modKey "SHIFT + f") (lua "hl.dsp.window.move({ workspace = 4 })"))
           (bind (modKey "SHIFT + g") (lua "hl.dsp.window.move({ workspace = 5 })"))
 
-          # Workspace back and forth
           (bind (modKey "Tab") (lua ''hl.dsp.focus({ workspace = "previous" })''))
 
-          # Applications
           (bind (modKey "e") (lua ''hl.dsp.exec_cmd("${pkgs.nemo}/bin/nemo")''))
-          (bind (modKey "o") (lua ''hl.dsp.exec_cmd("noctalia msg panel-toggle launcher")''))
+          (bind (modKey "o") (lua ''hl.dsp.exec_cmd("${pkgs.noctalia}/bin/noctalia msg panel-toggle launcher")''))
 
-          # System
           (bind (modKey "SHIFT + r") (lua ''hl.dsp.exec_cmd("hyprctl reload")''))
 
-          # Media keys
           (bindWith "XF86AudioRaiseVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%+")'') { locked = true; repeating = true; })
           (bindWith "XF86AudioLowerVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%-")'') { locked = true; repeating = true; })
           (bindWith "XF86AudioMute" (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SINK@ toggle")'') { locked = true; repeating = true; })
 
-          # Brightness (scales both SDR & HDR in HDR mode)
           (bindWith "XF86MonBrightnessDown" (lua "function() brightness_adjust(-0.2) end") { locked = true; repeating = true; })
           (bindWith "XF86MonBrightnessUp" (lua "function() brightness_adjust(0.2) end") { locked = true; repeating = true; })
         ];

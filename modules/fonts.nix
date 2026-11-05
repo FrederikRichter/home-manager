@@ -1,8 +1,5 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 {
-fonts.fontconfig.enable = true;
-home.packages = with pkgs; [
-    cm_unicode
-    inter
-];
+  fonts.fontconfig.enable = true;
+  home.packages = [ pkgs.cm_unicode ];
 }

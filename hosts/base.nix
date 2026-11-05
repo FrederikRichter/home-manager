@@ -1,105 +1,97 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 
 {
-	# Setup home constants
-	home.username = "frederik";
-	home.homeDirectory = "/home/frederik";
+  home.username = "frederik";
+  home.homeDirectory = "/home/frederik";
 
-	# Let Home Manager install and manage itself.
-	programs.home-manager.enable = true;
-	targets.genericLinux.enable = lib.mkDefault true;
+  programs.home-manager.enable = true;
 
-	home.stateVersion = lib.mkDefault "25.11";
+  home.stateVersion = lib.mkDefault "25.11";
 
-	# load all nix files from ./modules
-	imports = [
-		../modules
-	];
+  imports = [
+    ../modules
+  ];
 
-	# define home packages
-	home.packages = with pkgs; [
+  home.packages = with pkgs; [
+    android-tools
     antigravity-cli
-	android-tools
-	ausweisapp
-	bash
-	blender
-	coreutils
-	dconf
-	dosfstools
-	ffmpeg-full
-	fzf
-	gtrash
-	grim
-	htop
-	hugo
+    ausweisapp
+    bash
+    blender
+    btop
+    coreutils
+    dconf
+    dosfstools
+    fastfetch
+    ffmpeg-full
+    fzf
+    gnumake
+    gtrash
+    grim
     helium
-	keepassxc
-	loupe
-	libnotify
-	libreoffice-qt
-	libsecret
+    htop
+    hugo
+    libnotify
+    libreoffice-qt
+    libsecret
+    lm_sensors
     localsend
-	nixvim
-	ntfs3g
-	pavucontrol
-	powertop
-	ripgrep
-	signal-desktop
-	slurp
-	spotify
-	swayidle
-	telegram-desktop
-	transmission_4
-	typst
-	udiskie
-	unrar
-	unzip
-	usbutils
-	wakeonlan
-	wget
-	wl-clipboard
-	lm_sensors
-	wofi
-	yt-dlp
-	zathura
-	btop
-	mpv
-	overskride
-	fastfetch
-	tree
-	nemo
-	vlc
-	rquickshare
-	qalculate-qt
+    loupe
+    nemo
+    nixvim
+    ntfs3g
+    overskride
+    pavucontrol
+    powertop
+    qalculate-qt
+    ripgrep
+    rquickshare
+    signal-desktop
+    slurp
+    spotify
+    swayidle
+    telegram-desktop
+    transmission_4
+    tree
+    typst
+    udiskie
+    unrar
+    unzip
+    usbutils
+    vlc
+    wakeonlan
+    wget
+    wl-clipboard
+    wofi
+    yt-dlp
+    zathura
     zig
     zotero
     llm-agents.dsh
-    gnumake
-	];
-    # set session vars
-	home.sessionVariables = {
-		EDITOR="nvim";
-		XDG_SESSION_TYPE = "wayland";
-		XDG_CURRENT_DESKTOP = "Hyprland";
-		XDG_SESSION_DESKTOP = "Hyprland";
-		GSK_RENDERER="ngl"; # HOTFIX
-		WEBKIT_DISABLE_COMPOSITING_MODE=1; # HOTFIX
-	};
+  ];
 
-    # Disable gnome open with
-    xdg.portal.xdgOpenUsePortal = false;
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+    XDG_SESSION_TYPE = "wayland";
+    XDG_CURRENT_DESKTOP = "Hyprland";
+    XDG_SESSION_DESKTOP = "Hyprland";
+    GSK_RENDERER = "ngl";
+    WEBKIT_DISABLE_COMPOSITING_MODE = "1";
+  };
 
+  nixpkgs.config = {
+    allowUnfree = true;
+    permittedInsecurePackages = [
+      "firefox-esr-140-bin-unwrapped-140.17.0esr"
+    ];
+  };
 
-	# Allow unfree packages both inside Home Manager and for user-level nix
-	# commands (e.g. `nix-shell -p`, `nix build`, `nix-env`). See
-	# https://nixos.org/manual/nixpkgs/stable/#sec-allow-unfree
-	nixpkgs.config = {
-        allowUnfree = true;
-        permittedInsecurePackages = [
-                "firefox-esr-140-bin-unwrapped-140.17.0esr"
-        ];
-    };
-	xdg.configFile."nixpkgs/config.nix".text = ''
-		{ allowUnfree = true; }
-	'';
+  # Apply nixpkgs config to user-level nix commands.
+  xdg.configFile."nixpkgs/config.nix".text = ''
+    {
+      allowUnfree = true;
+      permittedInsecurePackages = [ "firefox-esr-140-bin-unwrapped-140.17.0esr" ];
+    }
+  '';
 }
