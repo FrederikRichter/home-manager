@@ -27,10 +27,6 @@
       url = "github:FrederikRichter/evolve-stage2-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    keepassxc-src = {
-      url = "github:FrederikRichter/keepassxc/develop";
-      flake = false;
-    };
   };
 
   outputs = { nixpkgs, ... }@inputs:
@@ -42,14 +38,17 @@
         evolved.overlays.default
         nixvim.overlays.default
         llm-agents.overlays.shared-nixpkgs
+        # patches
         (_final: prev: {
           hyprland = prev.hyprland.overrideAttrs (oldAttrs: {
             patches = (oldAttrs.patches or [ ]) ++ [
               ./patches/hyprland-unified-hdr-brightness.patch
             ];
           });
-          keepassxc = prev.keepassxc.overrideAttrs (_oldAttrs: {
-            src = inputs.keepassxc-src;
+          keepassxc = prev.keepassxc.overrideAttrs (oldAttrs: {
+            patches = (oldAttrs.patches or [ ]) ++ [
+              ./patches/keepassxc-nix-app-auth.patch
+            ];
           });
         })
       ];

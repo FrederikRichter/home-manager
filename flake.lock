@@ -297,23 +297,6 @@
         "type": "github"
       }
     },
-    "keepassxc-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1793909657,
-        "narHash": "sha256-qks8VpRD8y/hJDF7EF880Q6gz4D9qrNRsGkfstZ+Gbg=",
-        "owner": "FrederikRichter",
-        "repo": "keepassxc",
-        "rev": "d2423a9a06bba31a794494bd4f8d1b75c15ddd43",
-        "type": "github"
-      },
-      "original": {
-        "owner": "FrederikRichter",
-        "ref": "develop",
-        "repo": "keepassxc",
-        "type": "github"
-      }
-    },
     "llm-agents": {
       "inputs": {
         "bun2nix": "bun2nix",
@@ -473,7 +456,6 @@
         "evolved": "evolved",
         "helium": "helium",
         "home-manager": "home-manager",
-        "keepassxc-src": "keepassxc-src",
         "llm-agents": "llm-agents",
         "nixpkgs": "nixpkgs",
         "nixvim": "nixvim",
