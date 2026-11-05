@@ -1,10 +1,9 @@
-{ ... }:
+_:
 {
   imports = [
     ./bluetooth.nix
     ./direnv.nix
     ./discord.nix
-    ./easyeffects.nix
     ./fonts.nix
     ./foot.nix
     ./git.nix
@@ -21,3 +20,4 @@
     ./zsh.nix
   ];
 }
+

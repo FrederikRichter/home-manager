@@ -19,6 +19,12 @@ let
 
   modKey = key: lua ''mod .. " + ${key}"'';
 
+  startHyprlandScript = ''
+    if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
+      exec ${config.wayland.windowManager.hyprland.package}/bin/start-hyprland
+    fi
+  '';
+
   brightnessAdjust = lua ''
     (function()
       local levels = {}
@@ -44,11 +50,53 @@ let
       end
     end)()
   '';
+
+  directionBinds = [
+    { key = left; dir = "left"; }
+    { key = down; dir = "down"; }
+    { key = up; dir = "up"; }
+    { key = right; dir = "right"; }
+  ];
+
+  workspaceBinds = [
+    { key = "a"; ws = "1"; }
+    { key = "s"; ws = "2"; }
+    { key = "d"; ws = "3"; }
+    { key = "f"; ws = "4"; }
+    { key = "g"; ws = "5"; }
+  ];
+
+  mediaBindOpts = {
+    locked = true;
+    repeating = true;
+  };
 in
 {
-
   options = {
-    hyprland.enable = lib.mkEnableOption "Enable hyprland";
+    hyprland = {
+      enable = lib.mkEnableOption "Enable hyprland";
+
+      tvPreset = lib.mkOption {
+        type = lib.types.attrsOf lib.types.anything;
+        readOnly = true;
+        description = "Shared HDR display preset for the HDMI-A-1 TV output.";
+        default = {
+          output = "HDMI-A-1";
+          mode = "3840x2160@60.00Hz";
+          position = "auto";
+          scale = 2;
+          bitdepth = 10;
+          cm = "hdr";
+          vrr = 1;
+          brightness = 1.0;
+          sdrsaturation = 1.0;
+          sdr_min_luminance = 0.045;
+          sdr_max_luminance = 250;
+          min_luminance = 0.045;
+          max_luminance = 387;
+        };
+      };
+    };
   };
 
   config = lib.mkIf config.hyprland.enable {
@@ -60,24 +108,17 @@ in
       ];
     };
 
-    programs.zsh.loginExtra = ''
-      if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
-        exec ${config.wayland.windowManager.hyprland.package}/bin/start-hyprland
-      fi
-    '';
-
-    programs.bash.profileExtra = ''
-      if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
-        exec ${config.wayland.windowManager.hyprland.package}/bin/start-hyprland
-      fi
-    '';
+    programs.zsh.loginExtra = startHyprlandScript;
+    programs.bash.profileExtra = startHyprlandScript;
 
     wayland.windowManager.hyprland = {
       enable = true;
       configType = "lua";
 
-      systemd.enable = true;
-      systemd.variables = [ "--all" ];
+      systemd = {
+        enable = true;
+        variables = [ "--all" ];
+      };
 
       settings = {
         mod = {
@@ -180,7 +221,7 @@ in
           {
             name = "noscreenshare";
             match = {
-                class = "^(org.telegram.desktop|signal|discord|nemo|org.keepassxc.KeePassXC)";
+              class = "^(org.telegram.desktop|signal|discord|nemo|org.keepassxc.KeePassXC)";
             };
             no_screen_share = true;
           }
@@ -197,51 +238,36 @@ in
           ];
         };
 
-        bind = [
-          (bind "Print" (lua ''hl.dsp.exec_cmd("grim -g \"$(${pkgs.slurp}/bin/slurp -d)\" - | ${pkgs.wl-clipboard}/bin/wl-copy -t image/png")''))
+        bind =
+          [
+            (bind "Print" (lua ''hl.dsp.exec_cmd("${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp -d)\" - | ${pkgs.wl-clipboard}/bin/wl-copy -t image/png")''))
 
-          (bind (modKey "Return") (lua ''hl.dsp.exec_cmd("${terminal} -e ${pkgs.zsh}/bin/zsh -c '${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new'")''))
-          (bind (modKey "SHIFT + Return") (lua ''hl.dsp.exec_cmd("${terminal} --hold sh -c '${pkgs.tmux}/bin/tmux'")''))
+            (bind (modKey "Return") (lua ''hl.dsp.exec_cmd("${terminal} -e ${pkgs.zsh}/bin/zsh -c '${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new'")''))
+            (bind (modKey "SHIFT + Return") (lua ''hl.dsp.exec_cmd("${terminal} --hold sh -c '${pkgs.tmux}/bin/tmux'")''))
 
-          (bind (modKey "q") (lua "hl.dsp.window.close()"))
+            (bind (modKey "q") (lua "hl.dsp.window.close()"))
+          ]
+          ++ map (d: bind (modKey d.key) (lua ''hl.dsp.focus({ direction = "${d.dir}" })'')) directionBinds
+          ++ map (d: bind (modKey "SHIFT + ${d.key}") (lua ''hl.dsp.window.move({ direction = "${d.dir}" })'')) directionBinds
+          ++ map (w: bind (modKey w.key) (lua "hl.dsp.focus({ workspace = ${w.ws} })")) workspaceBinds
+          ++ map (w: bind (modKey "SHIFT + ${w.key}") (lua "hl.dsp.window.move({ workspace = ${w.ws} })")) workspaceBinds
+          ++ [
+            (bind (modKey "Tab") (lua ''hl.dsp.focus({ workspace = "previous" })''))
 
-          (bind (modKey left) (lua ''hl.dsp.focus({ direction = "left" })''))
-          (bind (modKey down) (lua ''hl.dsp.focus({ direction = "down" })''))
-          (bind (modKey up) (lua ''hl.dsp.focus({ direction = "up" })''))
-          (bind (modKey right) (lua ''hl.dsp.focus({ direction = "right" })''))
+            (bind (modKey "e") (lua ''hl.dsp.exec_cmd("${pkgs.nemo}/bin/nemo")''))
+            (bind (modKey "o") (lua ''hl.dsp.exec_cmd("${pkgs.noctalia}/bin/noctalia msg panel-toggle launcher")''))
 
-          (bind (modKey "SHIFT + ${left}") (lua ''hl.dsp.window.move({ direction = "left" })''))
-          (bind (modKey "SHIFT + ${down}") (lua ''hl.dsp.window.move({ direction = "down" })''))
-          (bind (modKey "SHIFT + ${up}") (lua ''hl.dsp.window.move({ direction = "up" })''))
-          (bind (modKey "SHIFT + ${right}") (lua ''hl.dsp.window.move({ direction = "right" })''))
+            (bind (modKey "SHIFT + r") (lua ''hl.dsp.exec_cmd("hyprctl reload")''))
 
-          (bind (modKey "a") (lua "hl.dsp.focus({ workspace = 1 })"))
-          (bind (modKey "s") (lua "hl.dsp.focus({ workspace = 2 })"))
-          (bind (modKey "d") (lua "hl.dsp.focus({ workspace = 3 })"))
-          (bind (modKey "f") (lua "hl.dsp.focus({ workspace = 4 })"))
-          (bind (modKey "g") (lua "hl.dsp.focus({ workspace = 5 })"))
+            (bindWith "XF86AudioRaiseVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%+")'') mediaBindOpts)
+            (bindWith "XF86AudioLowerVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%-")'') mediaBindOpts)
+            (bindWith "XF86AudioMute" (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SINK@ toggle")'') mediaBindOpts)
 
-          (bind (modKey "SHIFT + a") (lua "hl.dsp.window.move({ workspace = 1 })"))
-          (bind (modKey "SHIFT + s") (lua "hl.dsp.window.move({ workspace = 2 })"))
-          (bind (modKey "SHIFT + d") (lua "hl.dsp.window.move({ workspace = 3 })"))
-          (bind (modKey "SHIFT + f") (lua "hl.dsp.window.move({ workspace = 4 })"))
-          (bind (modKey "SHIFT + g") (lua "hl.dsp.window.move({ workspace = 5 })"))
-
-          (bind (modKey "Tab") (lua ''hl.dsp.focus({ workspace = "previous" })''))
-
-          (bind (modKey "e") (lua ''hl.dsp.exec_cmd("${pkgs.nemo}/bin/nemo")''))
-          (bind (modKey "o") (lua ''hl.dsp.exec_cmd("${pkgs.noctalia}/bin/noctalia msg panel-toggle launcher")''))
-
-          (bind (modKey "SHIFT + r") (lua ''hl.dsp.exec_cmd("hyprctl reload")''))
-
-          (bindWith "XF86AudioRaiseVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%+")'') { locked = true; repeating = true; })
-          (bindWith "XF86AudioLowerVolume" (lua ''hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_SINK@ 5%-")'') { locked = true; repeating = true; })
-          (bindWith "XF86AudioMute" (lua ''hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_SINK@ toggle")'') { locked = true; repeating = true; })
-
-          (bindWith "XF86MonBrightnessDown" (lua "function() brightness_adjust(-0.2) end") { locked = true; repeating = true; })
-          (bindWith "XF86MonBrightnessUp" (lua "function() brightness_adjust(0.2) end") { locked = true; repeating = true; })
-        ];
+            (bindWith "XF86MonBrightnessDown" (lua "function() brightness_adjust(-0.2) end") mediaBindOpts)
+            (bindWith "XF86MonBrightnessUp" (lua "function() brightness_adjust(0.2) end") mediaBindOpts)
+          ];
       };
     };
   };
 }
+

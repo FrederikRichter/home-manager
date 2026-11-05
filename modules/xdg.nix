@@ -3,6 +3,8 @@
 let
   browser = "helium.desktop";
   editor = "nvim.desktop";
+  pdfViewer = "org.pwmt.zathura-pdf-mupdf.desktop";
+  fileManager = "nemo.desktop";
 
   browserMimeTypes = [
     "application/xhtml+xml"
@@ -38,8 +40,8 @@ let
   ];
 
   defaults = {
-    "application/pdf" = "org.pwmt.zathura-pdf-mupdf.desktop";
-    "inode/directory" = "nemo.desktop";
+    "application/pdf" = pdfViewer;
+    "inode/directory" = fileManager;
     "text/markdown" = editor;
     "text/plain" = editor;
     "x-scheme-handler/discord" = "discord.desktop";
@@ -72,10 +74,10 @@ in
     mimeApps = {
       enable = true;
       defaultApplications = defaults // lib.genAttrs browserMimeTypes (_: browser);
-      associations.added = lib.genAttrs editorMimeTypes (_: editor) // {
-        "application/pdf" = "org.pwmt.zathura-pdf-mupdf.desktop";
-        "image/svg+xml" = "org.pwmt.zathura-pdf-mupdf.desktop";
-        "inode/directory" = "nemo.desktop";
+      associations.added = lib.genAttrs editorMimeTypes (_: [ editor ]) // {
+        "application/pdf" = [ pdfViewer ];
+        "image/svg+xml" = [ pdfViewer ];
+        "inode/directory" = [ fileManager ];
       };
     };
 
@@ -87,3 +89,4 @@ in
 
   home.sessionVariables.BROWSER = "helium";
 }
+

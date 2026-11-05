@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   xiaomi = {
@@ -15,22 +15,6 @@ let
     sdr_max_luminance = 400;
     max_luminance = 1000;
   };
-
-  tv = {
-    output = "HDMI-A-1";
-    mode = "3840x2160@60.00Hz";
-    position = "auto";
-    scale = 2;
-    bitdepth = 10;
-    cm = "hdr";
-    vrr = 1;
-    brightness = 1.0;
-    sdrsaturation = 1.0;
-    sdr_min_luminance = 0.045;
-    sdr_max_luminance = 250;
-    min_luminance = 0.045;
-    max_luminance = 387;
-  };
 in
 {
   hyprland.enable = true;
@@ -44,7 +28,7 @@ in
 
     monitor = [
       xiaomi
-      tv
+      config.hyprland.tvPreset
     ];
   };
 
@@ -65,3 +49,4 @@ in
 
   home.stateVersion = "24.05";
 }
+

@@ -17,22 +17,6 @@ let
     disabled = false;
   };
 
-  tv = {
-    output = "HDMI-A-1";
-    mode = "3840x2160@60.00Hz";
-    position = "auto";
-    scale = 2;
-    bitdepth = 10;
-    cm = "hdr";
-    vrr = 1;
-    brightness = 1.0;
-    sdrsaturation = 1.0;
-    sdr_min_luminance = 0.045;
-    sdr_max_luminance = 250;
-    min_luminance = 0.045;
-    max_luminance = 387;
-  };
-
   hdmi = {
     output = "HDMI-A-1";
     mode = "preferred";
@@ -49,7 +33,7 @@ in
       settings = {
         monitor = [
           internalMonitor
-          (if config.ideapad.tv.enable then tv else hdmi)
+          (if config.ideapad.tv.enable then config.hyprland.tvPreset else hdmi)
         ];
       } // lib.optionalAttrs (!config.ideapad.tv.enable) {
         workspace_rule = [
@@ -81,11 +65,15 @@ in
       extraConfig = lib.mkIf config.ideapad.tv.enable ''
         local internal_monitor = ${lib.generators.toLua { } internalMonitor}
 
+        local function is_external_monitor(mon)
+          local mname = (type(mon) == "userdata" or type(mon) == "table") and mon.name or tostring(mon)
+          return mname ~= "eDP-1" and mname ~= "FALLBACK"
+        end
+
         local function check_external()
           local has_external = false
           for _, m in ipairs(hl.get_monitors()) do
-            local mname = (type(m) == "userdata" or type(m) == "table") and m.name or tostring(m)
-            if mname ~= "eDP-1" and mname ~= "FALLBACK" then
+            if is_external_monitor(m) then
               has_external = true
               break
             end
@@ -99,17 +87,13 @@ in
         end
 
         hl.on("monitor.added", function(mon)
-          local mname = (type(mon) == "userdata" or type(mon) == "table") and mon.name or tostring(mon)
-          if mname ~= "eDP-1" and mname ~= "FALLBACK" then
+          if is_external_monitor(mon) then
             hl.monitor({ output = "eDP-1", disabled = true })
           end
         end)
 
-        hl.on("monitor.removed", function(mon)
-          local mname = (type(mon) == "userdata" or type(mon) == "table") and mon.name or tostring(mon)
-          if mname ~= "eDP-1" and mname ~= "FALLBACK" then
-            hl.monitor(internal_monitor)
-          end
+        hl.on("monitor.removed", function()
+          check_external()
         end)
 
         hl.on("hyprland.start", function()
@@ -124,3 +108,4 @@ in
     programs.foot.settings.main.font = lib.mkForce "monospace:size=12";
   };
 }
+

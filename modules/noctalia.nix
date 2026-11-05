@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   home.packages = [ pkgs.noctalia ];
 
@@ -45,7 +45,7 @@
     wallpaper_scheme = "m3-content"
 
     [wallpaper.default]
-    path = "${../assets/wallpaper/abstract.jpg}"
+    path = "${config.stylix.image}"
 
     [widget.control-center]
     custom_image = "${../assets/icons/nixos.svg}"
@@ -64,3 +64,4 @@
     mute_color = "primary"
   '';
 }
+

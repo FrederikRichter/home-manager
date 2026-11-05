@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   home.packages = [ pkgs.megacmd ];
 
@@ -12,9 +12,10 @@
     Service = {
       ExecStart = "${pkgs.megacmd}/bin/mega-cmd-server";
       Restart = "always";
-      Environment = "PATH=${pkgs.megacmd}/bin/";
+      Environment = "PATH=${lib.makeBinPath [ pkgs.megacmd pkgs.coreutils ]}";
     };
 
     Install.WantedBy = [ "graphical-session.target" ];
   };
 }
+

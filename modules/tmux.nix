@@ -8,7 +8,7 @@ let
       owner = "aserowy";
       repo = "tmux.nvim";
       rev = "32ceaf2793582955ef9576809730878c4d2d9426";
-      sha256 = "sha256-dKarwc0NByKV8/rMHnHqwiRTgeiXAPGsviFBP+bOaXI=";
+      hash = "sha256-dKarwc0NByKV8/rMHnHqwiRTgeiXAPGsviFBP+bOaXI=";
     };
   };
 in
@@ -18,6 +18,10 @@ in
     shell = "${pkgs.zsh}/bin/zsh";
     terminal = "tmux-256color";
     historyLimit = 100000;
+    keyMode = "vi";
+    focusEvents = true;
+    aggressiveResize = true;
+    escapeTime = 0;
 
     plugins = [
       tmux-nvim
@@ -37,11 +41,6 @@ in
 
       set-option -g update-environment "SWAYSOCK SSH_AUTH_SOCK"
 
-      set -g mode-keys vi
-      set -g focus-events on
-      setw -g aggressive-resize on
-      set -s escape-time 0
-
       bind-key -n C-b copy-mode
       bind-key -T copy-mode-vi v send-keys -X begin-selection
       bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
@@ -55,3 +54,4 @@ in
     '';
   };
 }
+

@@ -10,10 +10,10 @@
       ll = "ls -l";
       sudo = "sudo --preserve-env=PATH env";
       v = "nvim";
-      hm-rollback = "bash $(home-manager generations | fzf | awk -F '-> ' '{print $2 \"/activate\"}')";
+      hm-rollback = ''bash "$(home-manager generations | ${pkgs.fzf}/bin/fzf | ${pkgs.gawk}/bin/awk -F '-> ' '{print $2 "/activate"}')"'';
       hm = "home-manager";
       rm = "echo Use forcerm, consider using trash";
-      forcerm = "rm";
+      forcerm = "command rm";
       trash = "${pkgs.gtrash}/bin/gtrash";
       javacmp = "${pkgs.openjdk25}/bin/javac --release 25 -d src src/*.java && ${pkgs.openjdk25}/bin/java -cp src Main";
     };
@@ -27,3 +27,4 @@
     };
   };
 }
+

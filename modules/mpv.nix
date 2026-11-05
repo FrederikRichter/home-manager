@@ -1,4 +1,16 @@
-{ ... }:
+_:
+let
+  isHdr = ''(p["video-params/gamma"] == "pq" or p["video-params/gamma"] == "hlg")'';
+  isTv = ''(p["display-names"] and table.concat(p["display-names"], ","):find("HDMI%-A%-1") ~= nil)'';
+
+  mkHdrProfile = { cond, peak }: {
+    profile-cond = "${isHdr} and ${cond}";
+    profile-restore = "copy";
+    target-peak = peak;
+    target-prim = "display-p3";
+    target-trc = "pq";
+  };
+in
 {
   programs.mpv = {
     enable = true;
@@ -15,27 +27,16 @@
     };
 
     profiles = {
-      hdr = {
-        profile-cond =
-          "(p[\"video-params/gamma\"] == \"pq\" or p[\"video-params/gamma\"] == \"hlg\")"
-          + " and not (p[\"display-names\"] and table.concat(p[\"display-names\"], \",\"):find(\"HDMI%-A%-1\"))";
-
-        profile-restore = "copy";
-        target-peak = "1000";
-        target-prim = "display-p3";
-        target-trc = "pq";
+      hdr = mkHdrProfile {
+        cond = "not ${isTv}";
+        peak = "1000";
       };
 
-      hdr-tv = {
-        profile-cond =
-          "(p[\"video-params/gamma\"] == \"pq\" or p[\"video-params/gamma\"] == \"hlg\")"
-          + " and (p[\"display-names\"] and table.concat(p[\"display-names\"], \",\"):find(\"HDMI%-A%-1\") ~= nil)";
-
-        profile-restore = "copy";
-        target-peak = "387";
-        target-prim = "display-p3";
-        target-trc = "pq";
+      hdr-tv = mkHdrProfile {
+        cond = isTv;
+        peak = "387";
       };
     };
   };
 }
+

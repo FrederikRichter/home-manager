@@ -29,11 +29,14 @@
       url."ssh://git@github.com/".insteadOf = "https://github.com/";
       credential = {
         helper = "manager";
-        "https://git.rz.tu-bs.de/".username = "frederik.richer@tu-braunschweig.de";
-        "https://git.rz.tu-bs.de".provider = "generic";
         credentialStore = "cache";
-        provide = "generic";
+        provider = "generic";
+        "https://git.rz.tu-bs.de" = {
+          username = "frederik.richter@tu-braunschweig.de";
+          provider = "generic";
+        };
       };
     };
   };
 }
+
