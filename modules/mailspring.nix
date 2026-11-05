@@ -6,32 +6,31 @@ let
     set -u
     export PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.procps pkgs.systemd ]}:$PATH
 
-    # Do not start a second instance when systemd restarts this unit.
+    # Do not start a second instance if Mailspring is already running.
     if pgrep -u "$(id -u)" -f -- "${pkgs.mailspring}/share/mailspring/resources/app\.asar( |$)" >/dev/null 2>&1; then
+      if [ "$#" -gt 0 ]; then
+        exec ${pkgs.mailspring}/bin/mailspring --password-store=gnome-libsecret "$@"
+      fi
       exit 0
     fi
 
-    for _ in $(seq 1 30); do
-      busctl --user status org.freedesktop.secrets >/dev/null 2>&1 && break
+    # Wait indefinitely until KeePassXC's default Secret Service collection is unlocked.
+    until [ "$(busctl --user get-property \
+              org.freedesktop.secrets \
+              /org/freedesktop/secrets/aliases/default \
+              org.freedesktop.Secret.Collection Locked 2>/dev/null || true)" = "b false" ]; do
       sleep 1
     done
 
-    locked=""
-    for _ in $(seq 1 300); do
-      locked="$(busctl --user get-property \
-        org.freedesktop.secrets \
-        /org/freedesktop/secrets/aliases/default \
-        org.freedesktop.Secret.Collection Locked 2>/dev/null || true)"
-      [ "$locked" = "b false" ] && break
-      sleep 1
-    done
-
-    [ "$locked" = "b false" ] || exit 0
-
-    exec ${pkgs.mailspring}/bin/mailspring \
-      --background \
-      --password-store=gnome-libsecret \
-      "$@"
+    if [ "$#" -eq 0 ]; then
+      exec ${pkgs.mailspring}/bin/mailspring \
+        --background \
+        --password-store=gnome-libsecret
+    else
+      exec ${pkgs.mailspring}/bin/mailspring \
+        --password-store=gnome-libsecret \
+        "$@"
+    fi
   '';
 in
 {
@@ -58,7 +57,7 @@ in
     name = "Mailspring";
     genericName = "Mail Client";
     comment = "A beautiful, modern email client";
-    exec = "${pkgs.mailspring}/bin/mailspring --password-store=gnome-libsecret %U";
+    exec = "${startMailspring} %U";
     icon = "mailspring";
     categories = [ "Network" "Email" ];
     mimeType = [ "x-scheme-handler/mailto" "x-scheme-handler/mailspring" ];
