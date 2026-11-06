@@ -26,8 +26,8 @@
       ffmpeg-full
       fzf
       gnumake
-      gtrash
       grim
+      gtrash
       helium
       htop
       hugo
@@ -87,4 +87,3 @@
     }
   '';
 }
-
