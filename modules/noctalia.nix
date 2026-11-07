@@ -38,6 +38,9 @@
     font_family = "Inter Display SemiBold"
     ui_scale = 1.1
 
+    [shell.launcher]
+    default_view = "all"
+
     [theme]
     builtin = "Catppuccin"
     mode = "dark"
