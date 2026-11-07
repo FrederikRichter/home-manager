@@ -34,7 +34,6 @@
       libnotify
       libreoffice-qt
       libsecret
-      llm-agents.dsh
       lm_sensors
       localsend
       loupe

@@ -11,10 +11,6 @@
       url = "github:FrederikRichter/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    llm-agents = {
-      url = "github:numtide/llm-agents.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -37,7 +33,6 @@
         helium.overlays.default
         evolved.overlays.default
         nixvim.overlays.default
-        llm-agents.overlays.shared-nixpkgs
         # patches
         (_final: prev: {
           hyprland = prev.hyprland.overrideAttrs (oldAttrs: {
