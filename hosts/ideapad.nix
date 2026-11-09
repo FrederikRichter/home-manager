@@ -22,6 +22,12 @@ let
     mode = "preferred";
     position = "auto-left";
   };
+
+  dp2 = {
+    output = "DP-2";
+    mode = "preferred";
+    position = "auto";
+  };
 in
 {
   options.ideapad.tv.enable = lib.mkEnableOption "TV display profile with automatic internal display handling";
@@ -34,6 +40,7 @@ in
         monitor = [
           internalMonitor
           (if config.ideapad.tv.enable then config.hyprland.tvPreset else hdmi)
+          dp2
         ];
       } // lib.optionalAttrs (!config.ideapad.tv.enable) {
         workspace_rule = [
@@ -62,12 +69,16 @@ in
         ];
       };
 
-      extraConfig = lib.mkIf config.ideapad.tv.enable ''
+      # In TV mode any external display disables the internal one;
+      # otherwise only a display connected via DP-2 does.
+      extraConfig = ''
         local internal_monitor = ${lib.generators.toLua { } internalMonitor}
 
         local function is_external_monitor(mon)
           local mname = (type(mon) == "userdata" or type(mon) == "table") and mon.name or tostring(mon)
-          return mname ~= "eDP-1" and mname ~= "FALLBACK"
+          ${if config.ideapad.tv.enable
+            then ''return mname ~= "eDP-1" and mname ~= "FALLBACK"''
+            else ''return mname == "DP-2"''}
         end
 
         local function check_external()
