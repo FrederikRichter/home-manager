@@ -21,6 +21,7 @@ let
     output = "HDMI-A-1";
     mode = "preferred";
     position = "auto-left";
+    scale = 1;
   };
 
   dp2 = {
