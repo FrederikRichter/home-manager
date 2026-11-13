@@ -1,70 +1,70 @@
-{ config, pkgs, ... }:
+{ config, lib, ... }:
 {
-  home.packages = [ pkgs.noctalia ];
+  programs.noctalia = {
+    enable = true;
+    systemd.enable = true;
 
-  xdg.configFile."noctalia/config.toml".text = ''
-    [bar.widgets]
-    concave_edge_corners = false
-    end = [
-        "sysmon",
-        "notifications",
-        "clipboard",
-        "volume",
-        "battery",
-        "network",
-        "bluetooth",
-        "date",
-        "tray",
-        "control-center"
-    ]
-    margin_edge = 10
-    margin_ends = 10
-    position = "bottom"
-    scale = 1.15
+    settings = {
+      bar.widgets = {
+        concave_edge_corners = false;
+        end = [
+          "sysmon"
+          "notifications"
+          "clipboard"
+          "volume"
+          "battery"
+          "network"
+          "bluetooth"
+          "date"
+          "tray"
+          "control-center"
+        ];
+        margin_edge = 10;
+        margin_ends = 10;
+        position = "bottom";
+        scale = 1.15;
+      };
 
-    [dock]
-    background_opacity = 1.0
+      dock.background_opacity = 1.0;
 
-    [location]
-    auto_locate = true
+      location.auto_locate = true;
 
-    [notification]
-    background_opacity = 1.0
+      notification.background_opacity = 1.0;
 
-    [osd]
-    background_opacity = 1.0
+      osd.background_opacity = 1.0;
 
-    [shell]
-    font_family = "Inter Display SemiBold"
-    ui_scale = 1.1
+      shell = {
+        font_family = lib.mkForce "Inter Display SemiBold";
+        ui_scale = 1.1;
 
-    [shell.launcher]
-    default_view = "all"
+        launcher.default_view = "all";
+      };
 
-    [theme]
-    builtin = "Catppuccin"
-    mode = "dark"
-    source = "builtin"
-    wallpaper_scheme = "m3-content"
+      theme = {
+        builtin = "Catppuccin";
+        mode = "dark";
+        wallpaper_scheme = "m3-content";
+      };
 
-    [wallpaper.default]
-    path = "${config.stylix.image}"
+      wallpaper.default.path = "${config.stylix.image}";
 
-    [widget.control-center]
-    custom_image = "${../assets/icons/nixos.svg}"
-    custom_image_colorize = true
-    glyph = ""
+      widget = {
+        control-center = {
+          custom_image = "${../assets/icons/nixos.svg}";
+          custom_image_colorize = true;
+          glyph = "";
+        };
 
-    [widget.sysmon]
-    highlight_color = "primary"
-    show_value = true
-    visualization = "none"
+        sysmon = {
+          highlight_color = "primary";
+          show_value = true;
+          visualization = "none";
+        };
 
-    [widget.tray]
-    drawer = true
+        tray.drawer = true;
 
-    [widget.volume]
-    mute_color = "primary"
-  '';
+        volume.mute_color = "primary";
+      };
+    };
+  };
 }
-

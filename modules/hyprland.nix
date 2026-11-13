@@ -227,17 +227,6 @@ in
           }
         ];
 
-        on = {
-          _args = [
-            "hyprland.start"
-            (lua ''
-              function()
-                hl.exec_cmd("${pkgs.noctalia}/bin/noctalia")
-              end
-            '')
-          ];
-        };
-
         bind =
           [
             (bind "Print" (lua ''hl.dsp.exec_cmd("${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp -d)\" - | ${pkgs.wl-clipboard}/bin/wl-copy -t image/png")''))
