@@ -148,6 +148,7 @@ in
             border_size = 0;
             layout = "dwindle";
             allow_tearing = true;
+            resize_on_border = true;
           };
 
           decoration = {

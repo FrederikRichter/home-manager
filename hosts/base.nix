@@ -19,6 +19,7 @@
       bash
       blender
       btop
+      bubblewrap
       coreutils
       dconf
       dosfstools
