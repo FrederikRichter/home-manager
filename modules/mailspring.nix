@@ -15,10 +15,20 @@ let
     fi
 
     # Wait indefinitely until KeePassXC's default Secret Service collection is unlocked.
-    until [ "$(busctl --user get-property \
-              org.freedesktop.secrets \
-              /org/freedesktop/secrets/aliases/default \
-              org.freedesktop.Secret.Collection Locked 2>/dev/null || true)" = "b false" ]; do
+    while true; do
+      collection="$(busctl --user call \
+        org.freedesktop.secrets \
+        /org/freedesktop/secrets \
+        org.freedesktop.Secret.Service ReadAlias s default 2>/dev/null || true)"
+      collection="''${collection#o \"}"
+      collection="''${collection%\"}"
+      if [ -n "$collection" ] && [ "$collection" != "/" ] && \
+         [ "$(busctl --user get-property \
+           org.freedesktop.secrets \
+           "$collection" \
+           org.freedesktop.Secret.Collection Locked 2>/dev/null || true)" = "b false" ]; then
+        break
+      fi
       sleep 1
     done
 
