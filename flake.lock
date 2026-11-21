@@ -75,11 +75,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795330955,
-        "narHash": "sha256-muek5+MR/K9E43Zbv+dgnxJGSEHOF73rzQ1JKyo9wYE=",
+        "lastModified": 1795284265,
+        "narHash": "sha256-rqLMUkJlKSN+AodP82GqfVHjlDoHLD56+YiXCED0yYY=",
         "owner": "FrederikRichter",
         "repo": "evolve-stage2-nix",
-        "rev": "47ec91b09934d08088e061fed0598762d41d333a",
+        "rev": "ffaad1dc305545cee27175c9c56803f68f352fdc",
         "type": "github"
       },
       "original": {
@@ -208,11 +208,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1795326991,
-        "narHash": "sha256-8JRyA89Mpfr6A0iyT2JEwaNhKcxuhF/Cx8dm/fVJYjM=",
+        "lastModified": 1795070768,
+        "narHash": "sha256-VYtjBkOQDPoOeNm4sbMIVV+Yh+ESBm3MV+GYSODdei8=",
         "owner": "FrederikRichter",
         "repo": "helium-browser-nix-flake",
-        "rev": "ddfa6c884abab2468ba1c54c5eaecfd1da385caa",
+        "rev": "a8636302435edfe52c59652f2ebd3b1a3262a84f",
         "type": "github"
       },
       "original": {
@@ -228,11 +228,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795340038,
-        "narHash": "sha256-RtgZbV+4BDtJqMImbiPJri3fmVDbCbrz/B0cuPQUJQY=",
+        "lastModified": 1795268568,
+        "narHash": "sha256-1RJm4DEu7YHJv94sjSY7sjqT+kHx/AUwmtUN4dtFBUo=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "03885bcd0b477bdecebebc57b213b0f8f0826d51",
+        "rev": "6857c7f7c338ad181729c52071386b0d3afa24bc",
         "type": "github"
       },
       "original": {
