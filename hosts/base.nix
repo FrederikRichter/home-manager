@@ -69,6 +69,8 @@
       zotero
     ];
 
+
+
     sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";
