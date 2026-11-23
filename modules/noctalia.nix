@@ -38,6 +38,12 @@
         ui_scale = 1.1;
 
         launcher.default_view = "all";
+
+        screenshot = {
+          copy_to_clipboard = true;
+          directory = config.xdg.userDirs.pictures;
+          save_to_file = true;
+        };
       };
 
       theme = {

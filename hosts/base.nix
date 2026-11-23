@@ -27,7 +27,6 @@
       ffmpeg-full
       fzf
       gnumake
-      grim
       gtrash
       helium
       htop
@@ -48,7 +47,6 @@
       ripgrep
       rquickshare
       signal-desktop
-      slurp
       spotify
       swayidle
       transmission_4

@@ -75,11 +75,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795330955,
-        "narHash": "sha256-muek5+MR/K9E43Zbv+dgnxJGSEHOF73rzQ1JKyo9wYE=",
+        "lastModified": 1795384429,
+        "narHash": "sha256-M/y/oFqqXPjt7JtTJIH/uRstD5glA0NpT5/bEhHQuZA=",
         "owner": "FrederikRichter",
         "repo": "evolve-stage2-nix",
-        "rev": "47ec91b09934d08088e061fed0598762d41d333a",
+        "rev": "3354764d9ac0f9d10bd22f3e6e919426985b430a",
         "type": "github"
       },
       "original": {
