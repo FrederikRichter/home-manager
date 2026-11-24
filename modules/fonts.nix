@@ -1,5 +1,5 @@
 { pkgs, ... }:
 {
   fonts.fontconfig.enable = true;
-  home.packages = [ pkgs.cm_unicode pkgs.gyre-fonts ];
+  home.packages = with pkgs; [ cm_unicode gyre-fonts inter libertinus];
 }
