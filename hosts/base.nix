@@ -22,6 +22,7 @@
       bubblewrap
       coreutils
       dconf
+      discord
       dosfstools
       fastfetch
       ffmpeg-full

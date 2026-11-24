@@ -3,7 +3,6 @@ _:
   imports = [
     ./bluetooth.nix
     ./direnv.nix
-    ./discord.nix
     ./fonts.nix
     ./foot.nix
     ./git.nix
