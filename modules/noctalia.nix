@@ -34,7 +34,6 @@
       osd.background_opacity = 1.0;
 
       shell = {
-        font_family = lib.mkForce "Inter Display SemiBold";
         ui_scale = 1.1;
 
         launcher.default_view = "all";

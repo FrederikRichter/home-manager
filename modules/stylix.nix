@@ -15,12 +15,12 @@
 
     fonts = {
       sansSerif = {
-        package = pkgs.inter;
-        name = "Inter";
+        package = pkgs.sarasa-gothic;
+        name = "Sarasa UI J SemiBold";
       };
       monospace = {
-        package = pkgs.nerd-fonts.jetbrains-mono;
-        name = "JetBrainsMono Nerd Font Mono";
+        package = pkgs.sarasa-gothic;
+        name = "Sarasa Mono J";
       };
     };
 
