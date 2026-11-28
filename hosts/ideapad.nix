@@ -35,7 +35,7 @@ in
 
   config = {
     hyprland.enable = true;
-    ideapad.tv.enable = true;
+    ideapad.tv.enable = false;
 
     wayland.windowManager.hyprland = {
       settings = {
