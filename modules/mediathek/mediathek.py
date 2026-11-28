@@ -5,6 +5,7 @@ import argparse
 import curses
 import datetime
 import json
+import locale
 import os
 import re
 import shutil
@@ -584,23 +585,20 @@ class MediathekTUI:
 
         self.stdscr.refresh()
 
-    def handle_search_key(self, ch: int):
-        if ch in (10, 13, curses.KEY_ENTER):
+    def handle_search_key(self, ch: str | int):
+        if ch in ("\n", "\r", curses.KEY_ENTER):
             self.query = self.search_buf.strip()
             self.search_mode = False
             self.trigger_search(reset_offset=True)
-        elif ch == 27:  # Esc
+        elif ch == "\x1b":  # Esc
             self.search_mode = False
             self.search_buf = self.query
-        elif ch in (curses.KEY_BACKSPACE, 127, 8):
+        elif ch in (curses.KEY_BACKSPACE, "\x7f", "\x08"):
             self.search_buf = self.search_buf[:-1]
-        elif ch == 21:  # Ctrl-U
+        elif ch == "\x15":  # Ctrl-U
             self.search_buf = ""
-        elif 32 <= ch <= 126 or ch >= 160:
-            try:
-                self.search_buf += chr(ch)
-            except ValueError:
-                pass
+        elif isinstance(ch, str) and ch.isprintable():
+            self.search_buf += ch
 
     def run(self):
         curses.curs_set(0)
@@ -611,8 +609,9 @@ class MediathekTUI:
         try:
             while True:
                 self.draw()
-                ch = self.stdscr.getch()
-                if ch == -1:
+                try:
+                    ch = self.stdscr.get_wch()
+                except curses.error:
                     continue
 
                 if self.show_help:
@@ -623,17 +622,17 @@ class MediathekTUI:
                     self.handle_search_key(ch)
                     continue
 
-                if ch in (ord("Q"), 27):
+                if ch in ("Q", "\x1b"):
                     break
-                elif ch == ord("?"):
+                elif ch == "?":
                     self.show_help = True
-                elif ch in (ord("/"), ord("s")):
+                elif ch in ("/", "s"):
                     self.search_mode = True
                     self.search_buf = self.query
-                elif ch in (curses.KEY_DOWN, ord("j")):
+                elif ch in (curses.KEY_DOWN, "j"):
                     if self.results and self.selected < len(self.results) - 1:
                         self.selected += 1
-                elif ch in (curses.KEY_UP, ord("k")):
+                elif ch in (curses.KEY_UP, "k"):
                     if self.selected > 0:
                         self.selected -= 1
                 elif ch == curses.KEY_NPAGE:
@@ -641,35 +640,35 @@ class MediathekTUI:
                         self.selected = min(len(self.results) - 1, self.selected + 15)
                 elif ch == curses.KEY_PPAGE:
                     self.selected = max(0, self.selected - 15)
-                elif ch in (ord("g"), curses.KEY_HOME):
+                elif ch in ("g", curses.KEY_HOME):
                     self.selected = 0
-                elif ch in (ord("G"), curses.KEY_END):
+                elif ch in ("G", curses.KEY_END):
                     if self.results:
                         self.selected = len(self.results) - 1
-                elif ch in (10, 13, curses.KEY_ENTER):
+                elif ch in ("\n", "\r", curses.KEY_ENTER):
                     self.play_selected()
-                elif ch == ord("d"):
+                elif ch == "d":
                     self.download_selected()
-                elif ch == ord("x"):
+                elif ch == "x":
                     self.cancel_download()
-                elif ch == ord("c"):
+                elif ch == "c":
                     self.channel_idx = (self.channel_idx + 1) % len(CHANNELS)
                     self.trigger_search(reset_offset=True)
-                elif ch == ord("q"):
+                elif ch == "q":
                     self.quality_idx = (self.quality_idx + 1) % len(QUALITIES)
                     self.status = f"Preferred quality set to {self.quality}"
-                elif ch == ord("o"):
+                elif ch == "o":
                     self.sort_idx = (self.sort_idx + 1) % len(SORTS)
                     self.trigger_search(reset_offset=True)
-                elif ch == ord("r"):
+                elif ch == "r":
                     self.trigger_search(reset_offset=False)
-                elif ch == ord("n"):
+                elif ch == "n":
                     if self.offset + PAGE_SIZE < self.total_results:
                         self.offset += PAGE_SIZE
                         self.trigger_search(reset_offset=False)
                     else:
                         self.status = "Already on the last page."
-                elif ch == ord("p"):
+                elif ch == "p":
                     if self.offset >= PAGE_SIZE:
                         self.offset -= PAGE_SIZE
                         self.trigger_search(reset_offset=False)
@@ -682,6 +681,7 @@ class MediathekTUI:
 
 
 def main():
+    locale.setlocale(locale.LC_ALL, "")
     parser = argparse.ArgumentParser(
         prog="mediathek",
         description="TUI for searching, playing (via mpv), and downloading German public media shows.",
