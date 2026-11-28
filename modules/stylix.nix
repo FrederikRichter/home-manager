@@ -10,7 +10,6 @@
       nixvim.enable = false;
       rofi.enable = false;
       vesktop.enable = false;
-      wayprompt.enable = false;
     };
 
     fonts = {
