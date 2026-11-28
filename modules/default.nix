@@ -10,6 +10,7 @@ _:
     ./hyprland.nix
     ./keepass.nix
     ./mailspring.nix
+    ./mediathek
     ./mega.nix
     ./mpv.nix
     ./noctalia.nix
