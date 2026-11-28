@@ -62,6 +62,7 @@
       wl-clipboard
       wofi
       yt-dlp
+      youtube-tui
       zathura
       zig
       zotero
