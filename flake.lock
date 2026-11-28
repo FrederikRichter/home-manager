@@ -68,26 +68,6 @@
         "type": "github"
       }
     },
-    "evolved": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1795867072,
-        "narHash": "sha256-ytm6NgszMjgCfAeQ5NQnltgEXzWa4Js0OmFvN34iu/c=",
-        "owner": "FrederikRichter",
-        "repo": "evolve-stage2-nix",
-        "rev": "f56dfdf333647f0ee208fdda9613d64ce621962e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "FrederikRichter",
-        "repo": "evolve-stage2-nix",
-        "type": "github"
-      }
-    },
     "firefox-gnome-theme": {
       "flake": false,
       "locked": {
@@ -357,7 +337,6 @@
     },
     "root": {
       "inputs": {
-        "evolved": "evolved",
         "helium": "helium",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
