@@ -36,7 +36,6 @@ in
   programs.foot.settings.main.font = lib.mkForce "monospace:size=16";
 
   home.packages = with pkgs; [
-    modded-evolve
     prismlauncher
     r2modman
     xournalpp

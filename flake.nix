@@ -19,10 +19,6 @@
       url = "github:FrederikRichter/helium-browser-nix-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    evolved = {
-      url = "github:FrederikRichter/evolve-stage2-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = { nixpkgs, ... }@inputs:
@@ -31,7 +27,6 @@
 
       overlays = with inputs; [
         helium.overlays.default
-        evolved.overlays.default
         nixvim.overlays.default
         # patches
         (_final: prev: {
